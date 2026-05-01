@@ -296,7 +296,9 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
           <div class="form-group"><label class="form-label">Vencimento (dia)</label>
             <select class="form-select" id="f-payday">
               <option value="">Sem vencimento</option>
-              ${Array.from({length:28},(_,i)=>`<option value="${i+1}">Dia ${i+1}</option>`).join('')}
+               <option value="">Dia 5</option>
+                <option value="">Dia 10</option>
+              ${Array.from({length:28},(_,i)=>`<option value="20">Dia 20</option>`).join('')}
             </select>
           </div>
           <div class="form-group"><label class="form-label">Status</label>

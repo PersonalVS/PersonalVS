@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#0a0c10"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="PersonalVS"/>
-<title>PersonalVS Pro</title>
+<meta name="apple-mobile-web-app-title" content="FitPlan"/>
+<title>FitPlan Pro</title>
 <script>
-const manifestData={name:"PersonalVS Pro",short_name:"PersonalVS",description:"App de Personal Trainer",start_url:"./",display:"standalone",background_color:"#0a0c10",theme_color:"#0a0c10",orientation:"portrait",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230a0c10'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E💪%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"}]};
+const manifestData={name:"FitPlan Pro",short_name:"FitPlan",description:"App de Personal Trainer",start_url:"./",display:"standalone",background_color:"#0a0c10",theme_color:"#0a0c10",orientation:"portrait",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230a0c10'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"}]};
 const blob=new Blob([JSON.stringify(manifestData)],{type:'application/json'});
 document.write('<link rel="manifest" href="'+URL.createObjectURL(blob)+'">');
 </script>
@@ -26,38 +26,26 @@ document.write('<link rel="manifest" href="'+URL.createObjectURL(blob)+'">');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overscroll-behavior:none}
 #app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-
-/* TOP BAR */
-#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:calc(var(--safe-top) + 14px) 16px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:100}
+#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:calc(var(--safe-top)+14px) 16px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:100}
 #topbar .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px}
 #topbar .logo span{color:var(--accent)}
 .back-btn{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:22px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
 #top-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
 .spacer{flex:1}
-
-/* MAIN */
-#main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:18px 14px calc(var(--safe-bottom) + 18px)}
-
-/* BOTTOM NAV */
-#bottomnav{background:var(--surface);border-top:1px solid var(--border);padding:10px 0 calc(var(--safe-bottom) + 10px);display:flex;flex-shrink:0}
+#main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:18px 14px calc(var(--safe-bottom)+18px)}
+#bottomnav{background:var(--surface);border-top:1px solid var(--border);padding:10px 0 calc(var(--safe-bottom)+10px);display:flex;flex-shrink:0}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 4px;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;transition:color .2s}
 .nav-item.active{color:var(--accent)}
 .nav-icon{font-size:21px;line-height:1}
 .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0;transition:opacity .2s}
 .nav-item.active .nav-dot{opacity:1}
-
-/* SCREENS */
 .screen{display:none;animation:fadeIn .22s ease}
 .screen.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-
-/* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 10px}
 .stat-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800}
 .stat-lbl{font-size:11px;color:var(--text2);margin-top:2px}
-
-/* SEARCH */
 .search-wrap{position:relative;margin-bottom:14px}
 .search-wrap .sicon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px}
 .search-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 13px 11px 38px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
@@ -66,12 +54,19 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 /* STUDENT CARD */
 .student-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:14px;margin-bottom:9px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .2s,transform .12s;-webkit-user-select:none;user-select:none}
 .student-card:active{transform:scale(.98);border-color:var(--accent)}
-.s-avatar{width:44px;height:44px;border-radius:13px;flex-shrink:0;background:linear-gradient(135deg,var(--accent-dim),rgba(77,159,255,.15));display:flex;align-items:center;justify-content:center;font-size:20px}
+.s-avatar{width:48px;height:48px;border-radius:14px;flex-shrink:0;background:linear-gradient(135deg,var(--accent-dim),rgba(77,159,255,.15));display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;position:relative}
+.s-avatar img{width:100%;height:100%;object-fit:cover;border-radius:14px}
 .s-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:2px}
 .s-meta{font-size:11px;color:var(--text2)}
-.s-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.s-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
 
-/* BADGE */
+/* PAYMENT BADGE */
+.pay-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.pay-ok{background:rgba(59,255,160,.15);color:var(--accent);border:1px solid rgba(59,255,160,.4)}
+.pay-late{background:rgba(255,77,106,.15);color:var(--red);border:1px solid rgba(255,77,106,.4)}
+.pay-near{background:rgba(255,170,59,.15);color:var(--orange);border:1px solid rgba(255,170,59,.4)}
+
+/* BADGES */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}
 .badge-green{background:rgba(59,255,160,.12);color:var(--accent);border:1px solid rgba(59,255,160,.3)}
 .badge-orange{background:rgba(255,170,59,.12);color:var(--orange);border:1px solid rgba(255,170,59,.3)}
@@ -87,6 +82,15 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
 
+/* PHOTO PICKER */
+.photo-picker{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.photo-preview{width:72px;height:72px;border-radius:16px;background:var(--card2);border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;cursor:pointer;flex-shrink:0;transition:border-color .2s}
+.photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+.photo-preview:active{border-color:var(--accent)}
+.photo-picker-info{flex:1}
+.photo-picker-info .pp-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.photo-picker-info .pp-sub{font-size:11px;color:var(--text3);line-height:1.5}
+
 /* BUTTONS */
 .btn{padding:12px 20px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:6px;justify-content:center}
 .btn:active{transform:scale(.96)}
@@ -95,6 +99,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .btn-ghost{background:var(--card);color:var(--text2);border:1px solid var(--border)}
 .btn-danger{background:rgba(255,77,106,.12);color:var(--red);border:1px solid rgba(255,77,106,.3)}
 .btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent-mid)}
+.btn-blue{background:rgba(77,159,255,.15);color:var(--blue);border:1px solid rgba(77,159,255,.3)}
 .btn-full{width:100%}
 .btn-row{display:flex;gap:9px;margin-top:8px}
 .btn-sm{padding:7px 13px;font-size:12px;border-radius:9px}
@@ -117,13 +122,11 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .day-tab.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-mid)}
 .day-tab .dot{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--accent);display:none}
 .day-tab.has-ex .dot{display:block}
-
-/* MODE TOGGLE */
 .mode-toggle{display:flex;gap:7px;margin-bottom:14px}
 .mode-btn{flex:1;padding:9px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);font-family:'DM Sans',sans-serif;transition:all .15s;text-align:center}
 .mode-btn.active{background:var(--accent);color:#0a0c10;border-color:var(--accent)}
 
-/* EXERCISE ITEMS */
+/* EXERCISE */
 .ex-item{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:8px}
 .ex-name{font-weight:700;font-size:15px;margin-bottom:7px}
 .ex-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
@@ -133,17 +136,14 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .icon-btn:active{transform:scale(.88)}
 .icon-btn.danger{color:var(--red);border-color:rgba(255,77,106,.3);background:rgba(255,77,106,.08)}
 
-/* ── MEDIA THUMBNAIL ── */
+/* MEDIA */
 .ex-media{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px}
 .media-thumb{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(--border);flex-shrink:0;background:var(--card2)}
 .media-thumb img,.media-thumb video{width:100%;height:100%;object-fit:cover}
 .media-thumb .play-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);font-size:20px}
-.media-thumb .del-thumb{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:5px;background:rgba(255,77,106,.85);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;line-height:1}
-.add-media-btn{width:72px;height:72px;border-radius:10px;border:1px dashed var(--border2);background:var(--card2);color:var(--text3);font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:3px;flex-shrink:0;transition:border-color .2s}
-.add-media-btn span{font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3)}
-.add-media-btn:active{border-color:var(--accent)}
-
-/* VIEW MODE */
+.media-thumb .del-thumb{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:5px;background:rgba(255,77,106,.85);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer}
+.add-media-btn{width:72px;height:72px;border-radius:10px;border:1px dashed var(--border2);background:var(--card2);color:var(--text3);font-size:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:3px;flex-shrink:0}
+.add-media-btn span{font-size:9px;font-weight:600;text-transform:uppercase;color:var(--text3)}
 .view-ex{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border-radius:13px;padding:13px;margin-bottom:8px;border:1px solid var(--border)}
 .view-num{width:32px;height:32px;border-radius:9px;flex-shrink:0;background:var(--accent-dim);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px}
 .view-media{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
@@ -151,27 +151,40 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .view-thumb img,.view-thumb video{width:100%;height:100%;object-fit:cover}
 .view-thumb .play-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);font-size:24px}
 
+/* MEDIA MODAL UPLOAD */
+.upload-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--card2);margin-bottom:10px}
+.upload-zone:active{border-color:var(--accent)}
+.uz-icon{font-size:30px;margin-bottom:6px}
+.uz-text{font-size:13px;color:var(--text2);line-height:1.6}
+.uz-note{font-size:11px;color:var(--text3);margin-top:4px}
+.media-preview-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.mp-item{position:relative;width:70px;height:70px;border-radius:9px;overflow:hidden;border:1px solid var(--border)}
+.mp-item img,.mp-item video{width:100%;height:100%;object-fit:cover}
+.mp-item .mp-del{position:absolute;top:2px;right:2px;width:17px;height:17px;border-radius:4px;background:rgba(255,77,106,.9);border:none;color:#fff;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mp-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);font-size:18px}
+.vid-warn{background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.3);border-radius:9px;padding:9px 12px;font-size:12px;color:var(--orange);margin-bottom:10px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+
 /* HINT */
 .hint{background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:11px;padding:11px 13px;font-size:13px;color:var(--accent);margin-bottom:13px;display:flex;align-items:center;gap:8px}
 
 /* TOAST */
-#toast{position:fixed;bottom:calc(var(--safe-bottom) + 88px);left:50%;transform:translateX(-50%) translateY(16px);background:var(--card2);border:1px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:11px;font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:all .28s;z-index:9999;white-space:nowrap}
+#toast{position:fixed;bottom:calc(var(--safe-bottom)+88px);left:50%;transform:translateX(-50%) translateY(16px);background:var(--card2);border:1px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:11px;font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:all .28s;z-index:9999;white-space:nowrap}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* EXERCISE MODAL */
+/* MODALS */
 #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
 #modal-overlay.open{display:flex}
-#modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(var(--safe-bottom) + 22px);width:100%;max-height:92vh;overflow-y:auto;animation:slideUp .28s ease}
+#modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(var(--safe-bottom)+22px);width:100%;max-height:92vh;overflow-y:auto;animation:slideUp .28s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
 .modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
 .modal-close{width:30px;height:30px;border-radius:8px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-/* MEDIA MODAL (full screen viewer) */
+/* MEDIA VIEWER */
 #media-viewer{position:fixed;inset:0;background:#000;z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column}
 #media-viewer.open{display:flex}
 #media-viewer img,#media-viewer video{max-width:100%;max-height:85vh;object-fit:contain;border-radius:12px}
-#media-viewer .close-viewer{position:absolute;top:calc(var(--safe-top) + 16px);right:16px;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-#media-viewer .viewer-caption{position:absolute;bottom:calc(var(--safe-bottom) + 20px);color:rgba(255,255,255,.6);font-size:13px;text-align:center;padding:0 20px}
+#media-viewer .close-viewer{position:absolute;top:calc(var(--safe-top)+16px);right:16px;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#media-viewer .viewer-caption{position:absolute;bottom:calc(var(--safe-bottom)+20px);color:rgba(255,255,255,.6);font-size:13px;text-align:center}
 
 /* CONFIRM */
 #confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
@@ -181,27 +194,26 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 #confirm-box h3{font-family:'Syne',sans-serif;font-size:16px;margin-bottom:7px}
 #confirm-box p{font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5}
 
-/* UPLOAD ZONE (modal) */
-.upload-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--card2);margin-bottom:10px}
-.upload-zone:active{border-color:var(--accent)}
-.upload-zone .uz-icon{font-size:30px;margin-bottom:6px}
-.upload-zone .uz-text{font-size:13px;color:var(--text2);line-height:1.6}
-.upload-zone .uz-note{font-size:11px;color:var(--text3);margin-top:4px}
-.media-preview-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.mp-item{position:relative;width:70px;height:70px;border-radius:9px;overflow:hidden;border:1px solid var(--border)}
-.mp-item img,.mp-item video{width:100%;height:100%;object-fit:cover}
-.mp-item .mp-del{position:absolute;top:2px;right:2px;width:17px;height:17px;border-radius:4px;background:rgba(255,77,106,.9);border:none;color:#fff;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.mp-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);font-size:18px}
+/* PAYMENT SECTION */
+.pay-section{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.pay-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pay-toggle{display:flex;gap:8px}
+.pay-opt{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text3);transition:all .15s}
+.pay-opt.active-ok{background:rgba(59,255,160,.15);color:var(--accent);border-color:rgba(59,255,160,.4)}
+.pay-opt.active-late{background:rgba(255,77,106,.15);color:var(--red);border-color:rgba(255,77,106,.4)}
 
-/* VIDEO TRIM WARNING */
-.vid-warn{background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.3);border-radius:9px;padding:9px 12px;font-size:12px;color:var(--orange);margin-bottom:10px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+/* DUPLICATE MODAL */
+#dup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:250;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
+#dup-overlay.open{display:flex}
+#dup-box{background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(var(--safe-bottom)+22px);width:100%;max-height:70vh;overflow-y:auto;animation:slideUp .28s ease}
+.dup-item{display:flex;align-items:center;gap:12px;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.dup-item:active{border-color:var(--accent)}
 
 ::-webkit-scrollbar{width:0}
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- TOP BAR -->
   <div id="topbar">
     <button class="back-btn" id="back-btn" onclick="goBack()">‹</button>
     <div class="logo">Fit<span>Plan</span> <span style="font-size:12px;color:var(--text3);font-weight:400">Pro</span></div>
@@ -222,6 +234,19 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
     <!-- FORM ALUNO -->
     <div class="screen" id="screen-form">
+      <!-- Foto de perfil -->
+      <div class="card">
+        <div class="card-title">Foto de Perfil</div>
+        <div class="photo-picker">
+          <div class="photo-preview" id="pp-preview" onclick="pickProfilePhoto()">🧍</div>
+          <div class="photo-picker-info">
+            <div class="pp-title">Foto do aluno</div>
+            <div class="pp-sub">Toque para escolher da galeria ou tirar uma foto.<br>Aparece no card e no perfil.</div>
+          </div>
+        </div>
+        <input type="file" id="profile-photo-input" accept="image/*" style="display:none" onchange="handleProfilePhoto(event)"/>
+      </div>
+
       <div class="card">
         <div class="card-title">Dados Pessoais</div>
         <div class="form-group"><label class="form-label">Nome completo *</label><input class="form-input" id="f-name" placeholder="Ex: João Silva"/></div>
@@ -231,11 +256,14 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
         </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Idade</label><input class="form-input" id="f-age" type="number" placeholder="28"/></div>
-          <div class="form-group"><label class="form-label">Sexo</label><select class="form-select" id="f-sex"><option value="">—</option><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
+          <div class="form-group"><label class="form-label">Sexo</label>
+            <select class="form-select" id="f-sex"><option value="">—</option><option value="M">Masculino</option><option value="F">Feminino</option></select>
+          </div>
         </div>
         <div class="form-group"><label class="form-label">Objetivo</label><input class="form-input" id="f-goal" placeholder="Ex: Hipertrofia, Emagrecimento..."/></div>
         <div class="form-group"><label class="form-label">Observações / Restrições</label><textarea class="form-textarea" id="f-obs" placeholder="Lesões, limitações..."></textarea></div>
       </div>
+
       <div class="card">
         <div class="card-title">Configuração de Treino</div>
         <div class="form-row">
@@ -253,15 +281,49 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
           </div>
         </div>
         <div class="hint">💡 Ciclo: <strong id="cycle-hint-text">A → B → C</strong></div>
+
+        <!-- DUPLICAR TREINO -->
+        <div id="dup-section" style="display:none">
+          <div style="font-size:11px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Duplicar treino de outro aluno</div>
+          <button class="btn btn-blue btn-full btn-sm" onclick="openDupModal()">📋 Copiar treino de aluno existente</button>
+        </div>
       </div>
+
+      <!-- MENSALIDADE -->
+      <div class="card">
+        <div class="card-title">💰 Mensalidade</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Vencimento (dia)</label>
+            <select class="form-select" id="f-payday">
+              <option value="">Sem vencimento</option>
+              ${Array.from({length:28},(_,i)=>`<option value="${i+1}">Dia ${i+1}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Status</label>
+            <div class="pay-toggle" style="margin-top:6px">
+              <button class="pay-opt active-ok" id="pay-btn-ok" onclick="setPayStatus('ok')">✅ Pago</button>
+              <button class="pay-opt" id="pay-btn-late" onclick="setPayStatus('late')">❌ Pendente</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="goBack()">Cancelar</button>
         <button class="btn btn-primary" onclick="saveStudent()" style="flex:1">Salvar Aluno</button>
       </div>
     </div>
 
-    <!-- DETALHE ALUNO -->
+    <!-- DETALHE -->
     <div class="screen" id="screen-detail">
+      <div id="detail-header" style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <div id="detail-avatar" style="width:56px;height:56px;border-radius:16px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div id="detail-name" style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px"></div>
+          <div id="detail-goal" style="font-size:12px;color:var(--accent);margin-top:2px"></div>
+        </div>
+        <div id="detail-pay-badge"></div>
+      </div>
       <div id="detail-info-grid" class="info-grid"></div>
       <div id="detail-obs-box" style="display:none" class="hint"><span>📝</span><span id="detail-obs-text"></span></div>
       <div class="mode-toggle">
@@ -270,40 +332,36 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       </div>
       <div class="day-tabs" id="day-tabs"></div>
       <div class="card" id="exercise-area"></div>
-      <button class="btn btn-outline btn-full" onclick="exportPDF()" style="margin-top:2px">📄 Exportar PDF</button>
+      <button class="btn btn-outline btn-full" onclick="exportPDF()" style="margin-top:2px">📄 Exportar / Compartilhar</button>
     </div>
 
-    <!-- GUIA INSTALAÇÃO -->
+    <!-- INSTALAR -->
     <div class="screen" id="screen-install">
       <div style="text-align:center;padding:28px 0 18px">
         <div style="font-size:48px;margin-bottom:10px">📲</div>
         <div style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800;margin-bottom:5px">Instalar no Celular</div>
-        <div style="font-size:13px;color:var(--text3)">O amor de Deus transforma qualquer coração.</div>
+        <div style="font-size:13px;color:var(--text3)">O AMOR de DEUS transforma qualquer coração.</div>
       </div>
       <div class="card">
         <div class="card-title">🍎 iPhone — Safari</div>
         <div style="font-size:13px;color:var(--text2);line-height:2">
-          1. Abra este link no <strong style="color:var(--text)">Safari</strong><br>
-          2. Toque em <strong style="color:var(--text)">□↑ Compartilhar</strong> (barra inferior)<br>
-          3. Selecione <strong style="color:var(--text)">"Adicionar à Tela de Início"</strong><br>
-          4. Confirme com <strong style="color:var(--text)">"Adicionar"</strong> ✅
+          1. Abra no <strong style="color:var(--text)">Safari</strong><br>
+          2. Toque em <strong style="color:var(--text)">□↑ Compartilhar</strong><br>
+          3. <strong style="color:var(--text)">"Adicionar à Tela de Início"</strong><br>
+          4. <strong style="color:var(--text)">"Adicionar"</strong> ✅
         </div>
       </div>
       <div class="card">
         <div class="card-title">🤖 Android — Chrome</div>
         <div style="font-size:13px;color:var(--text2);line-height:2">
           1. Abra no <strong style="color:var(--text)">Chrome</strong><br>
-          2. Banner automático aparece na tela<br>
-          3. Ou menu <strong style="color:var(--text)">⋮ → "Adicionar à tela inicial"</strong> ✅
+          2. Banner automático ou menu <strong style="color:var(--text)">⋮ → "Adicionar à tela inicial"</strong> ✅
         </div>
       </div>
-      <div class="hint" style="margin-top:4px">
-        💡 Os dados ficam no celular. Compartilhe treinos via <strong>📄 PDF</strong>.
-      </div>
+      <div class="hint">💡 Dados salvos no celular. Compartilhe treinos via 📄 PDF.</div>
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
   <nav id="bottomnav">
     <div class="nav-item active" id="nav-home" onclick="showNav('home')"><div class="nav-icon">🏠</div><div>Início</div><div class="nav-dot"></div></div>
     <div class="nav-item" id="nav-add" onclick="showNav('add')"><div class="nav-icon">➕</div><div>Novo Aluno</div><div class="nav-dot"></div></div>
@@ -311,15 +369,10 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </nav>
 </div>
 
-<!-- ═══════════ EXERCISE MODAL ═══════════ -->
+<!-- EXERCISE MODAL -->
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal-box">
-    <div class="modal-title">
-      <span id="modal-title-text">Novo Exercício</span>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-
-    <!-- Dados básicos -->
+    <div class="modal-title"><span id="modal-title-text">Novo Exercício</span><button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-group"><label class="form-label">Nome do exercício *</label><input class="form-input" id="ex-name" placeholder="Ex: Supino Reto com Barra"/></div>
     <div class="form-row3">
       <div class="form-group"><label class="form-label">Séries</label><input class="form-input" id="ex-sets" type="number" value="3"/></div>
@@ -335,33 +388,25 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
         <option>Cardio</option><option>Full Body</option>
       </select>
     </div>
-    <div class="form-group"><label class="form-label">Dica / Observação</label><textarea class="form-textarea" id="ex-obs" placeholder="Ex: Manter costas retas, não travar joelhos..."></textarea></div>
+    <div class="form-group"><label class="form-label">Dica / Observação</label><textarea class="form-textarea" id="ex-obs" placeholder="Ex: Manter costas retas..."></textarea></div>
 
-    <!-- ══ MÍDIA ══ -->
+    <!-- MÍDIA -->
     <div style="margin-bottom:6px">
       <label class="form-label" style="margin-bottom:10px">📸 Fotos / 🎬 Vídeos (até 10s)</label>
-
-      <!-- Preview de mídias já adicionadas -->
       <div class="media-preview-list" id="modal-media-preview"></div>
+      <div class="vid-warn" id="vid-warn" style="display:none">⚠️ <div>Vídeos cortados em <strong>10 segundos</strong>.</div></div>
 
-      <!-- Aviso vídeo -->
-      <div class="vid-warn" id="vid-warn" style="display:none">
-        ⚠️ <div>Vídeos são cortados automaticamente em <strong>10 segundos</strong>. Para melhor resultado, grave diretamente no app com a câmera.</div>
+      <!-- Botões de seleção de mídia -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('image','gallery')">🖼️ Da Galeria</button>
+        <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('image','camera')">📷 Câmera</button>
+        <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('video','gallery')">🎞️ Vídeo Galeria</button>
+        <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('video','camera')">🎬 Gravar Vídeo</button>
       </div>
-
-      <!-- Zona de upload -->
-      <div class="upload-zone" onclick="document.getElementById('file-input').click()">
-        <div class="uz-icon">📁</div>
-        <div class="uz-text">Toque para escolher da galeria<br>ou tirar foto/vídeo</div>
-        <div class="uz-note">Fotos: JPG, PNG · Vídeos: MP4, MOV (máx 10s)</div>
-      </div>
-      <input type="file" id="file-input" accept="image/*,video/*" multiple capture="environment" style="display:none" onchange="handleFileInput(event)"/>
-
-      <!-- Botões câmera rápida -->
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="openCamera('image')">📷 Câmera</button>
-        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="openCamera('video')">🎬 Gravar vídeo</button>
-      </div>
+      <input type="file" id="media-gallery-img" accept="image/*" multiple style="display:none" onchange="handleMediaFiles(event)"/>
+      <input type="file" id="media-camera-img" accept="image/*" capture="environment" style="display:none" onchange="handleMediaFiles(event)"/>
+      <input type="file" id="media-gallery-vid" accept="video/*" multiple style="display:none" onchange="handleMediaFiles(event)"/>
+      <input type="file" id="media-camera-vid" accept="video/*" capture="environment" style="display:none" onchange="handleMediaFiles(event)"/>
     </div>
 
     <div class="btn-row" style="margin-top:14px">
@@ -371,14 +416,23 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </div>
 </div>
 
-<!-- ═══════════ MEDIA VIEWER ═══════════ -->
+<!-- MEDIA VIEWER -->
 <div id="media-viewer">
   <button class="close-viewer" onclick="closeViewer()">✕</button>
   <div id="viewer-content"></div>
   <div class="viewer-caption" id="viewer-caption"></div>
 </div>
 
-<!-- ═══════════ CONFIRM ═══════════ -->
+<!-- DUPLICATE MODAL -->
+<div id="dup-overlay" onclick="closeDupModal(event)">
+  <div id="dup-box">
+    <div class="modal-title"><span>📋 Copiar Treino de Aluno</span><button class="modal-close" onclick="closeDupModal()">✕</button></div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Selecione o aluno cujo treino deseja copiar:</div>
+    <div id="dup-list"></div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
 <div id="confirm-overlay">
   <div id="confirm-box">
     <div class="ci" id="confirm-icon">⚠️</div>
@@ -397,29 +451,27 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
-let students = JSON.parse(localStorage.getItem('fp_v5') || '[]');
+let students = JSON.parse(localStorage.getItem('fp_v6') || '[]');
 let currentScreen = 'home';
 let selectedStudentId = null;
 let activeDay = 'A';
 let viewMode = 'edit';
 let editingExId = null;
 let confirmCallback = null;
-let pendingMedia = []; // {type:'image'|'video', dataUrl, duration?}
+let pendingMedia = [];
+let pendingProfilePhoto = null;
+let currentPayStatus = 'ok';
 
 // ══════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════
-function save() { localStorage.setItem('fp_v5', JSON.stringify(students)); }
+function save() { localStorage.setItem('fp_v6', JSON.stringify(students)); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-
 function toast(msg, d = 2200) {
   const e = document.getElementById('toast');
-  e.textContent = msg;
-  e.classList.add('show');
-  clearTimeout(e._t);
-  e._t = setTimeout(() => e.classList.remove('show'), d);
+  e.textContent = msg; e.classList.add('show');
+  clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('show'), d);
 }
-
 function showConfirm(icon, title, msg, okLabel = 'Confirmar') {
   document.getElementById('confirm-icon').textContent = icon;
   document.getElementById('confirm-title').textContent = title;
@@ -432,7 +484,6 @@ function closeConfirm(r) {
   document.getElementById('confirm-overlay').classList.remove('open');
   if (confirmCallback) { confirmCallback(r); confirmCallback = null; }
 }
-
 function cycleLetters(n) { return ['A','B','C','D','E','F'].slice(0, n); }
 function calcBMI(w, h) { if (!w || !h) return null; return (w / ((h/100)**2)).toFixed(1); }
 function bmiLabel(b) {
@@ -442,114 +493,132 @@ function bmiLabel(b) {
   return ['Obesidade','var(--red)'];
 }
 
+// Payment status helpers
+function payInfo(s) {
+  if (!s.payDay) return null;
+  const today = new Date();
+  const day = today.getDate();
+  const payDay = parseInt(s.payDay);
+  const status = s.payStatus || 'ok';
+  if (status === 'late') return { label: '❌ Pendente', cls: 'pay-late', tip: `Vence dia ${payDay}` };
+  const diff = payDay - day;
+  if (diff < 0) return { label: '⚠️ Venceu', cls: 'pay-near', tip: `Venceu dia ${payDay}` };
+  if (diff <= 3) return { label: `⏰ Vence em ${diff}d`, cls: 'pay-near', tip: `Vence dia ${payDay}` };
+  return { label: `✅ Dia ${payDay}`, cls: 'pay-ok', tip: `Vence dia ${payDay}` };
+}
+
 // ══════════════════════════════════════════
-// MEDIA HANDLING
+// PROFILE PHOTO
 // ══════════════════════════════════════════
-function handleFileInput(e) {
+function pickProfilePhoto() {
+  document.getElementById('profile-photo-input').click();
+}
+function handleProfilePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const SIZE = 200;
+      canvas.width = SIZE; canvas.height = SIZE;
+      const ctx = canvas.getContext('2d');
+      // crop square center
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min) / 2;
+      const sy = (img.height - min) / 2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, SIZE, SIZE);
+      pendingProfilePhoto = canvas.toDataURL('image/jpeg', 0.82);
+      const preview = document.getElementById('pp-preview');
+      preview.innerHTML = `<img src="${pendingProfilePhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:14px"/>`;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+// ══════════════════════════════════════════
+// MEDIA HANDLING — 4 separate inputs for iOS
+// ══════════════════════════════════════════
+function triggerMediaPick(type, source) {
+  const id = `media-${source}-${type === 'image' ? 'img' : 'vid'}`;
+  document.getElementById(id).click();
+}
+
+function handleMediaFiles(e) {
   const files = Array.from(e.target.files);
   e.target.value = '';
-  files.forEach(f => processFile(f));
+  if (!files.length) return;
+  files.forEach(f => processMediaFile(f));
 }
 
-function openCamera(type) {
-  const input = document.getElementById('file-input');
-  input.accept = type === 'image' ? 'image/*' : 'video/*';
-  input.capture = 'environment';
-  input.click();
-}
-
-function processFile(file) {
+function processMediaFile(file) {
   if (file.type.startsWith('image/')) {
     const reader = new FileReader();
     reader.onload = ev => {
-      // Compress image
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX = 1080;
-        let w = img.width, h = img.height;
-        if (w > MAX || h > MAX) {
-          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-          else { w = Math.round(w * MAX / h); h = MAX; }
-        }
+        const MAX = 1080; let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
         pendingMedia.push({ type: 'image', dataUrl });
         renderModalMediaPreview();
+        toast('✅ Foto adicionada!');
       };
       img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
   } else if (file.type.startsWith('video/')) {
-    const url = URL.createObjectURL(file);
-    const vid = document.createElement('video');
-    vid.preload = 'metadata';
-    vid.src = url;
-    vid.onloadedmetadata = () => {
-      const duration = vid.duration;
-      if (duration > 10) {
-        document.getElementById('vid-warn').style.display = 'flex';
-        toast('⚠️ Vídeo cortado em 10 segundos');
-      }
-      // Trim to 10s via MediaRecorder if needed
-      trimAndEncodeVideo(file, Math.min(duration, 10));
-      URL.revokeObjectURL(url);
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const dataUrl = ev.target.result;
+      // Check duration via temp video element
+      const vid = document.createElement('video');
+      vid.preload = 'metadata';
+      vid.onloadedmetadata = () => {
+        const dur = vid.duration;
+        if (dur > 10) { document.getElementById('vid-warn').style.display = 'flex'; toast('⚠️ Vídeo longo — será cortado em 10s'); }
+        pendingMedia.push({ type: 'video', dataUrl, duration: Math.min(dur, 10) });
+        renderModalMediaPreview();
+        toast('✅ Vídeo adicionado!');
+      };
+      vid.src = dataUrl;
     };
+    reader.readAsDataURL(file);
   }
-}
-
-function trimAndEncodeVideo(file, maxDuration) {
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const dataUrl = ev.target.result;
-    // We'll store the raw dataUrl and enforce 10s limit at playback
-    pendingMedia.push({ type: 'video', dataUrl, duration: maxDuration });
-    renderModalMediaPreview();
-  };
-  reader.readAsDataURL(file);
 }
 
 function renderModalMediaPreview() {
-  const container = document.getElementById('modal-media-preview');
-  if (pendingMedia.length === 0) { container.innerHTML = ''; return; }
-  container.innerHTML = pendingMedia.map((m, i) => `
+  const c = document.getElementById('modal-media-preview');
+  if (!pendingMedia.length) { c.innerHTML = ''; return; }
+  c.innerHTML = pendingMedia.map((m, i) => `
     <div class="mp-item">
-      ${m.type === 'image'
-        ? `<img src="${m.dataUrl}" />`
-        : `<video src="${m.dataUrl}" muted playsinline></video><div class="mp-badge">▶</div>`}
+      ${m.type==='image' ? `<img src="${m.dataUrl}"/>` : `<video src="${m.dataUrl}" muted playsinline></video><div class="mp-badge">▶</div>`}
       <button class="mp-del" onclick="removePendingMedia(${i})">✕</button>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
 function removePendingMedia(i) {
   pendingMedia.splice(i, 1);
-  if (!pendingMedia.some(m => m.type === 'video')) {
-    document.getElementById('vid-warn').style.display = 'none';
-  }
+  if (!pendingMedia.some(m => m.type === 'video')) document.getElementById('vid-warn').style.display = 'none';
   renderModalMediaPreview();
 }
 
-// ── VIEWER ──────────────────────────────────
 function openViewer(mediaList, index) {
   const m = mediaList[index];
   const vc = document.getElementById('viewer-content');
-  const total = mediaList.length;
-
   if (m.type === 'image') {
     vc.innerHTML = `<img src="${m.dataUrl}" style="max-width:100%;max-height:85vh;border-radius:10px"/>`;
   } else {
-    vc.innerHTML = `<video src="${m.dataUrl}" controls autoplay playsinline
-      style="max-width:100%;max-height:85vh;border-radius:10px"
-      ${m.duration ? `ontimeupdate="if(this.currentTime>${Math.min(m.duration,10)})this.pause()"` : ''}></video>`;
+    vc.innerHTML = `<video src="${m.dataUrl}" controls autoplay playsinline style="max-width:100%;max-height:85vh;border-radius:10px" ${m.duration ? `ontimeupdate="if(this.currentTime>${Math.min(m.duration,10)})this.pause()"` : ''}></video>`;
   }
-
-  document.getElementById('viewer-caption').textContent =
-    total > 1 ? `${index + 1} / ${total}` : '';
+  document.getElementById('viewer-caption').textContent = mediaList.length > 1 ? `${index+1} / ${mediaList.length}` : '';
   document.getElementById('media-viewer').classList.add('open');
 }
-
 function closeViewer() {
   const v = document.getElementById('viewer-content').querySelector('video');
   if (v) v.pause();
@@ -570,14 +639,12 @@ function showScreen(name) {
   document.getElementById('top-title').style.display = isHome ? 'none' : 'block';
   document.getElementById('main').scrollTop = 0;
 }
-
 function showNav(tab) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (tab === 'home') { document.getElementById('nav-home').classList.add('active'); showScreen('home'); renderHome(); }
   else if (tab === 'add') { document.getElementById('nav-add').classList.add('active'); openStudentForm(null); }
   else if (tab === 'install') { document.getElementById('nav-install').classList.add('active'); showScreen('install'); }
 }
-
 function goBack() {
   if (currentScreen === 'detail') showNav('home');
   else if (currentScreen === 'form') selectedStudentId ? showStudentDetail(selectedStudentId) : showNav('home');
@@ -591,11 +658,12 @@ function renderHome() { renderStats(); renderStudentList(); }
 
 function renderStats() {
   const t = students.length;
-  const w = students.filter(s => Object.values(s.exercises || {}).some(e => e.length > 0)).length;
+  const w = students.filter(s => Object.values(s.exercises||{}).some(e => e.length > 0)).length;
+  const late = students.filter(s => s.payDay && s.payStatus === 'late').length;
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${t}</div><div class="stat-lbl">Alunos</div></div>
     <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${w}</div><div class="stat-lbl">Com treino</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--orange)">${t-w}</div><div class="stat-lbl">Sem treino</div></div>`;
+    <div class="stat-card"><div class="stat-val" style="color:var(--red)">${late}</div><div class="stat-lbl">Inadimplentes</div></div>`;
 }
 
 function renderStudentList() {
@@ -603,17 +671,22 @@ function renderStudentList() {
   const list = students.filter(s => s.name.toLowerCase().includes(q));
   const el = document.getElementById('student-list');
   if (!list.length) {
-    el.innerHTML = `<div class="empty" style="padding:50px 0;text-align:center;color:var(--text3)"><div style="font-size:44px;margin-bottom:10px">🏋️</div><p style="font-size:14px">${q ? 'Nenhum resultado.' : 'Nenhum aluno ainda.<br>Toque em <strong>➕</strong> para começar.'}</p></div>`;
+    el.innerHTML = `<div style="text-align:center;padding:50px 0;color:var(--text3)"><div style="font-size:44px;margin-bottom:10px">🏋️</div><p style="font-size:14px">${q ? 'Nenhum resultado.' : 'Nenhum aluno ainda.<br>Toque em <strong>➕</strong> para começar.'}</p></div>`;
     return;
   }
   el.innerHTML = list.map(s => {
-    const hasEx = Object.values(s.exercises || {}).some(e => e.length > 0);
+    const hasEx = Object.values(s.exercises||{}).some(e => e.length > 0);
+    const pi = payInfo(s);
+    const avatarHtml = s.photo
+      ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`
+      : '🧍';
     return `<div class="student-card" onclick="showStudentDetail('${s.id}')">
-      <div class="s-avatar">🧍</div>
+      <div class="s-avatar">${avatarHtml}</div>
       <div style="flex:1;min-width:0">
         <div class="s-name">${s.name}</div>
         <div class="s-meta">${s.weight}kg · ${s.height}cm · ${s.daysPerWeek}x/sem · ${cycleLetters(parseInt(s.cycle||3)).join('/')}</div>
         ${s.goal ? `<div style="font-size:11px;color:var(--accent);margin-top:2px">🎯 ${s.goal}</div>` : ''}
+        ${pi ? `<div style="margin-top:5px"><span class="pay-badge ${pi.cls}">${pi.label}</span></div>` : ''}
       </div>
       <div class="s-right">
         <span class="badge ${hasEx ? 'badge-green' : 'badge-orange'}">${hasEx ? 'Ativo' : 'Pendente'}</span>
@@ -624,15 +697,36 @@ function renderStudentList() {
 }
 
 // ══════════════════════════════════════════
+// PAYMENT STATUS FORM
+// ══════════════════════════════════════════
+function setPayStatus(status) {
+  currentPayStatus = status;
+  document.getElementById('pay-btn-ok').className = 'pay-opt' + (status === 'ok' ? ' active-ok' : '');
+  document.getElementById('pay-btn-late').className = 'pay-opt' + (status === 'late' ? ' active-late' : '');
+}
+
+// ══════════════════════════════════════════
 // STUDENT FORM
 // ══════════════════════════════════════════
 function openStudentForm(id) {
   selectedStudentId = id;
   const s = id ? students.find(x => x.id === id) : null;
+  pendingProfilePhoto = s?.photo || null;
+
+  // Reset photo preview
+  const pp = document.getElementById('pp-preview');
+  pp.innerHTML = s?.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:14px"/>` : '🧍';
+
   ['name','weight','height','age','goal','obs'].forEach(k => { document.getElementById('f-'+k).value = s?.[k] || ''; });
   document.getElementById('f-sex').value = s?.sex || '';
   document.getElementById('f-days').value = s?.daysPerWeek || '3';
   document.getElementById('f-cycle').value = s?.cycle || '3';
+  document.getElementById('f-payday').value = s?.payDay || '';
+  setPayStatus(s?.payStatus || 'ok');
+
+  // Show duplicate section only when creating new
+  document.getElementById('dup-section').style.display = id ? 'none' : (students.length > 0 ? 'block' : 'none');
+
   document.getElementById('top-title').textContent = id ? 'Editar Aluno' : 'Novo Aluno';
   updateCycleHint();
   showScreen('form');
@@ -647,13 +741,20 @@ function saveStudent() {
   const weight = document.getElementById('f-weight').value;
   const height = document.getElementById('f-height').value;
   if (!name || !weight || !height) { toast('⚠️ Preencha nome, peso e altura'); return; }
-  const data = { name, weight, height,
+
+  const data = {
+    name, weight, height,
     age: document.getElementById('f-age').value,
     sex: document.getElementById('f-sex').value,
     goal: document.getElementById('f-goal').value.trim(),
     obs: document.getElementById('f-obs').value.trim(),
     daysPerWeek: document.getElementById('f-days').value,
-    cycle: document.getElementById('f-cycle').value };
+    cycle: document.getElementById('f-cycle').value,
+    payDay: document.getElementById('f-payday').value,
+    payStatus: currentPayStatus,
+    photo: pendingProfilePhoto,
+  };
+
   if (selectedStudentId) {
     const idx = students.findIndex(s => s.id === selectedStudentId);
     students[idx] = { ...students[idx], ...data };
@@ -663,6 +764,7 @@ function saveStudent() {
     students.push(s); save(); toast('✅ Aluno cadastrado!');
     selectedStudentId = s.id; showStudentDetail(s.id);
   }
+  pendingProfilePhoto = null;
 }
 
 async function deleteStudent(e, id) {
@@ -675,14 +777,58 @@ async function deleteStudent(e, id) {
 }
 
 // ══════════════════════════════════════════
+// DUPLICATE WORKOUT
+// ══════════════════════════════════════════
+function openDupModal() {
+  const list = students.filter(s => Object.values(s.exercises||{}).some(e => e.length > 0));
+  if (!list.length) { toast('Nenhum aluno com treino cadastrado ainda.'); return; }
+  document.getElementById('dup-list').innerHTML = list.map(s => {
+    const days = cycleLetters(parseInt(s.cycle||3));
+    const totalEx = days.reduce((acc, d) => acc + (s.exercises?.[d]||[]).length, 0);
+    const avatarHtml = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍';
+    return `<div class="dup-item" onclick="applyDuplicate('${s.id}')">
+      <div style="width:42px;height:42px;border-radius:12px;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${avatarHtml}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14px">${s.name}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px">Ciclo ${days.join('/')} · ${totalEx} exercício${totalEx!==1?'s':''}</div>
+      </div>
+      <div style="color:var(--accent);font-size:20px">›</div>
+    </div>`;
+  }).join('');
+  document.getElementById('dup-overlay').classList.add('open');
+}
+function closeDupModal(e) {
+  if (e && e.target !== document.getElementById('dup-overlay')) return;
+  document.getElementById('dup-overlay').classList.remove('open');
+}
+function applyDuplicate(fromId) {
+  const src = students.find(s => s.id === fromId);
+  // Store temporarily — will be applied on save
+  window._dupExercises = JSON.parse(JSON.stringify(src.exercises || {}));
+  document.getElementById('dup-overlay').classList.remove('open');
+  toast(`✅ Treino de "${src.name}" será copiado ao salvar!`, 3000);
+}
+
+// ══════════════════════════════════════════
 // STUDENT DETAIL
 // ══════════════════════════════════════════
 function showStudentDetail(id) {
   selectedStudentId = id;
   const s = students.find(x => x.id === id);
   viewMode = 'edit';
-  activeDay = cycleLetters(parseInt(s.cycle || 3))[0];
+  activeDay = cycleLetters(parseInt(s.cycle||3))[0];
   document.getElementById('top-title').textContent = s.name;
+
+  // Header with avatar
+  const avatar = document.getElementById('detail-avatar');
+  avatar.innerHTML = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍';
+  document.getElementById('detail-name').textContent = s.name;
+  document.getElementById('detail-goal').textContent = s.goal ? `🎯 ${s.goal}` : '';
+
+  // Payment badge in header
+  const pi = payInfo(s);
+  document.getElementById('detail-pay-badge').innerHTML = pi ? `<span class="pay-badge ${pi.cls}" title="${pi.tip}">${pi.label}</span>` : '';
+
   const bmi = calcBMI(parseFloat(s.weight), parseFloat(s.height));
   const [bmiTxt, bmiColor] = bmi ? bmiLabel(parseFloat(bmi)) : ['—','var(--text)'];
   document.getElementById('detail-info-grid').innerHTML = `
@@ -690,30 +836,25 @@ function showStudentDetail(id) {
     <div class="info-item"><div class="info-icon">📏</div><div class="info-label">Altura</div><div class="info-value">${s.height} cm</div></div>
     <div class="info-item"><div class="info-icon">🗓</div><div class="info-label">Dias/Sem</div><div class="info-value">${s.daysPerWeek}x</div></div>
     <div class="info-item"><div class="info-icon">📊</div><div class="info-label">IMC</div><div class="info-value" style="color:${bmiColor}">${bmi||'—'}${bmi?' · '+bmiTxt:''}</div></div>`;
+
   const obs = document.getElementById('detail-obs-box');
   if (s.obs) { obs.style.display = 'flex'; document.getElementById('detail-obs-text').textContent = s.obs; }
   else obs.style.display = 'none';
+
   renderDayTabs(s); renderExerciseArea(s); setMode('edit');
   showScreen('detail');
 }
 
 function renderDayTabs(s) {
-  const days = cycleLetters(parseInt(s.cycle || 3));
+  const days = cycleLetters(parseInt(s.cycle||3));
   document.getElementById('day-tabs').innerHTML =
     days.map(d => {
-      const hasEx = (s.exercises?.[d] || []).length > 0;
-      return `<button class="day-tab ${d===activeDay?'active':''} ${hasEx?'has-ex':''}" onclick="switchDay('${d}')">
-        ${d}<div class="dot"></div></button>`;
+      const hasEx = (s.exercises?.[d]||[]).length > 0;
+      return `<button class="day-tab ${d===activeDay?'active':''} ${hasEx?'has-ex':''}" onclick="switchDay('${d}')">${d}<div class="dot"></div></button>`;
     }).join('') +
     `<button class="day-tab" onclick="openStudentForm('${s.id}')" style="font-size:12px;color:var(--text3)">✏️ Editar</button>`;
 }
-
-function switchDay(d) {
-  activeDay = d;
-  const s = students.find(x => x.id === selectedStudentId);
-  renderDayTabs(s); renderExerciseArea(s);
-}
-
+function switchDay(d) { activeDay = d; const s = students.find(x => x.id === selectedStudentId); renderDayTabs(s); renderExerciseArea(s); }
 function setMode(m) {
   viewMode = m;
   document.getElementById('mode-edit-btn').classList.toggle('active', m === 'edit');
@@ -721,95 +862,58 @@ function setMode(m) {
   renderExerciseArea(students.find(x => x.id === selectedStudentId));
 }
 
-// ── Render exercise thumbnails HTML ─────
 function mediaThumbs(media, exId, editable) {
   if (!media || !media.length) return '';
-  const thumbs = media.map((m, mi) => {
-    if (editable) {
-      return `<div class="media-thumb" onclick="openViewer(getExMedia('${exId}'),${mi})">
-        ${m.type==='image' ? `<img src="${m.dataUrl}"/>` : `<video src="${m.dataUrl}" muted></video><div class="play-badge">▶</div>`}
-        <button class="del-thumb" onclick="event.stopPropagation();removeExMedia('${exId}',${mi})">✕</button>
-      </div>`;
-    } else {
-      return `<div class="view-thumb" onclick="openViewer(getExMedia('${exId}'),${mi})">
-        ${m.type==='image' ? `<img src="${m.dataUrl}"/>` : `<video src="${m.dataUrl}" muted></video><div class="play-badge">▶</div>`}
-      </div>`;
-    }
-  }).join('');
-
-  const addBtn = editable ? `<div class="add-media-btn" onclick="addMediaToEx('${exId}')"><span style="font-size:18px">+📸</span><span>Adicionar</span></div>` : '';
-  return `<div class="${editable ? 'ex-media' : 'view-media'}">${thumbs}${addBtn}</div>`;
+  const thumbs = media.map((m, mi) => editable
+    ? `<div class="media-thumb" onclick="openViewer(getExMedia('${exId}'),${mi})">${m.type==='image'?`<img src="${m.dataUrl}"/>`:`<video src="${m.dataUrl}" muted></video><div class="play-badge">▶</div>`}<button class="del-thumb" onclick="event.stopPropagation();removeExMedia('${exId}',${mi})">✕</button></div>`
+    : `<div class="view-thumb" onclick="openViewer(getExMedia('${exId}'),${mi})">${m.type==='image'?`<img src="${m.dataUrl}"/>`:`<video src="${m.dataUrl}" muted></video><div class="play-badge">▶</div>`}</div>`
+  ).join('');
+  const addBtn = editable ? `<div class="add-media-btn" onclick="addMediaToEx('${exId}')"><span style="font-size:18px">+📸</span><span>Add</span></div>` : '';
+  return `<div class="${editable?'ex-media':'view-media'}">${thumbs}${addBtn}</div>`;
 }
-
 function getExMedia(exId) {
   const s = students.find(x => x.id === selectedStudentId);
-  const ex = (s.exercises?.[activeDay] || []).find(e => e.id === exId);
-  return ex?.media || [];
+  return (s.exercises?.[activeDay]||[]).find(e => e.id === exId)?.media || [];
 }
-
 function removeExMedia(exId, mi) {
   const s = students.find(x => x.id === selectedStudentId);
-  const ex = (s.exercises?.[activeDay] || []).find(e => e.id === exId);
+  const ex = (s.exercises?.[activeDay]||[]).find(e => e.id === exId);
   if (ex?.media) { ex.media.splice(mi, 1); save(); renderExerciseArea(s); }
 }
-
-function addMediaToEx(exId) {
-  // Open modal in "add media" mode
-  openExModal(exId, true);
-}
+function addMediaToEx(exId) { openExModal(exId, true); }
 
 function renderExerciseArea(s) {
-  const exs = (s.exercises || {})[activeDay] || [];
+  const exs = (s.exercises||{})[activeDay] || [];
   const area = document.getElementById('exercise-area');
-
   if (viewMode === 'edit') {
-    area.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Treino ${activeDay}</div>
-        <div style="display:flex;gap:7px;align-items:center">
-          <span class="badge badge-blue">${exs.length} ex.</span>
-          <button class="btn btn-primary btn-sm" onclick="openExModal()">+ Add</button>
-        </div>
-      </div>
-      ${exs.length === 0
+    area.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Treino ${activeDay}</div>
+      <div style="display:flex;gap:7px;align-items:center"><span class="badge badge-blue">${exs.length} ex.</span>
+      <button class="btn btn-primary btn-sm" onclick="openExModal()">+ Add</button></div></div>
+      ${exs.length===0
         ? `<div style="text-align:center;padding:28px 0;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">💪</div><p style="font-size:13px">Nenhum exercício.<br>Toque em <strong>+ Add</strong>.</p></div>`
-        : exs.map((ex, i) => `
-          <div class="ex-item">
-            <div class="ex-name">${ex.name}</div>
-            <div class="ex-meta">
-              <span class="badge badge-blue">${ex.sets}×${ex.reps}</span>
-              <span class="badge badge-gray">⏱ ${ex.rest}s</span>
-              ${ex.muscle ? `<span class="badge badge-green">${ex.muscle}</span>` : ''}
-            </div>
-            ${ex.obs ? `<div class="ex-obs">📝 ${ex.obs}</div>` : ''}
-            ${mediaThumbs(ex.media, ex.id, true)}
-            <div class="ex-actions">
-              ${i > 0 ? `<button class="icon-btn" onclick="moveEx('${activeDay}',${i},-1)">↑</button>` : ''}
-              ${i < exs.length-1 ? `<button class="icon-btn" onclick="moveEx('${activeDay}',${i},1)">↓</button>` : ''}
-              <button class="icon-btn" onclick="openExModal('${ex.id}')">✏️</button>
-              <button class="icon-btn danger" onclick="deleteEx('${activeDay}','${ex.id}')">✕</button>
-            </div>
-          </div>`).join('')}`;
+        : exs.map((ex,i) => `<div class="ex-item">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-meta"><span class="badge badge-blue">${ex.sets}×${ex.reps}</span><span class="badge badge-gray">⏱ ${ex.rest}s</span>${ex.muscle?`<span class="badge badge-green">${ex.muscle}</span>`:''}</div>
+          ${ex.obs?`<div class="ex-obs">📝 ${ex.obs}</div>`:''}
+          ${mediaThumbs(ex.media,ex.id,true)}
+          <div class="ex-actions">
+            ${i>0?`<button class="icon-btn" onclick="moveEx('${activeDay}',${i},-1)">↑</button>`:''}
+            ${i<exs.length-1?`<button class="icon-btn" onclick="moveEx('${activeDay}',${i},1)">↓</button>`:''}
+            <button class="icon-btn" onclick="openExModal('${ex.id}')">✏️</button>
+            <button class="icon-btn danger" onclick="deleteEx('${activeDay}','${ex.id}')">✕</button>
+          </div></div>`).join('')}`;
   } else {
-    area.innerHTML = `
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:14px">Treino ${activeDay}</div>
-      ${exs.length === 0
-        ? `<div style="text-align:center;padding:28px 0;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📋</div><p style="font-size:13px">Nenhum exercício neste treino.</p></div>`
-        : exs.map((ex, i) => `
-          <div class="view-ex">
-            <div class="view-num">${i+1}</div>
-            <div style="flex:1;min-width:0">
-              <div style="font-weight:700;font-size:15px;margin-bottom:6px">${ex.name}</div>
-              <div class="ex-meta">
-                <span class="badge badge-blue">${ex.sets} séries</span>
-                <span class="badge badge-blue">${ex.reps} reps</span>
-                <span class="badge badge-gray">⏱ ${ex.rest}s</span>
-                ${ex.muscle ? `<span class="badge badge-green">${ex.muscle}</span>` : ''}
-              </div>
-              ${ex.obs ? `<div class="ex-obs" style="margin-top:7px">📝 ${ex.obs}</div>` : ''}
-              ${ex.media && ex.media.length ? mediaThumbs(ex.media, ex.id, false) : ''}
-            </div>
-          </div>`).join('')}`;
+    area.innerHTML = `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:14px">Treino ${activeDay}</div>
+      ${exs.length===0
+        ? `<div style="text-align:center;padding:28px 0;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📋</div><p style="font-size:13px">Nenhum exercício.</p></div>`
+        : exs.map((ex,i) => `<div class="view-ex"><div class="view-num">${i+1}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:15px;margin-bottom:6px">${ex.name}</div>
+            <div class="ex-meta"><span class="badge badge-blue">${ex.sets} séries</span><span class="badge badge-blue">${ex.reps} reps</span><span class="badge badge-gray">⏱ ${ex.rest}s</span>${ex.muscle?`<span class="badge badge-green">${ex.muscle}</span>`:''}</div>
+            ${ex.obs?`<div class="ex-obs" style="margin-top:7px">📝 ${ex.obs}</div>`:''}
+            ${ex.media&&ex.media.length?mediaThumbs(ex.media,ex.id,false):''}
+          </div></div>`).join('')}`;
   }
 }
 
@@ -817,17 +921,12 @@ function renderExerciseArea(s) {
 // EXERCISE MODAL
 // ══════════════════════════════════════════
 let mediaOnlyMode = false;
-
 function openExModal(exId = null, mediaOnly = false) {
-  editingExId = exId;
-  mediaOnlyMode = mediaOnly;
+  editingExId = exId; mediaOnlyMode = mediaOnly;
   const s = students.find(x => x.id === selectedStudentId);
-  const ex = exId ? (s?.exercises?.[activeDay] || []).find(e => e.id === exId) : null;
-
-  // Reset pending media
+  const ex = exId ? (s?.exercises?.[activeDay]||[]).find(e => e.id === exId) : null;
   pendingMedia = ex?.media ? [...ex.media] : [];
   document.getElementById('vid-warn').style.display = 'none';
-
   document.getElementById('ex-name').value = ex?.name || '';
   document.getElementById('ex-sets').value = ex?.sets || '3';
   document.getElementById('ex-reps').value = ex?.reps || '10';
@@ -835,99 +934,74 @@ function openExModal(exId = null, mediaOnly = false) {
   document.getElementById('ex-muscle').value = ex?.muscle || '';
   document.getElementById('ex-obs').value = ex?.obs || '';
   document.getElementById('modal-title-text').textContent = exId ? (mediaOnly ? '📸 Adicionar Mídia' : 'Editar Exercício') : 'Novo Exercício';
-
   renderModalMediaPreview();
   document.getElementById('modal-overlay').classList.add('open');
   if (!mediaOnly) setTimeout(() => document.getElementById('ex-name').focus(), 320);
 }
-
 function closeModal(e) {
   if (e && e.target !== document.getElementById('modal-overlay')) return;
   document.getElementById('modal-overlay').classList.remove('open');
-  editingExId = null; mediaOnlyMode = false; pendingMedia = [];
-  renderModalMediaPreview();
+  editingExId = null; mediaOnlyMode = false; pendingMedia = []; renderModalMediaPreview();
 }
-
 function saveExercise() {
   const name = document.getElementById('ex-name').value.trim();
   if (!name) { toast('⚠️ Informe o nome do exercício'); return; }
-
-  const ex = {
-    id: editingExId || uid(),
-    name,
-    sets: document.getElementById('ex-sets').value || '3',
-    reps: document.getElementById('ex-reps').value || '10',
-    rest: document.getElementById('ex-rest').value || '60',
+  const ex = { id: editingExId||uid(), name,
+    sets: document.getElementById('ex-sets').value||'3',
+    reps: document.getElementById('ex-reps').value||'10',
+    rest: document.getElementById('ex-rest').value||'60',
     muscle: document.getElementById('ex-muscle').value,
     obs: document.getElementById('ex-obs').value.trim(),
-    media: [...pendingMedia],
-  };
-
+    media: [...pendingMedia] };
   const s = students.find(x => x.id === selectedStudentId);
   if (!s.exercises) s.exercises = {};
   if (!s.exercises[activeDay]) s.exercises[activeDay] = [];
-
-  if (editingExId) {
-    const idx = s.exercises[activeDay].findIndex(e => e.id === editingExId);
-    s.exercises[activeDay][idx] = ex;
-    toast('✅ Exercício atualizado!');
-  } else {
-    s.exercises[activeDay].push(ex);
-    toast('✅ Exercício adicionado!');
-  }
-
-  save();
-  document.getElementById('modal-overlay').classList.remove('open');
+  if (editingExId) { const idx = s.exercises[activeDay].findIndex(e => e.id === editingExId); s.exercises[activeDay][idx] = ex; toast('✅ Atualizado!'); }
+  else { s.exercises[activeDay].push(ex); toast('✅ Adicionado!'); }
+  save(); document.getElementById('modal-overlay').classList.remove('open');
   editingExId = null; mediaOnlyMode = false; pendingMedia = [];
   renderDayTabs(s); renderExerciseArea(s);
 }
-
 function moveEx(day, idx, dir) {
   const s = students.find(x => x.id === selectedStudentId);
-  const arr = s.exercises[day]; const swap = idx + dir;
-  if (swap < 0 || swap >= arr.length) return;
-  [arr[idx], arr[swap]] = [arr[swap], arr[idx]];
-  save(); renderExerciseArea(s);
+  const arr = s.exercises[day]; const swap = idx+dir;
+  if (swap<0||swap>=arr.length) return;
+  [arr[idx],arr[swap]]=[arr[swap],arr[idx]]; save(); renderExerciseArea(s);
 }
-
 async function deleteEx(day, exId) {
-  const ok = await showConfirm('🗑','Remover exercício?','Deseja remover este exercício?','Remover');
+  const ok = await showConfirm('🗑','Remover exercício?','Deseja remover?','Remover');
   if (!ok) return;
   const s = students.find(x => x.id === selectedStudentId);
-  s.exercises[day] = (s.exercises[day] || []).filter(e => e.id !== exId);
+  s.exercises[day] = (s.exercises[day]||[]).filter(e => e.id !== exId);
   save(); renderDayTabs(s); renderExerciseArea(s); toast('🗑 Removido');
 }
 
 // ══════════════════════════════════════════
-// PDF EXPORT — com compartilhamento e download
+// PDF EXPORT
 // ══════════════════════════════════════════
 function buildPDFHtml(s) {
-  const days = cycleLetters(parseInt(s.cycle || 3));
+  const days = cycleLetters(parseInt(s.cycle||3));
   const bmi = calcBMI(parseFloat(s.weight), parseFloat(s.height));
   const [bmiTxt] = bmi ? bmiLabel(parseFloat(bmi)) : ['—'];
-
   const blocks = days.map(d => {
-    const exs = (s.exercises || {})[d] || [];
+    const exs = (s.exercises||{})[d]||[];
     return `<div class="day-block"><div class="day-title">Treino ${d}</div>
-      ${exs.length === 0
-        ? `<p style="color:#999;font-style:italic;font-size:13px">Nenhum exercício cadastrado.</p>`
-        : `<table><thead><tr><th>#</th><th>Exercício</th><th>Séries</th><th>Reps</th><th>Descanso</th><th>Músculo</th></tr></thead><tbody>
-          ${exs.map((ex,i) => `<tr>
-            <td>${i+1}</td>
-            <td><strong>${ex.name}</strong>${ex.obs ? `<br><small style="color:#666">${ex.obs}</small>` : ''}
-              ${ex.media && ex.media.filter(m=>m.type==='image').length
-                ? `<br>${ex.media.filter(m=>m.type==='image').map(m=>`<img src="${m.dataUrl}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin:4px 4px 0 0">`).join('')}` : ''}
-            </td>
-            <td>${ex.sets}</td><td>${ex.reps}</td><td>${ex.rest}s</td><td>${ex.muscle||'—'}</td>
-          </tr>`).join('')}
-        </tbody></table>`}
-    </div>`;
+      ${exs.length===0 ? `<p style="color:#999;font-style:italic;font-size:13px">Nenhum exercício.</p>`
+      : `<table><thead><tr><th>#</th><th>Exercício</th><th>Séries</th><th>Reps</th><th>Descanso</th><th>Músculo</th></tr></thead><tbody>
+        ${exs.map((ex,i) => `<tr><td>${i+1}</td>
+          <td><strong>${ex.name}</strong>${ex.obs?`<br><small style="color:#666">${ex.obs}</small>`:''}
+          ${ex.media&&ex.media.filter(m=>m.type==='image').length?`<br>${ex.media.filter(m=>m.type==='image').map(m=>`<img src="${m.dataUrl}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin:4px 4px 0 0">`).join('')}`:''}</td>
+          <td>${ex.sets}</td><td>${ex.reps}</td><td>${ex.rest}s</td><td>${ex.muscle||'—'}</td></tr>`).join('')}
+      </tbody></table>`}</div>`;
   }).join('');
-
+  const photoHtml = s.photo ? `<img src="${s.photo}" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #3bffa0;margin-right:16px"/>` : '<div style="width:70px;height:70px;border-radius:50%;background:#f0fff8;display:flex;align-items:center;justify-content:center;font-size:32px;margin-right:16px">🧍</div>';
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Treino - ${s.name}</title>
   <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Arial,sans-serif;color:#111;padding:30px;max-width:860px;margin:0 auto}
-  .header{display:flex;align-items:center;gap:14px;border-bottom:3px solid #3bffa0;padding-bottom:14px;margin-bottom:22px}
-  .header h1{font-size:20px;color:#007b55;margin-bottom:3px}.header p{font-size:12px;color:#888}
+  .action-bar{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+  .action-bar button{padding:10px 18px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none}
+  .btn-print{background:#007b55;color:#fff}.btn-download{background:#1a56db;color:#fff}.btn-share{background:#25d366;color:#fff}
+  .header{display:flex;align-items:center;border-bottom:3px solid #3bffa0;padding-bottom:14px;margin-bottom:22px}
+  .header-text h1{font-size:20px;color:#007b55;margin-bottom:3px}.header-text p{font-size:12px;color:#888}
   .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:22px}
   .info-item{background:#f5f5f5;border-radius:9px;padding:11px 13px}
   .info-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#888;margin-bottom:3px}
@@ -939,28 +1013,13 @@ function buildPDFHtml(s) {
   th{background:#f0fff8;color:#007b55;font-weight:700;padding:7px 9px;text-align:left;font-size:10px;text-transform:uppercase}
   td{padding:8px 9px;border-bottom:1px solid #eee;vertical-align:top}tr:last-child td{border-bottom:none}
   .footer{margin-top:36px;text-align:center;font-size:11px;color:#bbb;border-top:1px solid #eee;padding-top:14px}
-
-  /* ── Botões de ação no topo da página gerada ── */
-  .action-bar{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap}
-  .action-bar button{padding:10px 18px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Segoe UI',sans-serif}
-  .btn-print{background:#007b55;color:#fff}
-  .btn-download{background:#1a56db;color:#fff}
-  .btn-share{background:#25d366;color:#fff}
-  @media print{.action-bar{display:none}body{padding:14px}.day-block{page-break-inside:avoid}}
-  </style></head><body>
-
-  <!-- Barra de ações -->
+  @media print{.action-bar{display:none}body{padding:14px}.day-block{page-break-inside:avoid}}</style></head><body>
   <div class="action-bar">
-    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
-    <button class="btn-download" onclick="downloadHTML()">⬇️ Baixar arquivo</button>
+    <button class="btn-print" onclick="window.print()">🖨️ Salvar como PDF</button>
+    <button class="btn-download" onclick="downloadHTML()">⬇️ Baixar</button>
     <button class="btn-share" onclick="shareFile()">📤 Compartilhar</button>
   </div>
-
-  <div class="header"><div style="font-size:32px">💪</div><div>
-    <h1>Ficha de Treino — ${s.name}</h1>
-    <p>Gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</p>
-  </div></div>
-
+  <div class="header">${photoHtml}<div class="header-text"><h1>${s.name}</h1><p>Gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</p></div></div>
   <div class="info-grid">
     <div class="info-item"><div class="info-label">Peso</div><div class="info-value">${s.weight} kg</div></div>
     <div class="info-item"><div class="info-label">Altura</div><div class="info-value">${s.height} cm</div></div>
@@ -969,150 +1028,66 @@ function buildPDFHtml(s) {
     <div class="info-item"><div class="info-label">Dias/Semana</div><div class="info-value">${s.daysPerWeek}x</div></div>
     <div class="info-item"><div class="info-label">Ciclo</div><div class="info-value">${days.join('/')}</div></div>
   </div>
-  ${s.goal ? `<div class="goal-box"><strong>🎯 Objetivo:</strong> ${s.goal}</div>` : ''}
-  ${s.obs ? `<div class="goal-box" style="background:#fff8f0;border-color:#ffaa3b55"><strong>📝 Obs:</strong> ${s.obs}</div>` : ''}
+  ${s.goal?`<div class="goal-box"><strong>🎯 Objetivo:</strong> ${s.goal}</div>`:''}
+  ${s.obs?`<div class="goal-box" style="background:#fff8f0;border-color:#ffaa3b55"><strong>📝 Obs:</strong> ${s.obs}</div>`:''}
   ${blocks}
   <div class="footer">FitPlan Pro · ${new Date().getFullYear()}</div>
-
   <script>
-  // Baixar como HTML (abre "Salvar como" no celular)
-  function downloadHTML() {
-    const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'treino-${s.name.replace(/\s+/g,'-')}.html';
-    a.click();
-  }
-  // Compartilhar via Web Share API (WhatsApp, iMessage, Drive, etc.)
-  async function shareFile() {
-    const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
-    const file = new File([blob], 'treino-${s.name.replace(/\s+/g,'-')}.html', {type:'text/html'});
-    if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
-      try { await navigator.share({ title:'Treino - ${s.name}', text:'Segue sua ficha de treino pelo FitPlan Pro!', files:[file] }); }
-      catch(e) { if(e.name!=='AbortError') alert('Erro ao compartilhar: '+e.message); }
-    } else if (navigator.share) {
-      try { await navigator.share({ title:'Treino - ${s.name}', text:'Segue sua ficha de treino pelo FitPlan Pro! Abra no navegador para visualizar.' }); }
-      catch(e) {}
-    } else {
-      downloadHTML();
-    }
-  }
-  // Tentar abrir compartilhamento automaticamente ao carregar
-  window.addEventListener('load', () => {
-    // Pequeno delay para a página renderizar
-    setTimeout(() => {
-      // Em mobile, tenta abrir o share sheet automaticamente
-      if (/iPhone|iPad|Android/i.test(navigator.userAgent)) {
-        shareFile();
-      }
-    }, 600);
-  });
-  <\/script>
-  </body></html>`;
+  function downloadHTML(){const b=new Blob([document.documentElement.outerHTML],{type:'text/html'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='treino-${s.name.replace(/\s+/g,'-')}.html';a.click();}
+  async function shareFile(){const b=new Blob([document.documentElement.outerHTML],{type:'text/html'});const f=new File([b],'treino-${s.name.replace(/\s+/g,'-')}.html',{type:'text/html'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({title:'Treino - ${s.name}',text:'Sua ficha de treino FitPlan Pro!',files:[f]});}catch(e){if(e.name!=='AbortError')downloadHTML();}}else{downloadHTML();}}
+  window.addEventListener('load',()=>{if(/iPhone|iPad|Android/i.test(navigator.userAgent))setTimeout(()=>shareFile(),600);});
+  <\/script></body></html>`;
 }
 
 function exportPDF() {
   const s = students.find(x => x.id === selectedStudentId);
   const html = buildPDFHtml(s);
-
-  // Tenta usar Web Share API com arquivo diretamente do app principal
   const blob = new Blob([html], { type: 'text/html' });
   const fileName = `treino-${s.name.replace(/\s+/g,'-')}.html`;
   const file = new File([blob], fileName, { type: 'text/html' });
-
   if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-    // iOS Safari / Android Chrome — abre share sheet nativo (WhatsApp, Drive, etc.)
-    navigator.share({
-      title: `Treino - ${s.name}`,
-      text: 'Segue sua ficha de treino pelo FitPlan Pro!',
-      files: [file]
-    }).then(() => toast('✅ Compartilhado!'))
+    navigator.share({ title:`Treino - ${s.name}`, text:'Ficha de treino FitPlan Pro!', files:[file] })
+      .then(() => toast('✅ Compartilhado!'))
       .catch(e => { if (e.name !== 'AbortError') openShareModal(html, s.name); });
-  } else {
-    // Fallback: abre modal de opções
-    openShareModal(html, s.name);
-  }
+  } else { openShareModal(html, s.name); }
 }
 
-// Modal de opções de compartilhamento (fallback)
 function openShareModal(html, studentName) {
   const fileName = `treino-${studentName.replace(/\s+/g,'-')}.html`;
   const blob = new Blob([html], { type: 'text/html' });
   const blobUrl = URL.createObjectURL(blob);
-
-  // Criar modal de compartilhamento
   let overlay = document.getElementById('share-modal-overlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'share-modal-overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:flex;align-items:flex-end;backdrop-filter:blur(4px)';
-    document.body.appendChild(overlay);
-  }
-
-  overlay.innerHTML = `
-    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px) + 22px);width:100%;animation:slideUp .28s ease">
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:6px">📤 Exportar Ficha</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:20px">${studentName}</div>
-
-      <!-- Opção 1: Abrir e Imprimir como PDF -->
-      <div onclick="openPrintWindow('${blobUrl}')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:10px;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:12px;background:rgba(59,255,160,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🖨️</div>
-        <div>
-          <div style="font-weight:700;font-size:14px">Imprimir / Salvar PDF</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px">Abre opção de salvar como PDF no celular</div>
-        </div>
-      </div>
-
-      <!-- Opção 2: Baixar arquivo -->
-      <a href="${blobUrl}" download="${fileName}" onclick="closeShareModal()" style="text-decoration:none;display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:10px;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:12px;background:rgba(77,159,255,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">⬇️</div>
-        <div>
-          <div style="font-weight:700;font-size:14px;color:var(--text)">Baixar arquivo</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px">Salva a ficha nos seus arquivos</div>
-        </div>
-      </a>
-
-      <!-- Opção 3: Compartilhar link WhatsApp -->
-      <div onclick="shareViaText('${studentName}')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:20px;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💬</div>
-        <div>
-          <div style="font-weight:700;font-size:14px">Compartilhar via WhatsApp</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px">Abre o WhatsApp com mensagem pronta</div>
-        </div>
-      </div>
-
-      <button onclick="closeShareModal()" style="width:100%;padding:13px;border-radius:12px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Cancelar</button>
-    </div>`;
-
+  if (!overlay) { overlay = document.createElement('div'); overlay.id = 'share-modal-overlay'; overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:flex;align-items:flex-end;backdrop-filter:blur(4px)'; document.body.appendChild(overlay); }
+  overlay.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;animation:slideUp .28s ease">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:6px">📤 Exportar Ficha</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:20px">${studentName}</div>
+    <div onclick="openPrintWindow('${blobUrl}')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:10px;cursor:pointer">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(59,255,160,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🖨️</div>
+      <div><div style="font-weight:700;font-size:14px">Salvar como PDF</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Abre opção de salvar PDF</div></div>
+    </div>
+    <a href="${blobUrl}" download="${fileName}" onclick="closeShareModal()" style="text-decoration:none;display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:10px;cursor:pointer">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(77,159,255,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">⬇️</div>
+      <div><div style="font-weight:700;font-size:14px;color:var(--text)">Baixar arquivo</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Salva nos seus arquivos</div></div>
+    </a>
+    <div onclick="shareViaWhatsApp('${studentName}')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:20px;cursor:pointer">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💬</div>
+      <div><div style="font-weight:700;font-size:14px">WhatsApp</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Abre WhatsApp com mensagem pronta</div></div>
+    </div>
+    <button onclick="closeShareModal()" style="width:100%;padding:13px;border-radius:12px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Cancelar</button>
+  </div>`;
   overlay.onclick = e => { if (e.target === overlay) closeShareModal(); };
   overlay.style.display = 'flex';
 }
-
-function openPrintWindow(blobUrl) {
-  closeShareModal();
-  const win = window.open(blobUrl, '_blank');
-  if (!win) {
-    toast('⚠️ Permita pop-ups nas configurações do Safari');
-    return;
-  }
-  // A página gerada já tem botão de imprimir e tenta abrir o share sheet automaticamente
-}
-
-function shareViaText(studentName) {
-  closeShareModal();
-  const msg = encodeURIComponent(`Olá! Segue sua ficha de treino gerada pelo FitPlan Pro 💪\n\nPara ver sua ficha completa, baixe o arquivo que vou te enviar e abra no navegador do seu celular.`);
-  window.open(`https://wa.me/?text=${msg}`, '_blank');
-  toast('💡 Dica: após enviar a mensagem, envie também o arquivo baixado!', 4000);
-}
-
-function closeShareModal() {
-  const overlay = document.getElementById('share-modal-overlay');
-  if (overlay) overlay.style.display = 'none';
-}
+function openPrintWindow(url) { closeShareModal(); const w = window.open(url,'_blank'); if (!w) toast('⚠️ Permita pop-ups no Safari'); }
+function shareViaWhatsApp(name) { closeShareModal(); window.open(`https://wa.me/?text=${encodeURIComponent(`Olá! Segue sua ficha de treino FitPlan Pro 💪\nAbra o arquivo que vou enviar no navegador.`)}`, '_blank'); toast('💡 Após mensagem, envie o arquivo baixado!', 4000); }
+function closeShareModal() { const o = document.getElementById('share-modal-overlay'); if (o) o.style.display = 'none'; }
 
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
+// Apply duplicate exercises on save if pending
+const _origSaveStudent = saveStudent;
+
 renderHome();
 </script>
 </body>

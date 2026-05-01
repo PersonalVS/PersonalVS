@@ -260,6 +260,10 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
             <select class="form-select" id="f-sex"><option value="">—</option><option value="M">Masculino</option><option value="F">Feminino</option></select>
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Massa Musc. (%)</label><input class="form-input" id="f-muscleMass" type="number" step="0.1" placeholder="Ex: 38.5"/></div>
+          <div class="form-group"><label class="form-label">Gord. Corp. (%)</label><input class="form-input" id="f-bodyFat" type="number" step="0.1" placeholder="Ex: 18.0"/></div>
+        </div>
         <div class="form-group"><label class="form-label">Objetivo</label><input class="form-input" id="f-goal" placeholder="Ex: Hipertrofia, Emagrecimento..."/></div>
         <div class="form-group"><label class="form-label">Observações / Restrições</label><textarea class="form-textarea" id="f-obs" placeholder="Lesões, limitações..."></textarea></div>
       </div>
@@ -296,7 +300,10 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
           <div class="form-group"><label class="form-label">Vencimento (dia)</label>
             <select class="form-select" id="f-payday">
               <option value="">Sem vencimento</option>
-              ${Array.from({length:28},(_,i)=>`<option value="${i+1}">Dia ${i+1}</option>`).join('')}
+              <option value="5">Dia 5</option>
+              <option value="10">Dia 10</option>
+              <option value="15">Dia 15</option>
+              <option value="20">Dia 20</option>
             </select>
           </div>
           <div class="form-group"><label class="form-label">Status</label>
@@ -314,6 +321,31 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       </div>
     </div>
 
+    <!-- PROGRESSO -->
+    <div class="screen" id="screen-progress">
+      <div id="progress-header" style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div id="progress-avatar" style="width:46px;height:46px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0"></div>
+        <div>
+          <div id="progress-name" style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px"></div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Histórico de evolução</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:13px">
+        <div class="card-title">📸 Registrar medição</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Peso (kg)</label><input class="form-input" id="prog-weight" type="number" step="0.1" placeholder="70.0"/></div>
+          <div class="form-group"><label class="form-label">Gord. Corp. (%)</label><input class="form-input" id="prog-fat" type="number" step="0.1" placeholder="18.0"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Massa Musc. (%)</label><input class="form-input" id="prog-muscle" type="number" step="0.1" placeholder="38.0"/></div>
+          <div class="form-group"><label class="form-label">IMC (calc. auto)</label><input class="form-input" id="prog-bmi" readonly placeholder="—" style="opacity:.6"/></div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="saveProgressEntry()" style="margin-top:4px">💾 Salvar medição</button>
+      </div>
+      <div id="progress-chart-area"></div>
+      <div id="progress-history"></div>
+    </div>
+
     <!-- DETALHE -->
     <div class="screen" id="screen-detail">
       <div id="detail-header" style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
@@ -329,10 +361,31 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <div class="mode-toggle">
         <button class="mode-btn active" id="mode-edit-btn" onclick="setMode('edit')">✏️ Editar</button>
         <button class="mode-btn" id="mode-view-btn" onclick="setMode('view')">👁 Visualizar</button>
+        <button class="mode-btn" id="mode-prog-btn" onclick="showProgress()">📈 Progresso</button>
       </div>
       <div class="day-tabs" id="day-tabs"></div>
       <div class="card" id="exercise-area"></div>
       <button class="btn btn-outline btn-full" onclick="exportPDF()" style="margin-top:2px">📄 Exportar / Compartilhar</button>
+    </div>
+
+    <!-- AGENDA -->
+    <div class="screen" id="screen-agenda">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Agenda do Dia</div>
+      <div id="agenda-date" style="font-size:13px;color:var(--text2);margin-bottom:16px"></div>
+      <div id="agenda-list"></div>
+      <div style="margin-top:18px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Esta Semana</div>
+        <div id="week-summary"></div>
+      </div>
+    </div>
+
+    <!-- MENSALIDADE -->
+    <div class="screen" id="screen-mensalidade">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Mensalidades</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Acompanhe pagamentos dos seus alunos</div>
+      <div id="pay-alerts-box" style="margin-bottom:14px"></div>
+      <div class="stats-row" id="pay-stats-row"></div>
+      <div id="pay-list"></div>
     </div>
 
     <!-- INSTALAR -->
@@ -340,7 +393,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <div style="text-align:center;padding:28px 0 18px">
         <div style="font-size:48px;margin-bottom:10px">📲</div>
         <div style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800;margin-bottom:5px">Instalar no Celular</div>
-        <div style="font-size:13px;color:var(--text3)">O Amor de DEUS transfoma qualquer pessoa.</div>
+        <div style="font-size:13px;color:var(--text3)">O Amor de DEUS transforma qualquer pessoa</div>
       </div>
       <div class="card">
         <div class="card-title">🍎 iPhone — Safari</div>
@@ -365,6 +418,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <nav id="bottomnav">
     <div class="nav-item active" id="nav-home" onclick="showNav('home')"><div class="nav-icon">🏠</div><div>Início</div><div class="nav-dot"></div></div>
     <div class="nav-item" id="nav-add" onclick="showNav('add')"><div class="nav-icon">➕</div><div>Novo Aluno</div><div class="nav-dot"></div></div>
+    <div class="nav-item" id="nav-agenda" onclick="showNav('agenda')"><div class="nav-icon">📅</div><div>Agenda</div><div class="nav-dot"></div></div>
+    <div class="nav-item" id="nav-mensalidade" onclick="showNav('mensalidade')"><div class="nav-icon">💰</div><div>Mensalidade</div><div class="nav-dot"></div></div>
     <div class="nav-item" id="nav-install" onclick="showNav('install')"><div class="nav-icon">📲</div><div>Instalar</div><div class="nav-dot"></div></div>
   </nav>
 </div>
@@ -633,7 +688,7 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   currentScreen = name;
-  const isHome = name === 'home' || name === 'install';
+  const isHome = name === 'home' || name === 'install' || name === 'agenda' || name === 'mensalidade';
   document.getElementById('back-btn').style.display = isHome ? 'none' : 'flex';
   document.querySelector('.logo').style.display = isHome ? 'flex' : 'none';
   document.getElementById('top-title').style.display = isHome ? 'none' : 'block';
@@ -643,10 +698,13 @@ function showNav(tab) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (tab === 'home') { document.getElementById('nav-home').classList.add('active'); showScreen('home'); renderHome(); }
   else if (tab === 'add') { document.getElementById('nav-add').classList.add('active'); openStudentForm(null); }
+  else if (tab === 'agenda') { document.getElementById('nav-agenda').classList.add('active'); showScreen('agenda'); renderAgenda(); }
+  else if (tab === 'mensalidade') { document.getElementById('nav-mensalidade').classList.add('active'); showScreen('mensalidade'); renderMensalidade(); }
   else if (tab === 'install') { document.getElementById('nav-install').classList.add('active'); showScreen('install'); }
 }
 function goBack() {
-  if (currentScreen === 'detail') showNav('home');
+  if (currentScreen === 'progress') showStudentDetail(selectedStudentId);
+  else if (currentScreen === 'detail') showNav('home');
   else if (currentScreen === 'form') selectedStudentId ? showStudentDetail(selectedStudentId) : showNav('home');
   else showNav('home');
 }
@@ -722,6 +780,8 @@ function openStudentForm(id) {
   document.getElementById('f-days').value = s?.daysPerWeek || '3';
   document.getElementById('f-cycle').value = s?.cycle || '3';
   document.getElementById('f-payday').value = s?.payDay || '';
+  document.getElementById('f-muscleMass').value = s?.muscleMass || '';
+  document.getElementById('f-bodyFat').value = s?.bodyFat || '';
   setPayStatus(s?.payStatus || 'ok');
 
   // Show duplicate section only when creating new
@@ -753,14 +813,26 @@ function saveStudent() {
     payDay: document.getElementById('f-payday').value,
     payStatus: currentPayStatus,
     photo: pendingProfilePhoto,
+    muscleMass: document.getElementById('f-muscleMass').value,
+    bodyFat: document.getElementById('f-bodyFat').value,
   };
 
   if (selectedStudentId) {
     const idx = students.findIndex(s => s.id === selectedStudentId);
-    students[idx] = { ...students[idx], ...data };
+    const prev = students[idx];
+    // Record progress snapshot if body metrics changed
+    const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
+    const entry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
+    const history = prev.progressHistory || [];
+    const lastE = history[history.length-1];
+    const changed = !lastE || lastE.weight !== data.weight || lastE.bodyFat !== data.bodyFat || lastE.muscleMass !== data.muscleMass;
+    if (changed) history.push(entry);
+    students[idx] = { ...prev, ...data, progressHistory: history };
     save(); toast('✅ Aluno atualizado!'); showStudentDetail(selectedStudentId);
   } else {
-    const s = { ...data, id: uid(), exercises: {} };
+    const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
+    const firstEntry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
+    const s = { ...data, id: uid(), exercises: {}, progressHistory: [firstEntry] };
     students.push(s); save(); toast('✅ Aluno cadastrado!');
     selectedStudentId = s.id; showStudentDetail(s.id);
   }
@@ -835,7 +907,9 @@ function showStudentDetail(id) {
     <div class="info-item"><div class="info-icon">⚖️</div><div class="info-label">Peso</div><div class="info-value">${s.weight} kg</div></div>
     <div class="info-item"><div class="info-icon">📏</div><div class="info-label">Altura</div><div class="info-value">${s.height} cm</div></div>
     <div class="info-item"><div class="info-icon">🗓</div><div class="info-label">Dias/Sem</div><div class="info-value">${s.daysPerWeek}x</div></div>
-    <div class="info-item"><div class="info-icon">📊</div><div class="info-label">IMC</div><div class="info-value" style="color:${bmiColor}">${bmi||'—'}${bmi?' · '+bmiTxt:''}</div></div>`;
+    <div class="info-item"><div class="info-icon">📊</div><div class="info-label">IMC</div><div class="info-value" style="color:${bmiColor}">${bmi||'—'}${bmi?' · '+bmiTxt:''}</div></div>
+    ${s.muscleMass ? `<div class="info-item"><div class="info-icon">💪</div><div class="info-label">Massa Musc.</div><div class="info-value">${s.muscleMass}%</div></div>` : ''}
+    ${s.bodyFat ? `<div class="info-item"><div class="info-icon">🔥</div><div class="info-label">Gord. Corp.</div><div class="info-value">${s.bodyFat}%</div></div>` : ''}`;
 
   const obs = document.getElementById('detail-obs-box');
   if (s.obs) { obs.style.display = 'flex'; document.getElementById('detail-obs-text').textContent = s.obs; }
@@ -859,6 +933,7 @@ function setMode(m) {
   viewMode = m;
   document.getElementById('mode-edit-btn').classList.toggle('active', m === 'edit');
   document.getElementById('mode-view-btn').classList.toggle('active', m === 'view');
+  document.getElementById('mode-prog-btn').classList.remove('active');
   renderExerciseArea(students.find(x => x.id === selectedStudentId));
 }
 
@@ -1083,12 +1158,240 @@ function shareViaWhatsApp(name) { closeShareModal(); window.open(`https://wa.me/
 function closeShareModal() { const o = document.getElementById('share-modal-overlay'); if (o) o.style.display = 'none'; }
 
 // ══════════════════════════════════════════
+// AGENDA
+// ══════════════════════════════════════════
+function renderAgenda() {
+  const now = new Date();
+  const days = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  document.getElementById('agenda-date').textContent = `${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]} de ${now.getFullYear()}`;
+
+  const listEl = document.getElementById('agenda-list');
+  if (!students.length) {
+    listEl.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:38px;margin-bottom:8px">📅</div><p style="font-size:13px">Nenhum aluno cadastrado.</p></div>`;
+  } else {
+    listEl.innerHTML = `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Alunos Ativos</div>` +
+      students.map(s => {
+        const hasEx = Object.values(s.exercises||{}).some(e => e.length > 0);
+        const pi = payInfo(s);
+        return `<div class="student-card" onclick="showStudentDetail('${s.id}')">
+          <div class="s-avatar">${s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍'}</div>
+          <div style="flex:1;min-width:0">
+            <div class="s-name">${s.name}</div>
+            <div class="s-meta">${s.daysPerWeek}x/sem · Ciclo ${cycleLetters(parseInt(s.cycle||3)).join('/')}</div>
+            ${s.goal ? `<div style="font-size:11px;color:var(--accent);margin-top:2px">🎯 ${s.goal}</div>` : ''}
+          </div>
+          <div class="s-right">
+            <span class="badge ${hasEx ? 'badge-green' : 'badge-orange'}">${hasEx ? 'Ativo' : 'Pendente'}</span>
+            ${pi ? `<span class="pay-badge ${pi.cls}" style="font-size:9px">${pi.label}</span>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+  }
+
+  const weekEl = document.getElementById('week-summary');
+  const total = students.length;
+  const comTreino = students.filter(s => Object.values(s.exercises||{}).some(e => e.length > 0)).length;
+  const semTreino = total - comTreino;
+  weekEl.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px">
+      <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${total}</div><div class="stat-lbl">Total alunos</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${comTreino}</div><div class="stat-lbl">Com treino</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--orange)">${semTreino}</div><div class="stat-lbl">Sem treino</div></div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// MENSALIDADE
+// ══════════════════════════════════════════
+function renderMensalidade() {
+  const today = new Date();
+  const day = today.getDate();
+  const tomorrow = day + 1;
+
+  // Alerts: vence hoje ou amanhã (só pendentes)
+  const alertsEl = document.getElementById('pay-alerts-box');
+  const alertsHtml = [];
+  students.forEach(s => {
+    if (!s.payDay || s.payStatus !== 'late') {
+      const pd = parseInt(s.payDay);
+      if (pd === day) alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🔴</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--red)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence HOJE (dia ${pd})</div></div><button class="btn btn-sm btn-danger" onclick="markPaid('${s.id}')">Marcar pago</button></div>`);
+      else if (pd === tomorrow) alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🟡</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--orange)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence amanhã (dia ${pd})</div></div></div>`);
+    }
+  });
+  alertsEl.innerHTML = alertsHtml.length ? `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚠️ Alertas</div>${alertsHtml.join('')}` : '';
+
+  // Stats
+  const comVenc = students.filter(s => s.payDay).length;
+  const pagos = students.filter(s => s.payDay && s.payStatus !== 'late').length;
+  const pend = students.filter(s => s.payDay && s.payStatus === 'late').length;
+  document.getElementById('pay-stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${comVenc}</div><div class="stat-lbl">Com venc.</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${pagos}</div><div class="stat-lbl">Em dia</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--red)">${pend}</div><div class="stat-lbl">Pendentes</div></div>`;
+
+  // List
+  const payList = document.getElementById('pay-list');
+  const withPay = students.filter(s => s.payDay);
+  if (!withPay.length) {
+    payList.innerHTML = `<div style="text-align:center;padding:36px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">💰</div><p style="font-size:13px">Nenhum aluno com vencimento cadastrado.</p></div>`;
+    return;
+  }
+  payList.innerHTML = withPay.sort((a,b) => parseInt(a.payDay)-parseInt(b.payDay)).map(s => {
+    const pi = payInfo(s);
+    const isPend = s.payStatus === 'late';
+    return `<div class="pay-section">
+      <div class="pay-row">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+          <div style="width:38px;height:38px;border-radius:11px;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
+          <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:1px">Vence dia ${s.payDay}</div></div>
+        </div>
+        ${pi ? `<span class="pay-badge ${pi.cls}">${pi.label}</span>` : ''}
+      </div>
+      <div style="display:flex;gap:8px">
+        ${isPend ? `<button class="btn btn-sm btn-outline" style="flex:1" onclick="markPaid('${s.id}')">✅ Marcar pago</button>` : `<button class="btn btn-sm btn-ghost" style="flex:1" onclick="markPending('${s.id}')">❌ Marcar pendente</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function markPaid(id) {
+  const s = students.find(x => x.id === id);
+  if (s) { s.payStatus = 'ok'; save(); renderMensalidade(); renderHome(); toast(`✅ ${s.name} marcado como pago!`); }
+}
+function markPending(id) {
+  const s = students.find(x => x.id === id);
+  if (s) { s.payStatus = 'late'; save(); renderMensalidade(); renderHome(); toast(`⚠️ ${s.name} marcado como pendente`); }
+}
+
+// ══════════════════════════════════════════
+// PROGRESSO
+// ══════════════════════════════════════════
+function showProgress() {
+  const s = students.find(x => x.id === selectedStudentId);
+  if (!s) return;
+  document.getElementById('top-title').textContent = 'Progresso';
+  const avatar = document.getElementById('progress-avatar');
+  avatar.innerHTML = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍';
+  document.getElementById('progress-name').textContent = s.name;
+  document.getElementById('prog-weight').value = s.weight || '';
+  document.getElementById('prog-fat').value = s.bodyFat || '';
+  document.getElementById('prog-muscle').value = s.muscleMass || '';
+  const bmi = calcBMI(parseFloat(s.weight), parseFloat(s.height));
+  document.getElementById('prog-bmi').value = bmi || '';
+  renderProgressChart(s);
+  showScreen('progress');
+}
+
+function saveProgressEntry() {
+  const s = students.find(x => x.id === selectedStudentId);
+  if (!s) return;
+  const w = document.getElementById('prog-weight').value;
+  const fat = document.getElementById('prog-fat').value;
+  const muscle = document.getElementById('prog-muscle').value;
+  if (!w) { toast('⚠️ Informe o peso'); return; }
+  const bmi = calcBMI(parseFloat(w), parseFloat(s.height));
+  document.getElementById('prog-bmi').value = bmi || '';
+  const entry = { date: new Date().toISOString(), weight: w, bodyFat: fat, muscleMass: muscle, bmi };
+  if (!s.progressHistory) s.progressHistory = [];
+  s.progressHistory.push(entry);
+  // Also update main data
+  s.weight = w; s.bodyFat = fat; s.muscleMass = muscle;
+  save(); toast('✅ Medição registrada!'); renderProgressChart(s);
+}
+
+function renderProgressChart(s) {
+  const history = s.progressHistory || [];
+  const chartArea = document.getElementById('progress-chart-area');
+  const histEl = document.getElementById('progress-history');
+
+  if (!history.length) {
+    chartArea.innerHTML = '';
+    histEl.innerHTML = `<div style="text-align:center;padding:32px 0;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📈</div><p style="font-size:13px">Nenhuma medição registrada ainda.</p></div>`;
+    return;
+  }
+
+  // Simple SVG mini-chart for weight
+  const weights = history.map(e => parseFloat(e.weight)||0).filter(v => v > 0);
+  const labels = history.map(e => {
+    const d = new Date(e.date);
+    return `${d.getDate()}/${d.getMonth()+1}`;
+  });
+
+  let chartHtml = '';
+  if (weights.length >= 2) {
+    const W = 320, H = 90, pad = 16;
+    const min = Math.min(...weights) - 1, max = Math.max(...weights) + 1;
+    const xStep = (W - pad*2) / (weights.length - 1);
+    const yScale = (H - pad*2) / (max - min);
+    const points = weights.map((v,i) => `${pad + i*xStep},${H - pad - (v-min)*yScale}`).join(' ');
+    const first = weights[0], last = weights[weights.length-1];
+    const trend = last < first ? `<span style="color:var(--accent)">▼ ${(first-last).toFixed(1)}kg</span>` : last > first ? `<span style="color:var(--orange)">▲ ${(last-first).toFixed(1)}kg</span>` : `<span style="color:var(--text2)">= Estável</span>`;
+    chartHtml = `<div class="card" style="margin-bottom:13px">
+      <div class="card-title">⚖️ Evolução do Peso ${trend}</div>
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;overflow:visible">
+        <polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>
+        ${weights.map((v,i) => `<circle cx="${pad+i*xStep}" cy="${H-pad-(v-min)*yScale}" r="3.5" fill="var(--accent)"/><text x="${pad+i*xStep}" y="${H-pad-(v-min)*yScale-8}" text-anchor="middle" font-size="9" fill="var(--text2)">${v}</text>`).join('')}
+        ${labels.map((l,i) => `<text x="${pad+i*xStep}" y="${H-2}" text-anchor="middle" font-size="9" fill="var(--text3)">${l}</text>`).join('')}
+      </svg>
+    </div>`;
+  }
+
+  // Table
+  const rows = [...history].reverse().map(e => {
+    const d = new Date(e.date);
+    const dateStr = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'2-digit'});
+    return `<tr>
+      <td style="font-size:11px;color:var(--text2);padding:9px 0">${dateStr}</td>
+      <td style="font-size:13px;font-weight:700;text-align:center">${e.weight||'—'} kg</td>
+      <td style="font-size:12px;text-align:center;color:var(--orange)">${e.bodyFat||'—'}%</td>
+      <td style="font-size:12px;text-align:center;color:var(--blue)">${e.muscleMass||'—'}%</td>
+      <td style="font-size:12px;text-align:center;color:var(--accent)">${e.bmi||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  chartArea.innerHTML = chartHtml;
+  histEl.innerHTML = `<div class="card">
+    <div class="card-title">📋 Histórico completo</div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="font-size:10px;color:var(--text3);text-align:left;padding-bottom:8px;font-weight:600;text-transform:uppercase">Data</th>
+        <th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Peso</th>
+        <th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Gord.</th>
+        <th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Musc.</th>
+        <th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">IMC</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// PAYMENT ALERTS ON LOAD
+// ══════════════════════════════════════════
+function checkPaymentAlerts() {
+  const today = new Date().getDate();
+  const tomorrow = today + 1;
+  const alertStudents = students.filter(s => {
+    if (!s.payDay || s.payStatus === 'late') return false;
+    const pd = parseInt(s.payDay);
+    return pd === today || pd === tomorrow;
+  });
+  if (alertStudents.length) {
+    const msgs = alertStudents.map(s => `${s.name}: vence ${parseInt(s.payDay)===today?'HOJE':'amanhã'}`);
+    setTimeout(() => toast(`💰 ${msgs[0]}${msgs.length>1?` (+${msgs.length-1})`:''}`, 4000), 800);
+  }
+}
+
+// ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
 // Apply duplicate exercises on save if pending
 const _origSaveStudent = saveStudent;
 
 renderHome();
+checkPaymentAlerts();
 </script>
 </body>
 </html>

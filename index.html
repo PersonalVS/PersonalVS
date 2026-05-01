@@ -210,6 +210,29 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .dup-item:active{border-color:var(--accent)}
 
 ::-webkit-scrollbar{width:0}
+
+/* AGENDA WEEKLY TABLE */
+.week-table{width:100%;border-collapse:collapse;min-width:480px}
+.week-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);padding:9px 6px;text-align:center;border-bottom:1px solid var(--border)}
+.week-table th.today-col{color:var(--accent)}
+.week-table td{padding:5px 4px;vertical-align:top;border-right:1px solid var(--border);min-width:68px}
+.week-table td:last-child{border-right:none}
+.week-table .name-col{font-size:11px;font-weight:700;color:var(--text2);padding:5px 10px;border-right:1px solid var(--border);white-space:nowrap;vertical-align:middle;min-width:90px;max-width:100px;overflow:hidden;text-overflow:ellipsis}
+.week-cell{border-radius:8px;padding:5px 4px;text-align:center;cursor:pointer;min-height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all .15s;position:relative}
+.week-cell.no-class{background:transparent;opacity:.3}
+.week-cell.present{background:rgba(59,255,160,.15);border:1px solid rgba(59,255,160,.4)}
+.week-cell.absent{background:rgba(255,77,106,.12);border:1px solid rgba(255,77,106,.3)}
+.week-cell.scheduled{background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.25)}
+.week-cell.today-cell{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.week-cell .wc-time{font-size:10px;font-weight:700;color:var(--text)}
+.week-cell .wc-icon{font-size:14px;line-height:1}
+.week-cell .wc-status{font-size:9px;font-weight:700;letter-spacing:.4px}
+
+/* ATTENDANCE ROW */
+.attend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.attend-row:last-child{border-bottom:none}
+.attend-bar-wrap{flex:1;height:6px;background:var(--card2);border-radius:4px;overflow:hidden}
+.attend-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .4s ease}
 </style>
 </head>
 <body>
@@ -300,6 +323,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
           <div class="form-group"><label class="form-label">Vencimento (dia)</label>
             <select class="form-select" id="f-payday">
               <option value="">Sem vencimento</option>
+              <option value="5">Dia 1</option>
               <option value="5">Dia 5</option>
               <option value="10">Dia 10</option>
               <option value="15">Dia 15</option>
@@ -370,12 +394,32 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
     <!-- AGENDA -->
     <div class="screen" id="screen-agenda">
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Agenda do Dia</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Agenda Semanal</div>
       <div id="agenda-date" style="font-size:13px;color:var(--text2);margin-bottom:16px"></div>
-      <div id="agenda-list"></div>
-      <div style="margin-top:18px">
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Esta Semana</div>
-        <div id="week-summary"></div>
+
+      <!-- Resumo rápido -->
+      <div id="agenda-stats-row" class="stats-row" style="margin-bottom:16px"></div>
+
+      <!-- Tabela semanal -->
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:13px">
+        <div style="padding:13px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <div class="card-title" style="margin-bottom:0">📅 Semana Atual</div>
+          <div id="agenda-week-label" style="font-size:11px;color:var(--text3)"></div>
+        </div>
+        <div id="agenda-week-table" style="overflow-x:auto;-webkit-overflow-scrolling:touch"></div>
+      </div>
+
+      <!-- Lista de atendimentos do dia selecionado -->
+      <div id="agenda-day-panel" style="display:none">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px" id="agenda-day-title"></div>
+        <div id="agenda-day-list"></div>
+      </div>
+
+      <!-- Presença mensal -->
+      <div class="card" style="margin-bottom:13px">
+        <div class="card-title">📊 Presenças do Mês</div>
+        <div id="attendance-month-label" style="font-size:12px;color:var(--text2);margin-bottom:10px"></div>
+        <div id="attendance-list"></div>
       </div>
     </div>
 
@@ -392,8 +436,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <div class="screen" id="screen-install">
       <div style="text-align:center;padding:28px 0 18px">
         <div style="font-size:48px;margin-bottom:10px">📲</div>
-        <div style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800;margin-bottom:5px">Instalar no Celular</div>
-        <div style="font-size:13px;color:var(--text3)">O Amor de DEUS transforma qualquer pessoa</div>
+        <div style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800;margin-bottom:5px">1 Ts 5:18</div>
+        <div style="font-size:13px;color:var(--text3)">Em tudo dai graças, porque esta é a vontade de Deus</div>
       </div>
       <div class="card">
         <div class="card-title">🍎 iPhone — Safari</div>
@@ -417,7 +461,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
   <nav id="bottomnav">
     <div class="nav-item active" id="nav-home" onclick="showNav('home')"><div class="nav-icon">🏠</div><div>Início</div><div class="nav-dot"></div></div>
-    <div class="nav-item" id="nav-add" onclick="showNav('add')"><div class="nav-icon">➕</div><div>Novo Aluno</div><div class="nav-dot"></div></div>
+    <div class="nav-item" id="nav-add" onclick="showNav('add')"><div class="nav-icon">➕</div><div>Novo</div><div class="nav-dot"></div></div>
     <div class="nav-item" id="nav-agenda" onclick="showNav('agenda')"><div class="nav-icon">📅</div><div>Agenda</div><div class="nav-dot"></div></div>
     <div class="nav-item" id="nav-mensalidade" onclick="showNav('mensalidade')"><div class="nav-icon">💰</div><div>Mensalidade</div><div class="nav-dot"></div></div>
     <div class="nav-item" id="nav-install" onclick="showNav('install')"><div class="nav-icon">📲</div><div>Instalar</div><div class="nav-dot"></div></div>
@@ -832,7 +876,11 @@ function saveStudent() {
   } else {
     const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
     const firstEntry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
-    const s = { ...data, id: uid(), exercises: {}, progressHistory: [firstEntry] };
+    // Apply duplicated exercises if pending
+    const exercises = window._dupExercises ? JSON.parse(JSON.stringify(window._dupExercises)) : {};
+    window._dupExercises = null;
+    window._dupCycle = null;
+    const s = { ...data, id: uid(), exercises, progressHistory: [firstEntry] };
     students.push(s); save(); toast('✅ Aluno cadastrado!');
     selectedStudentId = s.id; showStudentDetail(s.id);
   }
@@ -875,10 +923,18 @@ function closeDupModal(e) {
 }
 function applyDuplicate(fromId) {
   const src = students.find(s => s.id === fromId);
-  // Store temporarily — will be applied on save
+  // Deep copy ALL routines (A, B, C, D...) from source student
   window._dupExercises = JSON.parse(JSON.stringify(src.exercises || {}));
+  window._dupCycle = src.cycle; // also copy cycle config
+  const days = cycleLetters(parseInt(src.cycle||3));
+  const totalEx = days.reduce((acc, d) => acc + (src.exercises?.[d]||[]).length, 0);
   document.getElementById('dup-overlay').classList.remove('open');
-  toast(`✅ Treino de "${src.name}" será copiado ao salvar!`, 3000);
+  toast(`✅ Rotina ${days.join('/')} (${totalEx} exercícios) de "${src.name}" pronta para copiar!`, 3500);
+  // Update cycle selector to match source
+  if (window._dupCycle) {
+    document.getElementById('f-cycle').value = window._dupCycle;
+    updateCycleHint();
+  }
 }
 
 // ══════════════════════════════════════════
@@ -1158,47 +1214,242 @@ function shareViaWhatsApp(name) { closeShareModal(); window.open(`https://wa.me/
 function closeShareModal() { const o = document.getElementById('share-modal-overlay'); if (o) o.style.display = 'none'; }
 
 // ══════════════════════════════════════════
-// AGENDA
+// AGENDA — WEEKLY TABLE + ATTENDANCE
 // ══════════════════════════════════════════
+
+// Attendance data stored as: { 'studentId': { 'YYYY-MM-DD': 'present'|'absent' } }
+let attendanceData = JSON.parse(localStorage.getItem('fp_attendance') || '{}');
+function saveAttendance() { localStorage.setItem('fp_attendance', JSON.stringify(attendanceData)); }
+
+// Schedule data: { 'studentId': { scheduledDays: [0,1,2..6], time: '08:00' } }
+// 0=Dom,1=Seg,...6=Sáb
+let scheduleData = JSON.parse(localStorage.getItem('fp_schedule') || '{}');
+function saveSchedule() { localStorage.setItem('fp_schedule', JSON.stringify(scheduleData)); }
+
+const DAY_NAMES_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DAY_NAMES_FULL  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const MONTHS_FULL = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+function getWeekDates(refDate) {
+  // Monday-based week
+  const d = new Date(refDate);
+  const day = d.getDay(); // 0=sun
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+  return Array.from({length:7}, (_,i) => {
+    const dd = new Date(mon);
+    dd.setDate(mon.getDate() + i);
+    return dd;
+  });
+}
+
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+let agendaSelectedDay = null; // index in weekDates
+
 function renderAgenda() {
   const now = new Date();
-  const days = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-  const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-  document.getElementById('agenda-date').textContent = `${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]} de ${now.getFullYear()}`;
+  document.getElementById('agenda-date').textContent =
+    `${DAY_NAMES_FULL[now.getDay()]}, ${now.getDate()} de ${MONTHS_FULL[now.getMonth()]} de ${now.getFullYear()}`;
 
-  const listEl = document.getElementById('agenda-list');
+  const weekDates = getWeekDates(now);
+  const todayKey = dateKey(now);
+
+  // Week label
+  const wStart = weekDates[0], wEnd = weekDates[6];
+  document.getElementById('agenda-week-label').textContent =
+    `${wStart.getDate()}/${wStart.getMonth()+1} – ${wEnd.getDate()}/${wEnd.getMonth()+1}`;
+
+  // Stats
+  const total = students.length;
+  let weekPresent = 0, weekAbsent = 0;
+  weekDates.forEach(wd => {
+    const dk = dateKey(wd);
+    students.forEach(s => {
+      const sc = scheduleData[s.id];
+      if (!sc) return;
+      const wdow = wd.getDay() === 0 ? 6 : wd.getDay() - 1; // mon=0
+      if (sc.scheduledDays && sc.scheduledDays.includes(wd.getDay())) {
+        const st = attendanceData[s.id]?.[dk];
+        if (st === 'present') weekPresent++;
+        else if (st === 'absent') weekAbsent++;
+      }
+    });
+  });
+  document.getElementById('agenda-stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${total}</div><div class="stat-lbl">Alunos</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${weekPresent}</div><div class="stat-lbl">Presenças semana</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--red)">${weekAbsent}</div><div class="stat-lbl">Faltas semana</div></div>`;
+
+  // Build weekly table
   if (!students.length) {
-    listEl.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:38px;margin-bottom:8px">📅</div><p style="font-size:13px">Nenhum aluno cadastrado.</p></div>`;
+    document.getElementById('agenda-week-table').innerHTML =
+      `<div style="text-align:center;padding:30px;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📅</div><p style="font-size:13px">Nenhum aluno cadastrado.</p></div>`;
   } else {
-    listEl.innerHTML = `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Alunos Ativos</div>` +
-      students.map(s => {
-        const hasEx = Object.values(s.exercises||{}).some(e => e.length > 0);
-        const pi = payInfo(s);
-        return `<div class="student-card" onclick="showStudentDetail('${s.id}')">
-          <div class="s-avatar">${s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍'}</div>
-          <div style="flex:1;min-width:0">
-            <div class="s-name">${s.name}</div>
-            <div class="s-meta">${s.daysPerWeek}x/sem · Ciclo ${cycleLetters(parseInt(s.cycle||3)).join('/')}</div>
-            ${s.goal ? `<div style="font-size:11px;color:var(--accent);margin-top:2px">🎯 ${s.goal}</div>` : ''}
+    const studentsWithSchedule = students.filter(s => scheduleData[s.id]?.scheduledDays?.length);
+    const studentsNoSchedule = students.filter(s => !scheduleData[s.id]?.scheduledDays?.length);
+
+    let tableHtml = `<table class="week-table"><thead><tr>
+      <th style="text-align:left;padding-left:10px">Aluno</th>`;
+    weekDates.forEach(wd => {
+      const dk = dateKey(wd);
+      const isToday = dk === todayKey;
+      tableHtml += `<th class="${isToday?'today-col':''}">${DAY_NAMES_SHORT[wd.getDay()]}<br><span style="font-size:11px;font-weight:400">${wd.getDate()}</span></th>`;
+    });
+    tableHtml += `</tr></thead><tbody>`;
+
+    const renderStudentRow = s => {
+      const sc = scheduleData[s.id] || { scheduledDays: [], time: '' };
+      const name = s.name.split(' ')[0];
+      let row = `<tr><td class="name-col">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:24px;height:24px;border-radius:7px;overflow:hidden;flex-shrink:0;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:11px">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
+          <div>
+            <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px;font-size:11px;font-weight:700;color:var(--text)">${name}</div>
+            ${sc.time?`<div style="font-size:9px;color:var(--accent)">${sc.time}</div>`:''}
           </div>
-          <div class="s-right">
-            <span class="badge ${hasEx ? 'badge-green' : 'badge-orange'}">${hasEx ? 'Ativo' : 'Pendente'}</span>
-            ${pi ? `<span class="pay-badge ${pi.cls}" style="font-size:9px">${pi.label}</span>` : ''}
-          </div>
-        </div>`;
-      }).join('');
+        </div>
+        <button onclick="openScheduleModal('${s.id}')" style="margin-top:4px;font-size:9px;padding:2px 6px;border-radius:5px;border:1px solid var(--border);background:var(--card2);color:var(--text3);cursor:pointer;width:100%">⚙️ Config</button>
+      </td>`;
+      weekDates.forEach(wd => {
+        const dk = dateKey(wd);
+        const isToday = dk === todayKey;
+        const hasClass = sc.scheduledDays && sc.scheduledDays.includes(wd.getDay());
+        const status = attendanceData[s.id]?.[dk];
+        let cellClass = 'week-cell';
+        let icon = '', statusText = '';
+        if (!hasClass) {
+          cellClass += ' no-class';
+          icon = '—';
+        } else if (status === 'present') {
+          cellClass += ' present';
+          icon = '✅'; statusText = 'Presente';
+        } else if (status === 'absent') {
+          cellClass += ' absent';
+          icon = '❌'; statusText = 'Falta';
+        } else {
+          cellClass += ' scheduled';
+          icon = '🏋️'; statusText = sc.time || 'Agendado';
+        }
+        if (isToday && hasClass) cellClass += ' today-cell';
+        const clickable = hasClass ? `onclick="toggleAttendance('${s.id}','${dk}')"` : '';
+        row += `<td><div class="${cellClass}" ${clickable}>
+          <div class="wc-icon">${icon}</div>
+          ${statusText ? `<div class="wc-status" style="color:${status==='present'?'var(--accent)':status==='absent'?'var(--red)':'var(--text3)'}">${statusText}</div>` : ''}
+        </div></td>`;
+      });
+      row += `</tr>`;
+      return row;
+    };
+
+    studentsWithSchedule.forEach(s => { tableHtml += renderStudentRow(s); });
+    studentsNoSchedule.forEach(s => { tableHtml += renderStudentRow(s); });
+    tableHtml += `</tbody></table>`;
+    document.getElementById('agenda-week-table').innerHTML = tableHtml;
   }
 
-  const weekEl = document.getElementById('week-summary');
-  const total = students.length;
-  const comTreino = students.filter(s => Object.values(s.exercises||{}).some(e => e.length > 0)).length;
-  const semTreino = total - comTreino;
-  weekEl.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px">
-      <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${total}</div><div class="stat-lbl">Total alunos</div></div>
-      <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${comTreino}</div><div class="stat-lbl">Com treino</div></div>
-      <div class="stat-card"><div class="stat-val" style="color:var(--orange)">${semTreino}</div><div class="stat-lbl">Sem treino</div></div>
+  // Monthly attendance summary
+  const now2 = new Date();
+  const monthKey = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('attendance-month-label').textContent =
+    `${MONTHS_FULL[now2.getMonth()].charAt(0).toUpperCase() + MONTHS_FULL[now2.getMonth()].slice(1)} ${now2.getFullYear()}`;
+
+  if (!students.length) {
+    document.getElementById('attendance-list').innerHTML = `<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">Nenhum aluno cadastrado.</div>`;
+  } else {
+    document.getElementById('attendance-list').innerHTML = students.map(s => {
+      const att = attendanceData[s.id] || {};
+      let present = 0, absent = 0;
+      Object.entries(att).forEach(([k, v]) => {
+        if (k.startsWith(monthKey)) { if (v==='present') present++; else if (v==='absent') absent++; }
+      });
+      const total = present + absent;
+      const pct = total > 0 ? Math.round(present/total*100) : 0;
+      const name = s.name.split(' ').slice(0,2).join(' ');
+      return `<div class="attend-row">
+        <div style="width:28px;height:28px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:13px">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
+          <div class="attend-bar-wrap" style="margin-top:4px"><div class="attend-bar" style="width:${pct}%"></div></div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;min-width:64px">
+          <div style="font-size:12px;font-weight:700;color:var(--accent)">${present} aulas</div>
+          <div style="font-size:10px;color:var(--red)">${absent} falt.</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function toggleAttendance(studentId, dk) {
+  if (!attendanceData[studentId]) attendanceData[studentId] = {};
+  const cur = attendanceData[studentId][dk];
+  if (!cur || cur === 'absent') {
+    attendanceData[studentId][dk] = 'present';
+    toast('✅ Presença registrada!');
+  } else if (cur === 'present') {
+    attendanceData[studentId][dk] = 'absent';
+    toast('❌ Falta registrada');
+  }
+  saveAttendance();
+  renderAgenda();
+}
+
+// Schedule config modal
+function openScheduleModal(studentId) {
+  const s = students.find(x => x.id === studentId);
+  if (!s) return;
+  const sc = scheduleData[studentId] || { scheduledDays: [], time: '' };
+  const dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+  const modalHtml = `
+    <div id="sched-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:flex-end;backdrop-filter:blur(4px)" onclick="closeSchedModal(event)">
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;max-height:80vh;overflow-y:auto;animation:slideUp .28s ease">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;margin-bottom:4px">⚙️ Agenda de ${s.name.split(' ')[0]}</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Defina os dias e horário de atendimento</div>
+        <div class="form-label">Dias da semana</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">
+          ${dayNames.map((d,i) => `<button id="sd-${i}" onclick="toggleSchedDay(${i})" style="padding:8px 12px;border-radius:9px;font-weight:700;font-size:12px;cursor:pointer;border:1px solid ${(sc.scheduledDays||[]).includes(i)?'var(--accent)':'var(--border)'};background:${(sc.scheduledDays||[]).includes(i)?'var(--accent-dim)':'var(--card)'};color:${(sc.scheduledDays||[]).includes(i)?'var(--accent)':'var(--text3)'};transition:all .15s;font-family:'DM Sans',sans-serif">${d}</button>`).join('')}
+        </div>
+        <div class="form-label">Horário</div>
+        <input class="form-input" id="sched-time" type="time" value="${sc.time||''}" style="margin-bottom:16px"/>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeSchedModal()">Cancelar</button>
+          <button class="btn btn-primary" style="flex:1" onclick="saveSchedModal('${studentId}')">Salvar</button>
+        </div>
+      </div>
     </div>`;
+
+  window._schedDays = [...(sc.scheduledDays || [])];
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function toggleSchedDay(i) {
+  const idx = window._schedDays.indexOf(i);
+  if (idx >= 0) window._schedDays.splice(idx, 1); else window._schedDays.push(i);
+  const btn = document.getElementById('sd-'+i);
+  const active = window._schedDays.includes(i);
+  btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+  btn.style.background = active ? 'var(--accent-dim)' : 'var(--card)';
+  btn.style.color = active ? 'var(--accent)' : 'var(--text3)';
+}
+
+function saveSchedModal(studentId) {
+  const time = document.getElementById('sched-time').value;
+  scheduleData[studentId] = { scheduledDays: window._schedDays.sort((a,b)=>a-b), time };
+  saveSchedule();
+  closeSchedModal();
+  toast('✅ Agenda salva!');
+  renderAgenda();
+}
+
+function closeSchedModal(e) {
+  const overlay = document.getElementById('sched-modal-overlay');
+  if (!overlay) return;
+  if (e && e.target !== overlay) return;
+  overlay.remove();
 }
 
 // ══════════════════════════════════════════
@@ -1240,6 +1491,28 @@ function renderMensalidade() {
   payList.innerHTML = withPay.sort((a,b) => parseInt(a.payDay)-parseInt(b.payDay)).map(s => {
     const pi = payInfo(s);
     const isPend = s.payStatus === 'late';
+    const pd = parseInt(s.payDay);
+    // Countdown calculation
+    const now2 = new Date();
+    const todayDay = now2.getDate();
+    let daysLeft = pd - todayDay;
+    if (daysLeft < 0) {
+      // Next month
+      const daysInMonth = new Date(now2.getFullYear(), now2.getMonth()+2, 0).getDate();
+      daysLeft = daysInMonth - todayDay + pd;
+    }
+    let countdownHtml = '';
+    if (!isPend) {
+      const countdownColor = daysLeft <= 3 ? 'var(--red)' : daysLeft <= 7 ? 'var(--orange)' : 'var(--accent)';
+      countdownHtml = `<div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:10px">
+        <span style="font-size:18px">⏳</span>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;font-weight:600">Próximo pagamento</div>
+          <div style="font-size:13px;font-weight:700;color:${countdownColor};margin-top:1px">${daysLeft === 0 ? 'Vence HOJE!' : daysLeft === 1 ? 'Vence amanhã!' : `Faltam ${daysLeft} dias`}</div>
+        </div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:${countdownColor}">${daysLeft}</div>
+      </div>`;
+    }
     return `<div class="pay-section">
       <div class="pay-row">
         <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
@@ -1249,6 +1522,7 @@ function renderMensalidade() {
         </div>
         ${pi ? `<span class="pay-badge ${pi.cls}">${pi.label}</span>` : ''}
       </div>
+      ${countdownHtml}
       <div style="display:flex;gap:8px">
         ${isPend ? `<button class="btn btn-sm btn-outline" style="flex:1" onclick="markPaid('${s.id}')">✅ Marcar pago</button>` : `<button class="btn btn-sm btn-ghost" style="flex:1" onclick="markPending('${s.id}')">❌ Marcar pendente</button>`}
       </div>
@@ -1387,9 +1661,6 @@ function checkPaymentAlerts() {
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
-// Apply duplicate exercises on save if pending
-const _origSaveStudent = saveStudent;
-
 renderHome();
 checkPaymentAlerts();
 </script>

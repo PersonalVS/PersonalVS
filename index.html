@@ -26,7 +26,7 @@ document.write('<link rel="manifest" href="'+URL.createObjectURL(blob)+'">');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overscroll-behavior:none}
 #app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:calc(var(--safe-top)+20px) 16px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:100;min-height:calc(var(--safe-top)+60px)}
+#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:calc(var(--safe-top)+20px) 16px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:100;min-height:calc(var(--safe-top)+62px)}
 #topbar .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px}
 #topbar .logo span{color:var(--accent)}
 .back-btn{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:22px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
@@ -100,8 +100,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .btn-danger{background:rgba(255,77,106,.12);color:var(--red);border:1px solid rgba(255,77,106,.3)}
 .btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent-mid)}
 .btn-blue{background:rgba(77,159,255,.15);color:var(--blue);border:1px solid rgba(77,159,255,.3)}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
 .btn-full{width:100%}
 .btn-row{display:flex;gap:9px;margin-top:8px}
 .btn-sm{padding:7px 13px;font-size:12px;border-radius:9px}
@@ -531,36 +529,32 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
           </button>
         </div>
 
-        <!-- Opção de gerar imagem -->
-        <div class="card" style="margin-bottom:13px">
-          <div class="card-title">🖼️ Imagem para o Post</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Gere uma imagem fitness com IA (DALL-E). Requer a mesma API Key da OpenAI.</div>
-          <div class="form-group">
-            <label class="form-label">Descrição da imagem</label>
-            <textarea class="form-textarea" id="img-prompt" placeholder="Ex: Personal trainer motivando aluno na academia, estilo moderno, cores vibrantes..." style="height:70px"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Estilo</label>
-            <select class="form-select" id="img-style">
-              <option value="vivid">🎨 Vibrante (padrão Instagram)</option>
-              <option value="natural">📷 Natural / Fotográfico</option>
-            </select>
-          </div>
-          <button class="btn btn-blue btn-full" id="btn-gerar-img" onclick="gerarImagem()">
-            <span id="btn-gerar-img-txt">🖼️ Gerar Imagem com IA</span>
-          </button>
-          <!-- Resultado da imagem -->
-          <div id="img-resultado" style="display:none;margin-top:14px">
-            <img id="img-gerada" src="" alt="Imagem gerada" style="width:100%;border-radius:12px;display:block;margin-bottom:10px"/>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <button class="btn btn-ghost btn-sm" onclick="baixarImagem()">⬇️ Baixar</button>
-              <button class="btn btn-ghost btn-sm" onclick="compartilharImagem()">📤 Compartilhar</button>
-            </div>
-          </div>
-        </div>
-
         <!-- Resultado gerado -->
         <div id="post-resultado" style="display:none">
+
+          <!-- Imagem fitness -->
+          <div class="card" style="margin-bottom:13px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div class="card-title" style="margin-bottom:0">🖼️ Imagem do Post</div>
+              <button class="icon-btn" onclick="buscarNovaImagem()" title="Buscar outra imagem">🔄</button>
+            </div>
+            <div id="img-loading" style="display:none;text-align:center;padding:20px 0;color:var(--text3)">
+              <span class="spinner" style="border-color:rgba(59,255,160,.3);border-top-color:var(--accent)"></span> Buscando imagem...
+            </div>
+            <div id="img-container" style="display:none">
+              <img id="img-gerada" src="" alt="Imagem fitness" style="width:100%;border-radius:12px;display:block;margin-bottom:10px;max-height:300px;object-fit:cover"/>
+              <div id="img-credit" style="font-size:10px;color:var(--text3);margin-bottom:10px;text-align:right"></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <button class="btn btn-ghost btn-sm" onclick="baixarImagem()">⬇️ Baixar</button>
+                <button class="btn btn-ghost btn-sm" onclick="compartilharImagem()">📤 Compartilhar</button>
+              </div>
+            </div>
+            <div id="img-error" style="display:none;font-size:12px;color:var(--text3);text-align:center;padding:12px 0">
+              Imagem não disponível. <button class="btn btn-ghost btn-sm" onclick="buscarNovaImagem()" style="margin-top:6px">Tentar novamente</button>
+            </div>
+          </div>
+
+          <!-- Texto do post -->
           <div class="card" style="margin-bottom:13px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
               <div class="card-title" style="margin-bottom:0">📝 Post Gerado</div>
@@ -576,10 +570,10 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
           <!-- Compartilhar -->
           <div class="card" style="margin-bottom:13px">
             <div class="card-title">🚀 Compartilhar</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
               <button class="btn btn-ghost btn-sm" onclick="compartilhar('whatsapp')">💬 WhatsApp</button>
               <button class="btn btn-ghost btn-sm" onclick="compartilhar('instagram')">📸 Instagram</button>
-              <button class="btn btn-ghost btn-sm" onclick="compartilhar('native')">📤 Compartilhar</button>
+              <button class="btn btn-ghost btn-sm" onclick="compartilhar('native')">📤 Mais opções</button>
               <button class="btn btn-ghost btn-sm" onclick="salvarPost()">💾 Salvar</button>
             </div>
           </div>
@@ -1919,6 +1913,22 @@ const temaLabels = {
   recuperacao:'Recuperação', antes_depois:'Antes e Depois'
 };
 
+// Unsplash source queries por tema (sem API key, usa source.unsplash.com)
+const temaImgQuery = {
+  dica_exercicio: 'gym,workout,exercise',
+  motivacional:   'fitness,motivation,training',
+  nutricao:       'healthy,food,nutrition',
+  treino_dia:     'weightlifting,strength,gym',
+  resultado:      'athlete,fitness,body',
+  curiosidade:    'sport,science,fitness',
+  recuperacao:    'stretching,yoga,rest',
+  antes_depois:   'transformation,fitness,athlete'
+};
+
+let currentImgQuery = '';
+let currentImgSeed = Math.floor(Math.random()*1000);
+let lastImageUrl = '';
+
 async function gerarPost() {
   const apiKey = localStorage.getItem('fp_openai_key');
   if (!apiKey) { toast('⚠️ Adicione sua OpenAI API Key primeiro'); return; }
@@ -1980,6 +1990,12 @@ Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do J
     document.getElementById('post-texto').textContent = parsed.post;
     document.getElementById('post-hashtags').textContent = parsed.hashtags || '';
     document.getElementById('post-resultado').style.display = 'block';
+
+    // Buscar imagem automaticamente
+    currentImgQuery = temaImgQuery[tema] || 'fitness,gym';
+    currentImgSeed = Math.floor(Math.random()*9999);
+    await carregarImagem();
+
     document.getElementById('main').scrollBy({ top: 200, behavior: 'smooth' });
     toast('✅ Post gerado!');
 
@@ -1988,6 +2004,64 @@ Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do J
   } finally {
     btn.disabled = false;
     btnTxt.textContent = '✨ Gerar Post com IA';
+  }
+}
+
+// ── IMAGEM FITNESS (Unsplash Source — sem API key, sem CORS) ──
+async function carregarImagem() {
+  document.getElementById('img-loading').style.display = 'block';
+  document.getElementById('img-container').style.display = 'none';
+  document.getElementById('img-error').style.display = 'none';
+
+  // Unsplash Source: imagens gratuitas sem API key, sem CORS
+  const url = `https://source.unsplash.com/featured/1080x1080/?${encodeURIComponent(currentImgQuery)}&sig=${currentImgSeed}`;
+  lastImageUrl = url;
+
+  const img = document.getElementById('img-gerada');
+  img.onload = () => {
+    document.getElementById('img-loading').style.display = 'none';
+    document.getElementById('img-container').style.display = 'block';
+    document.getElementById('img-credit').textContent = 'Foto: Unsplash (uso livre)';
+  };
+  img.onerror = () => {
+    // Fallback: picsum.photos
+    currentImgSeed = Math.floor(Math.random()*999);
+    const fallbackUrl = `https://picsum.photos/seed/${currentImgSeed}/1080/1080`;
+    lastImageUrl = fallbackUrl;
+    img.src = fallbackUrl;
+    img.onerror = () => {
+      document.getElementById('img-loading').style.display = 'none';
+      document.getElementById('img-error').style.display = 'block';
+    };
+  };
+  img.src = url;
+}
+
+async function buscarNovaImagem() {
+  currentImgSeed = Math.floor(Math.random()*9999);
+  await carregarImagem();
+}
+
+function baixarImagem() {
+  if (!lastImageUrl) return;
+  // Abre em nova aba — no iOS o usuário segura e salva
+  window.open(lastImageUrl, '_blank');
+  toast('💡 Segure a imagem e escolha "Salvar"');
+}
+
+async function compartilharImagem() {
+  if (!lastImageUrl) return;
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: 'Post FitPlan', url: lastImageUrl });
+    } else {
+      window.open(lastImageUrl, '_blank');
+      toast('💡 Salve a imagem que abriu');
+    }
+  } catch(e) {
+    if (e.name !== 'AbortError') {
+      window.open(lastImageUrl, '_blank');
+    }
   }
 }
 
@@ -2027,127 +2101,6 @@ function salvarPost() {
   d.historico.unshift({ ...lastGeneratedPost, id: uid() });
   saveCriativoData(d);
   toast('💾 Post salvo no histórico!');
-}
-
-// ── GERAR IMAGEM COM DALL-E ──
-let lastGeneratedImageUrl = null;
-
-async function gerarImagem() {
-  const apiKey = localStorage.getItem('fp_openai_key');
-  if (!apiKey) { toast('⚠️ Adicione sua OpenAI API Key primeiro'); return; }
-
-  const tema = document.getElementById('post-tema').value;
-  const customPrompt = document.getElementById('img-prompt').value.trim();
-  const style = document.getElementById('img-style').value;
-
-  const temaPrompts = {
-    dica_exercicio: 'personal trainer demonstrating exercise technique in modern gym, professional fitness photography',
-    motivacional: 'athlete training hard, motivational fitness scene, dynamic lighting, high energy',
-    nutricao: 'healthy meal prep for athletes, colorful nutritious food, clean eating aesthetic',
-    treino_dia: 'gym workout session, person lifting weights, modern fitness center',
-    resultado: 'fitness transformation, before and after, athlete achievement celebration',
-    curiosidade: 'human body anatomy fitness infographic style, professional illustration',
-    recuperacao: 'athlete resting and recovering, stretching, foam rolling, peaceful gym scene',
-    antes_depois: 'fitness journey transformation, athletic body, motivational scene'
-  };
-
-  const basePrompt = customPrompt || temaPrompts[tema] || 'personal trainer fitness post';
-  const fullPrompt = `${basePrompt}. Instagram fitness post style, high quality, professional photography, ${style === 'vivid' ? 'vibrant colors, dynamic' : 'natural lighting, realistic'}. No text overlay.`;
-
-  const btn = document.getElementById('btn-gerar-img');
-  const btnTxt = document.getElementById('btn-gerar-img-txt');
-  btn.disabled = true;
-  btnTxt.innerHTML = '<span class="spinner"></span>Gerando imagem...';
-
-  try {
-    const resp = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: 'dall-e-3',
-        prompt: fullPrompt,
-        n: 1,
-        size: '1024x1024',
-        quality: 'standard',
-        style: style
-      })
-    });
-
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      const msg = err.error?.message || `Erro ${resp.status}`;
-      // Specific error messages in Portuguese
-      if (resp.status === 401) throw new Error('API Key inválida. Verifique sua chave OpenAI.');
-      if (resp.status === 429) throw new Error('Limite de requisições atingido. Aguarde e tente novamente.');
-      if (resp.status === 400) throw new Error('Prompt inválido ou recusado. Tente uma descrição diferente.');
-      throw new Error(msg);
-    }
-
-    const data = await resp.json();
-    const imageUrl = data.data[0].url;
-    lastGeneratedImageUrl = imageUrl;
-
-    const imgEl = document.getElementById('img-gerada');
-    imgEl.src = imageUrl;
-    imgEl.onload = () => {
-      document.getElementById('img-resultado').style.display = 'block';
-      document.getElementById('main').scrollBy({ top: 300, behavior: 'smooth' });
-      toast('✅ Imagem gerada!');
-    };
-    imgEl.onerror = () => {
-      toast('❌ Erro ao carregar imagem gerada');
-    };
-
-  } catch(e) {
-    toast('❌ ' + (e.message || 'Erro ao gerar imagem'));
-    console.error('DALL-E error:', e);
-  } finally {
-    btn.disabled = false;
-    btnTxt.textContent = '🖼️ Gerar Imagem com IA';
-  }
-}
-
-async function baixarImagem() {
-  if (!lastGeneratedImageUrl) return;
-  try {
-    // Fetch image as blob to force download
-    const resp = await fetch(lastGeneratedImageUrl);
-    const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `fitplan-post-${Date.now()}.png`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast('⬇️ Download iniciado!');
-  } catch(e) {
-    // Fallback: open in new tab
-    window.open(lastGeneratedImageUrl, '_blank');
-    toast('💡 Abra a imagem e salve manualmente');
-  }
-}
-
-async function compartilharImagem() {
-  if (!lastGeneratedImageUrl) return;
-  try {
-    const resp = await fetch(lastGeneratedImageUrl);
-    const blob = await resp.blob();
-    const file = new File([blob], 'fitplan-post.png', { type: 'image/png' });
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ title: 'Post FitPlan Pro', files: [file] });
-      toast('✅ Imagem compartilhada!');
-    } else if (navigator.share) {
-      await navigator.share({ title: 'Post FitPlan Pro', url: lastGeneratedImageUrl });
-    } else {
-      window.open(lastGeneratedImageUrl, '_blank');
-      toast('💡 Salve a imagem que abriu');
-    }
-  } catch(e) {
-    if (e.name !== 'AbortError') {
-      window.open(lastGeneratedImageUrl, '_blank');
-      toast('💡 Salve a imagem que abriu');
-    }
-  }
 }
 
 // ── HISTÓRICO ──

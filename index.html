@@ -1970,6 +1970,7 @@ Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do J
 
 function renderPostImage(tema, postTexto, seed) {
   const box = document.getElementById('svg-img-box');
+  try {
 
   // Seeded random helper
   const rng = (n) => ((seed * 9301 + n * 49297 + 233) % 233280) / 233280;
@@ -2020,8 +2021,12 @@ function renderPostImage(tema, postTexto, seed) {
       const x = 40 + i * 78;
       ctx.fillStyle = (i % 2 === 0 ? cfg.accent : cfg.accent2) + '44';
       ctx.beginPath();
-      ctx.roundRect(x, S - 80 - h, 50, h, 8);
-      ctx.fill();
+      const rx2 = 8, bx = x, by = S - 80 - h, bw = 50, bh = h;
+      ctx.moveTo(bx+rx2, by); ctx.lineTo(bx+bw-rx2, by);
+      ctx.quadraticCurveTo(bx+bw, by, bx+bw, by+rx2);
+      ctx.lineTo(bx+bw, by+bh); ctx.lineTo(bx, by+bh); ctx.lineTo(bx, by+rx2);
+      ctx.quadraticCurveTo(bx, by, bx+rx2, by);
+      ctx.closePath(); ctx.fill();
     }
   } else if (cfg.shapes === 'circles') {
     for (let i = 0; i < 8; i++) {
@@ -2091,12 +2096,20 @@ function renderPostImage(tema, postTexto, seed) {
   }
   ctx.restore();
 
-  // Border frame
+  // Border frame (iOS-safe, no roundRect)
+  const fr = 24, fx = 24, fy = 24, fw = S-48, fh = S-48;
   ctx.strokeStyle = cfg.accent + '55';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.roundRect(24, 24, S-48, S-48, 24);
-  ctx.stroke();
+  ctx.moveTo(fx+fr, fy); ctx.lineTo(fx+fw-fr, fy);
+  ctx.quadraticCurveTo(fx+fw, fy, fx+fw, fy+fr);
+  ctx.lineTo(fx+fw, fy+fh-fr);
+  ctx.quadraticCurveTo(fx+fw, fy+fh, fx+fw-fr, fy+fh);
+  ctx.lineTo(fx+fr, fy+fh);
+  ctx.quadraticCurveTo(fx, fy+fh, fx, fy+fh-fr);
+  ctx.lineTo(fx, fy+fr);
+  ctx.quadraticCurveTo(fx, fy, fx+fr, fy);
+  ctx.closePath(); ctx.stroke();
 
   // Corner accents
   const cSize = 22;
@@ -2119,7 +2132,6 @@ function renderPostImage(tema, postTexto, seed) {
   // Label
   ctx.font = 'bold 28px sans-serif';
   ctx.fillStyle = '#ffffff';
-  ctx.letterSpacing = '3px';
   ctx.fillText(cfg.label, S/2, S/2 + 65);
 
   // Divider line
@@ -2146,6 +2158,16 @@ function renderPostImage(tema, postTexto, seed) {
 
   // Store as dataURL for sharing
   try { lastGeneratedPost && (lastGeneratedPost.imgDataUrl = canvas.toDataURL('image/jpeg', 0.9)); } catch(e) {}
+
+  } catch(err) {
+    // Visible fallback so user knows something happened
+    box.innerHTML = `<div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#1a1a3e,#2d1b69);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
+      <div style="font-size:72px">💪</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#fff;text-align:center;padding:0 20px">FITPLAN PRO</div>
+      <div style="width:80px;height:3px;background:#3bffa0;border-radius:2px"></div>
+      <div style="font-size:13px;color:rgba(255,255,255,.5)">Post gerado com IA</div>
+    </div>`;
+  }
 }
 
 async function trocaImagem() {

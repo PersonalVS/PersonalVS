@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
@@ -26,7 +27,7 @@ document.write('<link rel="manifest" href="'+URL.createObjectURL(blob)+'">');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overscroll-behavior:none}
 #app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:calc(var(--safe-top)+14px) 16px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:100}
+#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:calc(var(--safe-top)+20px) 16px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:100;min-height:calc(var(--safe-top)+60px)}
 #topbar .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px}
 #topbar .logo span{color:var(--accent)}
 .back-btn{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:22px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
@@ -52,221 +53,224 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .search-input:focus{border-color:var(--accent)}
 
 /* STUDENT CARD */
-.student-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:14px;margin-bottom:9px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .2s,transform .12s;-webkit-user-select:none;user-select:none}
-.student-card:active{transform:scale(.98);border-color:var(--accent)}
-.s-avatar{width:48px;height:48px;border-radius:14px;flex-shrink:0;background:linear-gradient(135deg,var(--accent-dim),rgba(77,159,255,.15));display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;position:relative}
+.student-card{background:var(–card);border:1px solid var(–border);border-radius:15px;padding:14px;margin-bottom:9px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .2s,transform .12s;-webkit-user-select:none;user-select:none}
+.student-card:active{transform:scale(.98);border-color:var(–accent)}
+.s-avatar{width:48px;height:48px;border-radius:14px;flex-shrink:0;background:linear-gradient(135deg,var(–accent-dim),rgba(77,159,255,.15));display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;position:relative}
 .s-avatar img{width:100%;height:100%;object-fit:cover;border-radius:14px}
-.s-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:2px}
-.s-meta{font-size:11px;color:var(--text2)}
+.s-name{font-family:‘Syne’,sans-serif;font-weight:700;font-size:14px;margin-bottom:2px}
+.s-meta{font-size:11px;color:var(–text2)}
 .s-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
 
 /* PAYMENT BADGE */
 .pay-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px}
-.pay-ok{background:rgba(59,255,160,.15);color:var(--accent);border:1px solid rgba(59,255,160,.4)}
-.pay-late{background:rgba(255,77,106,.15);color:var(--red);border:1px solid rgba(255,77,106,.4)}
-.pay-near{background:rgba(255,170,59,.15);color:var(--orange);border:1px solid rgba(255,170,59,.4)}
+.pay-ok{background:rgba(59,255,160,.15);color:var(–accent);border:1px solid rgba(59,255,160,.4)}
+.pay-late{background:rgba(255,77,106,.15);color:var(–red);border:1px solid rgba(255,77,106,.4)}
+.pay-near{background:rgba(255,170,59,.15);color:var(–orange);border:1px solid rgba(255,170,59,.4)}
 
 /* BADGES */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}
-.badge-green{background:rgba(59,255,160,.12);color:var(--accent);border:1px solid rgba(59,255,160,.3)}
-.badge-orange{background:rgba(255,170,59,.12);color:var(--orange);border:1px solid rgba(255,170,59,.3)}
-.badge-blue{background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.3)}
-.badge-gray{background:rgba(154,163,184,.1);color:var(--text2);border:1px solid var(--border)}
+.badge-green{background:rgba(59,255,160,.12);color:var(–accent);border:1px solid rgba(59,255,160,.3)}
+.badge-orange{background:rgba(255,170,59,.12);color:var(–orange);border:1px solid rgba(255,170,59,.3)}
+.badge-blue{background:rgba(77,159,255,.12);color:var(–blue);border:1px solid rgba(77,159,255,.3)}
+.badge-gray{background:rgba(154,163,184,.1);color:var(–text2);border:1px solid var(–border)}
 
 /* FORM */
 .form-group{margin-bottom:14px}
-.form-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px}
-.form-input,.form-select,.form-textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 13px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;appearance:none}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+.form-label{font-size:11px;font-weight:600;color:var(–text2);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(–card);border:1px solid var(–border);border-radius:11px;padding:11px 13px;color:var(–text);font-size:15px;font-family:‘DM Sans’,sans-serif;outline:none;transition:border-color .2s;appearance:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(–accent)}
 .form-textarea{resize:none;height:65px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
 
 /* PHOTO PICKER */
 .photo-picker{display:flex;align-items:center;gap:14px;margin-bottom:14px}
-.photo-preview{width:72px;height:72px;border-radius:16px;background:var(--card2);border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;cursor:pointer;flex-shrink:0;transition:border-color .2s}
+.photo-preview{width:72px;height:72px;border-radius:16px;background:var(–card2);border:1.5px dashed var(–border2);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;cursor:pointer;flex-shrink:0;transition:border-color .2s}
 .photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:14px}
-.photo-preview:active{border-color:var(--accent)}
+.photo-preview:active{border-color:var(–accent)}
 .photo-picker-info{flex:1}
-.photo-picker-info .pp-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
-.photo-picker-info .pp-sub{font-size:11px;color:var(--text3);line-height:1.5}
+.photo-picker-info .pp-title{font-size:13px;font-weight:600;color:var(–text);margin-bottom:4px}
+.photo-picker-info .pp-sub{font-size:11px;color:var(–text3);line-height:1.5}
 
 /* BUTTONS */
-.btn{padding:12px 20px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn{padding:12px 20px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;border:none;font-family:‘DM Sans’,sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:6px;justify-content:center}
 .btn:active{transform:scale(.96)}
-.btn-primary{background:var(--accent);color:#0a0c10}
+.btn-primary{background:var(–accent);color:#0a0c10}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
-.btn-ghost{background:var(--card);color:var(--text2);border:1px solid var(--border)}
-.btn-danger{background:rgba(255,77,106,.12);color:var(--red);border:1px solid rgba(255,77,106,.3)}
-.btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent-mid)}
-.btn-blue{background:rgba(77,159,255,.15);color:var(--blue);border:1px solid rgba(77,159,255,.3)}
+.btn-ghost{background:var(–card);color:var(–text2);border:1px solid var(–border)}
+.btn-danger{background:rgba(255,77,106,.12);color:var(–red);border:1px solid rgba(255,77,106,.3)}
+.btn-outline{background:transparent;color:var(–accent);border:1px solid var(–accent-mid)}
+.btn-blue{background:rgba(77,159,255,.15);color:var(–blue);border:1px solid rgba(77,159,255,.3)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
 .btn-full{width:100%}
 .btn-row{display:flex;gap:9px;margin-top:8px}
 .btn-sm{padding:7px 13px;font-size:12px;border-radius:9px}
 
 /* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:16px;margin-bottom:13px}
-.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:13px}
+.card{background:var(–card);border:1px solid var(–border);border-radius:15px;padding:16px;margin-bottom:13px}
+.card-title{font-family:‘Syne’,sans-serif;font-weight:700;font-size:12px;color:var(–accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:13px}
 
 /* INFO GRID */
 .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:13px}
-.info-item{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:11px 13px}
+.info-item{background:var(–card2);border:1px solid var(–border);border-radius:11px;padding:11px 13px}
 .info-icon{font-size:17px;margin-bottom:3px}
-.info-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px}
-.info-value{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-top:2px}
+.info-label{font-size:10px;color:var(–text3);text-transform:uppercase;letter-spacing:.7px}
+.info-value{font-family:‘Syne’,sans-serif;font-weight:700;font-size:14px;margin-top:2px}
 
 /* DAY TABS */
 .day-tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px;margin-bottom:14px;scrollbar-width:none}
 .day-tabs::-webkit-scrollbar{display:none}
-.day-tab{flex-shrink:0;padding:7px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);transition:all .15s;position:relative;font-family:'Syne',sans-serif}
-.day-tab.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-mid)}
-.day-tab .dot{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--accent);display:none}
+.day-tab{flex-shrink:0;padding:7px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;border:1px solid var(–border);background:var(–surface);color:var(–text3);transition:all .15s;position:relative;font-family:‘Syne’,sans-serif}
+.day-tab.active{background:var(–accent-dim);color:var(–accent);border-color:var(–accent-mid)}
+.day-tab .dot{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(–accent);display:none}
 .day-tab.has-ex .dot{display:block}
 .mode-toggle{display:flex;gap:7px;margin-bottom:14px}
-.mode-btn{flex:1;padding:9px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);font-family:'DM Sans',sans-serif;transition:all .15s;text-align:center}
-.mode-btn.active{background:var(--accent);color:#0a0c10;border-color:var(--accent)}
+.mode-btn{flex:1;padding:9px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(–border);background:var(–surface);color:var(–text3);font-family:‘DM Sans’,sans-serif;transition:all .15s;text-align:center}
+.mode-btn.active{background:var(–accent);color:#0a0c10;border-color:var(–accent)}
 
 /* EXERCISE */
-.ex-item{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:8px}
+.ex-item{background:var(–surface);border:1px solid var(–border);border-radius:13px;padding:13px;margin-bottom:8px}
 .ex-name{font-weight:700;font-size:15px;margin-bottom:7px}
 .ex-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
-.ex-obs{font-size:12px;color:var(--text2);margin-bottom:8px;font-style:italic;line-height:1.5}
+.ex-obs{font-size:12px;color:var(–text2);margin-bottom:8px;font-style:italic;line-height:1.5}
 .ex-actions{display:flex;gap:5px;flex-wrap:wrap}
-.icon-btn{width:30px;height:30px;border-radius:8px;cursor:pointer;background:var(--card2);border:1px solid var(--border);color:var(--text3);font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.icon-btn{width:30px;height:30px;border-radius:8px;cursor:pointer;background:var(–card2);border:1px solid var(–border);color:var(–text3);font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
 .icon-btn:active{transform:scale(.88)}
-.icon-btn.danger{color:var(--red);border-color:rgba(255,77,106,.3);background:rgba(255,77,106,.08)}
+.icon-btn.danger{color:var(–red);border-color:rgba(255,77,106,.3);background:rgba(255,77,106,.08)}
 
 /* MEDIA */
 .ex-media{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px}
-.media-thumb{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(--border);flex-shrink:0;background:var(--card2)}
+.media-thumb{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(–border);flex-shrink:0;background:var(–card2)}
 .media-thumb img,.media-thumb video{width:100%;height:100%;object-fit:cover}
 .media-thumb .play-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);font-size:20px}
 .media-thumb .del-thumb{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:5px;background:rgba(255,77,106,.85);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer}
-.add-media-btn{width:72px;height:72px;border-radius:10px;border:1px dashed var(--border2);background:var(--card2);color:var(--text3);font-size:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:3px;flex-shrink:0}
-.add-media-btn span{font-size:9px;font-weight:600;text-transform:uppercase;color:var(--text3)}
-.view-ex{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border-radius:13px;padding:13px;margin-bottom:8px;border:1px solid var(--border)}
-.view-num{width:32px;height:32px;border-radius:9px;flex-shrink:0;background:var(--accent-dim);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px}
+.add-media-btn{width:72px;height:72px;border-radius:10px;border:1px dashed var(–border2);background:var(–card2);color:var(–text3);font-size:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:3px;flex-shrink:0}
+.add-media-btn span{font-size:9px;font-weight:600;text-transform:uppercase;color:var(–text3)}
+.view-ex{display:flex;gap:12px;align-items:flex-start;background:var(–surface);border-radius:13px;padding:13px;margin-bottom:8px;border:1px solid var(–border)}
+.view-num{width:32px;height:32px;border-radius:9px;flex-shrink:0;background:var(–accent-dim);color:var(–accent);display:flex;align-items:center;justify-content:center;font-family:‘Syne’,sans-serif;font-weight:800;font-size:13px}
 .view-media{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
-.view-thumb{width:90px;height:90px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--border);flex-shrink:0}
+.view-thumb{width:90px;height:90px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;border:1px solid var(–border);flex-shrink:0}
 .view-thumb img,.view-thumb video{width:100%;height:100%;object-fit:cover}
 .view-thumb .play-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);font-size:24px}
 
 /* MEDIA MODAL UPLOAD */
-.upload-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--card2);margin-bottom:10px}
-.upload-zone:active{border-color:var(--accent)}
+.upload-zone{border:1.5px dashed var(–border2);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(–card2);margin-bottom:10px}
+.upload-zone:active{border-color:var(–accent)}
 .uz-icon{font-size:30px;margin-bottom:6px}
-.uz-text{font-size:13px;color:var(--text2);line-height:1.6}
-.uz-note{font-size:11px;color:var(--text3);margin-top:4px}
+.uz-text{font-size:13px;color:var(–text2);line-height:1.6}
+.uz-note{font-size:11px;color:var(–text3);margin-top:4px}
 .media-preview-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.mp-item{position:relative;width:70px;height:70px;border-radius:9px;overflow:hidden;border:1px solid var(--border)}
+.mp-item{position:relative;width:70px;height:70px;border-radius:9px;overflow:hidden;border:1px solid var(–border)}
 .mp-item img,.mp-item video{width:100%;height:100%;object-fit:cover}
 .mp-item .mp-del{position:absolute;top:2px;right:2px;width:17px;height:17px;border-radius:4px;background:rgba(255,77,106,.9);border:none;color:#fff;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .mp-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);font-size:18px}
-.vid-warn{background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.3);border-radius:9px;padding:9px 12px;font-size:12px;color:var(--orange);margin-bottom:10px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.vid-warn{background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.3);border-radius:9px;padding:9px 12px;font-size:12px;color:var(–orange);margin-bottom:10px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
 
 /* HINT */
-.hint{background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:11px;padding:11px 13px;font-size:13px;color:var(--accent);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.hint{background:var(–accent-dim);border:1px solid var(–accent-mid);border-radius:11px;padding:11px 13px;font-size:13px;color:var(–accent);margin-bottom:13px;display:flex;align-items:center;gap:8px}
 
 /* TOAST */
-#toast{position:fixed;bottom:calc(var(--safe-bottom)+88px);left:50%;transform:translateX(-50%) translateY(16px);background:var(--card2);border:1px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:11px;font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:all .28s;z-index:9999;white-space:nowrap}
+#toast{position:fixed;bottom:calc(var(–safe-bottom)+88px);left:50%;transform:translateX(-50%) translateY(16px);background:var(–card2);border:1px solid var(–border2);color:var(–text);padding:9px 18px;border-radius:11px;font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:all .28s;z-index:9999;white-space:nowrap}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* MODALS */
 #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
 #modal-overlay.open{display:flex}
-#modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(var(--safe-bottom)+22px);width:100%;max-height:92vh;overflow-y:auto;animation:slideUp .28s ease}
+#modal-box{background:var(–surface);border:1px solid var(–border2);border-radius:22px 22px 0 0;padding:22px 16px calc(var(–safe-bottom)+22px);width:100%;max-height:92vh;overflow-y:auto;animation:slideUp .28s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
-.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
-.modal-close{width:30px;height:30px;border-radius:8px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-title{font-family:‘Syne’,sans-serif;font-weight:800;font-size:17px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(–card2);border:1px solid var(–border);color:var(–text2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
 /* MEDIA VIEWER */
 #media-viewer{position:fixed;inset:0;background:#000;z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column}
 #media-viewer.open{display:flex}
 #media-viewer img,#media-viewer video{max-width:100%;max-height:85vh;object-fit:contain;border-radius:12px}
-#media-viewer .close-viewer{position:absolute;top:calc(var(--safe-top)+16px);right:16px;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-#media-viewer .viewer-caption{position:absolute;bottom:calc(var(--safe-bottom)+20px);color:rgba(255,255,255,.6);font-size:13px;text-align:center}
+#media-viewer .close-viewer{position:absolute;top:calc(var(–safe-top)+16px);right:16px;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#media-viewer .viewer-caption{position:absolute;bottom:calc(var(–safe-bottom)+20px);color:rgba(255,255,255,.6);font-size:13px;text-align:center}
 
 /* CONFIRM */
 #confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 #confirm-overlay.open{display:flex}
-#confirm-box{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:22px;width:100%;max-width:310px;text-align:center}
+#confirm-box{background:var(–surface);border:1px solid var(–border2);border-radius:18px;padding:22px;width:100%;max-width:310px;text-align:center}
 #confirm-box .ci{font-size:38px;margin-bottom:10px}
-#confirm-box h3{font-family:'Syne',sans-serif;font-size:16px;margin-bottom:7px}
-#confirm-box p{font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5}
+#confirm-box h3{font-family:‘Syne’,sans-serif;font-size:16px;margin-bottom:7px}
+#confirm-box p{font-size:13px;color:var(–text2);margin-bottom:18px;line-height:1.5}
 
 /* PAYMENT SECTION */
-.pay-section{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.pay-section{background:var(–card2);border:1px solid var(–border);border-radius:12px;padding:14px;margin-bottom:10px}
 .pay-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .pay-toggle{display:flex;gap:8px}
-.pay-opt{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text3);transition:all .15s}
-.pay-opt.active-ok{background:rgba(59,255,160,.15);color:var(--accent);border-color:rgba(59,255,160,.4)}
-.pay-opt.active-late{background:rgba(255,77,106,.15);color:var(--red);border-color:rgba(255,77,106,.4)}
+.pay-opt{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(–border);background:var(–card);color:var(–text3);transition:all .15s}
+.pay-opt.active-ok{background:rgba(59,255,160,.15);color:var(–accent);border-color:rgba(59,255,160,.4)}
+.pay-opt.active-late{background:rgba(255,77,106,.15);color:var(–red);border-color:rgba(255,77,106,.4)}
 
 /* DUPLICATE MODAL */
 #dup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:250;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
 #dup-overlay.open{display:flex}
-#dup-box{background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(var(--safe-bottom)+22px);width:100%;max-height:70vh;overflow-y:auto;animation:slideUp .28s ease}
-.dup-item{display:flex;align-items:center;gap:12px;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
-.dup-item:active{border-color:var(--accent)}
+#dup-box{background:var(–surface);border:1px solid var(–border2);border-radius:22px 22px 0 0;padding:22px 16px calc(var(–safe-bottom)+22px);width:100%;max-height:70vh;overflow-y:auto;animation:slideUp .28s ease}
+.dup-item{display:flex;align-items:center;gap:12px;padding:13px;background:var(–card);border:1px solid var(–border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.dup-item:active{border-color:var(–accent)}
 
 ::-webkit-scrollbar{width:0}
 
 /* CRIATIVO */
-.criativo-tab{padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0}
-.criativo-tab.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-mid)}
-.tom-btn{padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);transition:all .15s;font-family:'DM Sans',sans-serif;text-align:center}
-.tom-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-mid)}
-.check-opt{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card)}
-.check-opt input{accent-color:var(--accent);width:14px;height:14px}
-.tag-btn{padding:7px 13px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);transition:all .15s;font-family:'DM Sans',sans-serif}
-.tag-btn.active{background:rgba(77,159,255,.15);color:var(--blue);border-color:rgba(77,159,255,.4)}
-.post-hist-item{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:9px}
+.criativo-tab{padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;border:1px solid var(–border);background:var(–surface);color:var(–text3);transition:all .15s;white-space:nowrap;font-family:‘DM Sans’,sans-serif;flex-shrink:0}
+.criativo-tab.active{background:var(–accent-dim);color:var(–accent);border-color:var(–accent-mid)}
+.tom-btn{padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(–border);background:var(–surface);color:var(–text3);transition:all .15s;font-family:‘DM Sans’,sans-serif;text-align:center}
+.tom-btn.active{background:var(–accent-dim);color:var(–accent);border-color:var(–accent-mid)}
+.check-opt{display:flex;align-items:center;gap:6px;font-size:13px;color:var(–text2);cursor:pointer;padding:5px 10px;border-radius:8px;border:1px solid var(–border);background:var(–card)}
+.check-opt input{accent-color:var(–accent);width:14px;height:14px}
+.tag-btn{padding:7px 13px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(–border);background:var(–surface);color:var(–text3);transition:all .15s;font-family:‘DM Sans’,sans-serif}
+.tag-btn.active{background:rgba(77,159,255,.15);color:var(–blue);border-color:rgba(77,159,255,.4)}
+.post-hist-item{background:var(–card);border:1px solid var(–border);border-radius:13px;padding:13px;margin-bottom:9px}
 .post-hist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.post-hist-tema{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--accent)}
-.post-hist-date{font-size:11px;color:var(--text3)}
-.post-hist-text{font-size:13px;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
+.post-hist-tema{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(–accent)}
+.post-hist-date{font-size:11px;color:var(–text3)}
+.post-hist-text{font-size:13px;color:var(–text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
 .post-hist-actions{display:flex;gap:7px}
-.ideia-item{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:9px}
-.ideia-tag{display:inline-flex;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;margin-bottom:8px;background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.3)}
-.ideia-titulo{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:5px}
-.ideia-texto{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.ideia-item{background:var(–card);border:1px solid var(–border);border-radius:13px;padding:13px;margin-bottom:9px}
+.ideia-tag{display:inline-flex;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;margin-bottom:8px;background:rgba(77,159,255,.12);color:var(–blue);border:1px solid rgba(77,159,255,.3)}
+.ideia-titulo{font-family:‘Syne’,sans-serif;font-weight:700;font-size:14px;margin-bottom:5px}
+.ideia-texto{font-size:13px;color:var(–text2);line-height:1.6;margin-bottom:10px}
 .cal-grid-inner{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-dow{font-size:9px;font-weight:700;text-transform:uppercase;text-align:center;color:var(--text3);padding:4px 0;letter-spacing:.5px}
+.cal-dow{font-size:9px;font-weight:700;text-transform:uppercase;text-align:center;color:var(–text3);padding:4px 0;letter-spacing:.5px}
 .cal-day{min-height:36px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:4px 2px;cursor:pointer;transition:background .15s;position:relative;border:1px solid transparent}
-.cal-day:active{background:var(--card2)}
-.cal-day.today{border-color:var(--accent-mid);background:var(--accent-dim)}
+.cal-day:active{background:var(–card2)}
+.cal-day.today{border-color:var(–accent-mid);background:var(–accent-dim)}
 .cal-day.other-month{opacity:.3}
-.cal-day.has-post::after{content:'';position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
-.cal-day-num{font-size:12px;font-weight:700;color:var(--text);margin-top:2px}
-.cal-day.today .cal-day-num{color:var(--accent)}
-.cal-post-chip{background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:7px;padding:5px 9px;font-size:11px;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cal-day.has-post::after{content:’’;position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(–accent)}
+.cal-day-num{font-size:12px;font-weight:700;color:var(–text);margin-top:2px}
+.cal-day.today .cal-day-num{color:var(–accent)}
+.cal-post-chip{background:var(–accent-dim);border:1px solid var(–accent-mid);border-radius:7px;padding:5px 9px;font-size:11px;color:var(–accent);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .cal-post-chip .chip-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(10,12,16,.4);border-top-color:rgba(10,12,16,.9);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* AGENDA WEEKLY TABLE */
 .week-table{width:100%;border-collapse:collapse;min-width:480px}
-.week-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);padding:9px 6px;text-align:center;border-bottom:1px solid var(--border)}
-.week-table th.today-col{color:var(--accent)}
-.week-table td{padding:5px 4px;vertical-align:top;border-right:1px solid var(--border);min-width:68px}
+.week-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(–text3);padding:9px 6px;text-align:center;border-bottom:1px solid var(–border)}
+.week-table th.today-col{color:var(–accent)}
+.week-table td{padding:5px 4px;vertical-align:top;border-right:1px solid var(–border);min-width:68px}
 .week-table td:last-child{border-right:none}
-.week-table .name-col{font-size:11px;font-weight:700;color:var(--text2);padding:5px 10px;border-right:1px solid var(--border);white-space:nowrap;vertical-align:middle;min-width:90px;max-width:100px;overflow:hidden;text-overflow:ellipsis}
+.week-table .name-col{font-size:11px;font-weight:700;color:var(–text2);padding:5px 10px;border-right:1px solid var(–border);white-space:nowrap;vertical-align:middle;min-width:90px;max-width:100px;overflow:hidden;text-overflow:ellipsis}
 .week-cell{border-radius:8px;padding:5px 4px;text-align:center;cursor:pointer;min-height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all .15s;position:relative}
 .week-cell.no-class{background:transparent;opacity:.3}
 .week-cell.present{background:rgba(59,255,160,.15);border:1px solid rgba(59,255,160,.4)}
 .week-cell.absent{background:rgba(255,77,106,.12);border:1px solid rgba(255,77,106,.3)}
 .week-cell.scheduled{background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.25)}
-.week-cell.today-cell{box-shadow:inset 0 0 0 1.5px var(--accent)}
-.week-cell .wc-time{font-size:10px;font-weight:700;color:var(--text)}
+.week-cell.today-cell{box-shadow:inset 0 0 0 1.5px var(–accent)}
+.week-cell .wc-time{font-size:10px;font-weight:700;color:var(–text)}
 .week-cell .wc-icon{font-size:14px;line-height:1}
 .week-cell .wc-status{font-size:9px;font-weight:700;letter-spacing:.4px}
 
 /* ATTENDANCE ROW */
-.attend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.attend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(–border)}
 .attend-row:last-child{border-bottom:none}
-.attend-bar-wrap{flex:1;height:6px;background:var(--card2);border-radius:4px;overflow:hidden}
-.attend-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .4s ease}
+.attend-bar-wrap{flex:1;height:6px;background:var(–card2);border-radius:4px;overflow:hidden}
+.attend-bar{height:100%;border-radius:4px;background:var(–accent);transition:width .4s ease}
 </style>
+
 </head>
 <body>
 <div id="app">
@@ -288,334 +292,365 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <div id="student-list"></div>
     </div>
 
-    <!-- FORM ALUNO -->
-    <div class="screen" id="screen-form">
-      <!-- Foto de perfil -->
-      <div class="card">
-        <div class="card-title">Foto de Perfil</div>
-        <div class="photo-picker">
-          <div class="photo-preview" id="pp-preview" onclick="pickProfilePhoto()">🧍</div>
-          <div class="photo-picker-info">
-            <div class="pp-title">Foto do aluno</div>
-            <div class="pp-sub">Toque para escolher da galeria ou tirar uma foto.<br>Aparece no card e no perfil.</div>
-          </div>
-        </div>
-        <input type="file" id="profile-photo-input" accept="image/*" style="display:none" onchange="handleProfilePhoto(event)"/>
+```
+<!-- FORM ALUNO -->
+<div class="screen" id="screen-form">
+  <!-- Foto de perfil -->
+  <div class="card">
+    <div class="card-title">Foto de Perfil</div>
+    <div class="photo-picker">
+      <div class="photo-preview" id="pp-preview" onclick="pickProfilePhoto()">🧍</div>
+      <div class="photo-picker-info">
+        <div class="pp-title">Foto do aluno</div>
+        <div class="pp-sub">Toque para escolher da galeria ou tirar uma foto.<br>Aparece no card e no perfil.</div>
       </div>
+    </div>
+    <input type="file" id="profile-photo-input" accept="image/*" style="display:none" onchange="handleProfilePhoto(event)"/>
+  </div>
 
-      <div class="card">
-        <div class="card-title">Dados Pessoais</div>
-        <div class="form-group"><label class="form-label">Nome completo *</label><input class="form-input" id="f-name" placeholder="Ex: João Silva"/></div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Peso (kg) *</label><input class="form-input" id="f-weight" type="number" placeholder="70"/></div>
-          <div class="form-group"><label class="form-label">Altura (cm) *</label><input class="form-input" id="f-height" type="number" placeholder="175"/></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Idade</label><input class="form-input" id="f-age" type="number" placeholder="28"/></div>
-          <div class="form-group"><label class="form-label">Sexo</label>
-            <select class="form-select" id="f-sex"><option value="">—</option><option value="M">Masculino</option><option value="F">Feminino</option></select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Massa Musc. (%)</label><input class="form-input" id="f-muscleMass" type="number" step="0.1" placeholder="Ex: 38.5"/></div>
-          <div class="form-group"><label class="form-label">Gord. Corp. (%)</label><input class="form-input" id="f-bodyFat" type="number" step="0.1" placeholder="Ex: 18.0"/></div>
-        </div>
-        <div class="form-group"><label class="form-label">Objetivo</label><input class="form-input" id="f-goal" placeholder="Ex: Hipertrofia, Emagrecimento..."/></div>
-        <div class="form-group"><label class="form-label">Observações / Restrições</label><textarea class="form-textarea" id="f-obs" placeholder="Lesões, limitações..."></textarea></div>
+  <div class="card">
+    <div class="card-title">Dados Pessoais</div>
+    <div class="form-group"><label class="form-label">Nome completo *</label><input class="form-input" id="f-name" placeholder="Ex: João Silva"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Peso (kg) *</label><input class="form-input" id="f-weight" type="number" placeholder="70"/></div>
+      <div class="form-group"><label class="form-label">Altura (cm) *</label><input class="form-input" id="f-height" type="number" placeholder="175"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Idade</label><input class="form-input" id="f-age" type="number" placeholder="28"/></div>
+      <div class="form-group"><label class="form-label">Sexo</label>
+        <select class="form-select" id="f-sex"><option value="">—</option><option value="M">Masculino</option><option value="F">Feminino</option></select>
       </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Massa Musc. (%)</label><input class="form-input" id="f-muscleMass" type="number" step="0.1" placeholder="Ex: 38.5"/></div>
+      <div class="form-group"><label class="form-label">Gord. Corp. (%)</label><input class="form-input" id="f-bodyFat" type="number" step="0.1" placeholder="Ex: 18.0"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Objetivo</label><input class="form-input" id="f-goal" placeholder="Ex: Hipertrofia, Emagrecimento..."/></div>
+    <div class="form-group"><label class="form-label">Observações / Restrições</label><textarea class="form-textarea" id="f-obs" placeholder="Lesões, limitações..."></textarea></div>
+  </div>
 
-      <div class="card">
-        <div class="card-title">Configuração de Treino</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Dias/semana</label>
-            <select class="form-select" id="f-days">
-              <option value="1">1 dia</option><option value="2">2 dias</option><option value="3" selected>3 dias</option>
-              <option value="4">4 dias</option><option value="5">5 dias</option><option value="6">6 dias</option><option value="7">7 dias</option>
-            </select>
-          </div>
-          <div class="form-group"><label class="form-label">Ciclo</label>
-            <select class="form-select" id="f-cycle" onchange="updateCycleHint()">
-              <option value="1">A</option><option value="2">A/B</option><option value="3" selected>A/B/C</option>
-              <option value="4">A/B/C/D</option><option value="5">A/B/C/D/E</option><option value="6">A/B/C/D/E/F</option>
-            </select>
-          </div>
-        </div>
-        <div class="hint">💡 Ciclo: <strong id="cycle-hint-text">A → B → C</strong></div>
+  <div class="card">
+    <div class="card-title">Configuração de Treino</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Dias/semana</label>
+        <select class="form-select" id="f-days">
+          <option value="1">1 dia</option><option value="2">2 dias</option><option value="3" selected>3 dias</option>
+          <option value="4">4 dias</option><option value="5">5 dias</option><option value="6">6 dias</option><option value="7">7 dias</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Ciclo</label>
+        <select class="form-select" id="f-cycle" onchange="updateCycleHint()">
+          <option value="1">A</option><option value="2">A/B</option><option value="3" selected>A/B/C</option>
+          <option value="4">A/B/C/D</option><option value="5">A/B/C/D/E</option><option value="6">A/B/C/D/E/F</option>
+        </select>
+      </div>
+    </div>
+    <div class="hint">💡 Ciclo: <strong id="cycle-hint-text">A → B → C</strong></div>
 
-        <!-- DUPLICAR TREINO -->
-        <div id="dup-section" style="display:none">
-          <div style="font-size:11px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Duplicar treino de outro aluno</div>
-          <button class="btn btn-blue btn-full btn-sm" onclick="openDupModal()">📋 Copiar treino de aluno existente</button>
+    <!-- DUPLICAR TREINO -->
+    <div id="dup-section" style="display:none">
+      <div style="font-size:11px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Duplicar treino de outro aluno</div>
+      <button class="btn btn-blue btn-full btn-sm" onclick="openDupModal()">📋 Copiar treino de aluno existente</button>
+    </div>
+  </div>
+
+  <!-- MENSALIDADE -->
+  <div class="card">
+    <div class="card-title">💰 Mensalidade</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Vencimento (dia)</label>
+        <select class="form-select" id="f-payday">
+          <option value="">Sem vencimento</option>
+          <option value="5">Dia 5</option>
+          <option value="10">Dia 10</option>
+          <option value="15">Dia 15</option>
+          <option value="20">Dia 20</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <div class="pay-toggle" style="margin-top:6px">
+          <button class="pay-opt active-ok" id="pay-btn-ok" onclick="setPayStatus('ok')">✅ Pago</button>
+          <button class="pay-opt" id="pay-btn-late" onclick="setPayStatus('late')">❌ Pendente</button>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- MENSALIDADE -->
-      <div class="card">
-        <div class="card-title">💰 Mensalidade</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Vencimento (dia)</label>
-            <select class="form-select" id="f-payday">
-              <option value="">Sem vencimento</option>
-              <option value="5">Dia 5</option>
-              <option value="10">Dia 10</option>
-              <option value="15">Dia 15</option>
-              <option value="20">Dia 20</option>
-            </select>
-          </div>
-          <div class="form-group"><label class="form-label">Status</label>
-            <div class="pay-toggle" style="margin-top:6px">
-              <button class="pay-opt active-ok" id="pay-btn-ok" onclick="setPayStatus('ok')">✅ Pago</button>
-              <button class="pay-opt" id="pay-btn-late" onclick="setPayStatus('late')">❌ Pendente</button>
-            </div>
-          </div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goBack()">Cancelar</button>
+    <button class="btn btn-primary" onclick="saveStudent()" style="flex:1">Salvar Aluno</button>
+  </div>
+</div>
+
+<!-- PROGRESSO -->
+<div class="screen" id="screen-progress">
+  <div id="progress-header" style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <div id="progress-avatar" style="width:46px;height:46px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0"></div>
+    <div>
+      <div id="progress-name" style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px"></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:2px">Histórico de evolução</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:13px">
+    <div class="card-title">📸 Registrar medição</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Peso (kg)</label><input class="form-input" id="prog-weight" type="number" step="0.1" placeholder="70.0"/></div>
+      <div class="form-group"><label class="form-label">Gord. Corp. (%)</label><input class="form-input" id="prog-fat" type="number" step="0.1" placeholder="18.0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Massa Musc. (%)</label><input class="form-input" id="prog-muscle" type="number" step="0.1" placeholder="38.0"/></div>
+      <div class="form-group"><label class="form-label">IMC (calc. auto)</label><input class="form-input" id="prog-bmi" readonly placeholder="—" style="opacity:.6"/></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="saveProgressEntry()" style="margin-top:4px">💾 Salvar medição</button>
+  </div>
+  <div id="progress-chart-area"></div>
+  <div id="progress-history"></div>
+</div>
+
+<!-- DETALHE -->
+<div class="screen" id="screen-detail">
+  <div id="detail-header" style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+    <div id="detail-avatar" style="width:56px;height:56px;border-radius:16px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;flex-shrink:0"></div>
+    <div style="flex:1;min-width:0">
+      <div id="detail-name" style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px"></div>
+      <div id="detail-goal" style="font-size:12px;color:var(--accent);margin-top:2px"></div>
+    </div>
+    <div id="detail-pay-badge"></div>
+  </div>
+  <div id="detail-info-grid" class="info-grid"></div>
+  <div id="detail-obs-box" style="display:none" class="hint"><span>📝</span><span id="detail-obs-text"></span></div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="mode-edit-btn" onclick="setMode('edit')">✏️ Editar</button>
+    <button class="mode-btn" id="mode-view-btn" onclick="setMode('view')">👁 Visualizar</button>
+    <button class="mode-btn" id="mode-prog-btn" onclick="showProgress()">📈 Progresso</button>
+  </div>
+  <div class="day-tabs" id="day-tabs"></div>
+  <div class="card" id="exercise-area"></div>
+  <button class="btn btn-outline btn-full" onclick="exportPDF()" style="margin-top:2px">📄 Exportar / Compartilhar</button>
+</div>
+
+<!-- AGENDA -->
+<div class="screen" id="screen-agenda">
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Agenda Semanal</div>
+  <div id="agenda-date" style="font-size:13px;color:var(--text2);margin-bottom:16px"></div>
+
+  <!-- Resumo rápido -->
+  <div id="agenda-stats-row" class="stats-row" style="margin-bottom:16px"></div>
+
+  <!-- Tabela semanal -->
+  <div class="card" style="padding:0;overflow:hidden;margin-bottom:13px">
+    <div style="padding:13px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div class="card-title" style="margin-bottom:0">📅 Semana Atual</div>
+      <div id="agenda-week-label" style="font-size:11px;color:var(--text3)"></div>
+    </div>
+    <div id="agenda-week-table" style="overflow-x:auto;-webkit-overflow-scrolling:touch"></div>
+  </div>
+
+  <!-- Lista de atendimentos do dia selecionado -->
+  <div id="agenda-day-panel" style="display:none">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px" id="agenda-day-title"></div>
+    <div id="agenda-day-list"></div>
+  </div>
+
+  <!-- Presença mensal -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="card-title">📊 Presenças do Mês</div>
+    <div id="attendance-month-label" style="font-size:12px;color:var(--text2);margin-bottom:10px"></div>
+    <div id="attendance-list"></div>
+  </div>
+</div>
+
+<!-- MENSALIDADE -->
+<div class="screen" id="screen-mensalidade">
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Mensalidades</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Acompanhe pagamentos dos seus alunos</div>
+  <div id="pay-alerts-box" style="margin-bottom:14px"></div>
+  <div class="stats-row" id="pay-stats-row"></div>
+  <div id="pay-list"></div>
+</div>
+
+<!-- CRIATIVO -->
+<div class="screen" id="screen-install">
+  <!-- Sub-tabs -->
+  <div style="display:flex;gap:7px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none">
+    <button class="criativo-tab active" id="ctab-gerar" onclick="setCriativoTab('gerar')">✨ Gerar Post</button>
+    <button class="criativo-tab" id="ctab-historico" onclick="setCriativoTab('historico')">📂 Histórico</button>
+    <button class="criativo-tab" id="ctab-calendario" onclick="setCriativoTab('calendario')">📅 Calendário</button>
+    <button class="criativo-tab" id="ctab-ideias" onclick="setCriativoTab('ideias')">💡 Ideias</button>
+  </div>
+
+  <!-- ── GERAR POST ── -->
+  <div id="cpanel-gerar">
+    <!-- API Key -->
+    <div id="api-key-section" class="card" style="margin-bottom:13px">
+      <div class="card-title">🔑 OpenAI API Key</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Insira sua chave para gerar posts com IA. Fica salva apenas no seu celular.</div>
+      <div style="display:flex;gap:8px">
+        <input class="form-input" id="openai-key-input" type="password" placeholder="sk-..." style="flex:1;font-size:13px"/>
+        <button class="btn btn-primary btn-sm" onclick="saveApiKey()">Salvar</button>
+      </div>
+      <div id="api-key-status" style="font-size:11px;margin-top:8px;color:var(--text3)"></div>
+    </div>
+
+    <!-- Configurações de geração -->
+    <div class="card" style="margin-bottom:13px">
+      <div class="card-title">⚙️ Configurar Post</div>
+      <div class="form-group">
+        <label class="form-label">Tema</label>
+        <select class="form-select" id="post-tema">
+          <option value="dica_exercicio">💪 Dica de Exercício</option>
+          <option value="motivacional">🔥 Post Motivacional</option>
+          <option value="nutricao">🥗 Nutrição e Alimentação</option>
+          <option value="treino_dia">📋 Treino do Dia</option>
+          <option value="resultado">🏆 Resultado de Aluno</option>
+          <option value="curiosidade">🧠 Curiosidade Fitness</option>
+          <option value="recuperacao">😴 Recuperação e Descanso</option>
+          <option value="antes_depois">✨ Antes e Depois</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tom do post</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+          <button class="tom-btn active" id="tom-motivador" onclick="setTom('motivador')">🔥 Motivador</button>
+          <button class="tom-btn" id="tom-educativo" onclick="setTom('educativo')">📚 Educativo</button>
+          <button class="tom-btn" id="tom-descontraido" onclick="setTom('descontraido')">😄 Descontraído</button>
+          <button class="tom-btn" id="tom-profissional" onclick="setTom('profissional')">💼 Profissional</button>
         </div>
       </div>
+      <div class="form-group">
+        <label class="form-label">Contexto adicional (opcional)</label>
+        <textarea class="form-textarea" id="post-contexto" placeholder="Ex: foco em glúteos, para iniciantes, pós-treino..." style="height:60px"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Incluir</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label class="check-opt"><input type="checkbox" id="inc-hashtags" checked> #Hashtags</label>
+          <label class="check-opt"><input type="checkbox" id="inc-emoji" checked> Emojis</label>
+          <label class="check-opt"><input type="checkbox" id="inc-cta"> Call-to-action</label>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" id="btn-gerar" onclick="gerarPost()">
+        <span id="btn-gerar-txt">✨ Gerar Post com IA</span>
+      </button>
+    </div>
 
-      <div class="btn-row">
-        <button class="btn btn-ghost" onclick="goBack()">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveStudent()" style="flex:1">Salvar Aluno</button>
+    <!-- Opção de gerar imagem -->
+    <div class="card" style="margin-bottom:13px">
+      <div class="card-title">🖼️ Imagem para o Post</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Gere uma imagem fitness com IA (DALL-E). Requer a mesma API Key da OpenAI.</div>
+      <div class="form-group">
+        <label class="form-label">Descrição da imagem</label>
+        <textarea class="form-textarea" id="img-prompt" placeholder="Ex: Personal trainer motivando aluno na academia, estilo moderno, cores vibrantes..." style="height:70px"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estilo</label>
+        <select class="form-select" id="img-style">
+          <option value="vivid">🎨 Vibrante (padrão Instagram)</option>
+          <option value="natural">📷 Natural / Fotográfico</option>
+        </select>
+      </div>
+      <button class="btn btn-blue btn-full" id="btn-gerar-img" onclick="gerarImagem()">
+        <span id="btn-gerar-img-txt">🖼️ Gerar Imagem com IA</span>
+      </button>
+      <!-- Resultado da imagem -->
+      <div id="img-resultado" style="display:none;margin-top:14px">
+        <img id="img-gerada" src="" alt="Imagem gerada" style="width:100%;border-radius:12px;display:block;margin-bottom:10px"/>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="baixarImagem()">⬇️ Baixar</button>
+          <button class="btn btn-ghost btn-sm" onclick="compartilharImagem()">📤 Compartilhar</button>
+        </div>
       </div>
     </div>
 
-    <!-- PROGRESSO -->
-    <div class="screen" id="screen-progress">
-      <div id="progress-header" style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <div id="progress-avatar" style="width:46px;height:46px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0"></div>
-        <div>
-          <div id="progress-name" style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px"></div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px">Histórico de evolução</div>
-        </div>
-      </div>
+    <!-- Resultado gerado -->
+    <div id="post-resultado" style="display:none">
       <div class="card" style="margin-bottom:13px">
-        <div class="card-title">📸 Registrar medição</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Peso (kg)</label><input class="form-input" id="prog-weight" type="number" step="0.1" placeholder="70.0"/></div>
-          <div class="form-group"><label class="form-label">Gord. Corp. (%)</label><input class="form-input" id="prog-fat" type="number" step="0.1" placeholder="18.0"/></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="card-title" style="margin-bottom:0">📝 Post Gerado</div>
+          <div style="display:flex;gap:6px">
+            <button class="icon-btn" onclick="regenerarPost()" title="Regenerar">🔄</button>
+            <button class="icon-btn" onclick="copiarPost()" title="Copiar">📋</button>
+          </div>
         </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Massa Musc. (%)</label><input class="form-input" id="prog-muscle" type="number" step="0.1" placeholder="38.0"/></div>
-          <div class="form-group"><label class="form-label">IMC (calc. auto)</label><input class="form-input" id="prog-bmi" readonly placeholder="—" style="opacity:.6"/></div>
-        </div>
-        <button class="btn btn-primary btn-full" onclick="saveProgressEntry()" style="margin-top:4px">💾 Salvar medição</button>
-      </div>
-      <div id="progress-chart-area"></div>
-      <div id="progress-history"></div>
-    </div>
-
-    <!-- DETALHE -->
-    <div class="screen" id="screen-detail">
-      <div id="detail-header" style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-        <div id="detail-avatar" style="width:56px;height:56px;border-radius:16px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;flex-shrink:0"></div>
-        <div style="flex:1;min-width:0">
-          <div id="detail-name" style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px"></div>
-          <div id="detail-goal" style="font-size:12px;color:var(--accent);margin-top:2px"></div>
-        </div>
-        <div id="detail-pay-badge"></div>
-      </div>
-      <div id="detail-info-grid" class="info-grid"></div>
-      <div id="detail-obs-box" style="display:none" class="hint"><span>📝</span><span id="detail-obs-text"></span></div>
-      <div class="mode-toggle">
-        <button class="mode-btn active" id="mode-edit-btn" onclick="setMode('edit')">✏️ Editar</button>
-        <button class="mode-btn" id="mode-view-btn" onclick="setMode('view')">👁 Visualizar</button>
-        <button class="mode-btn" id="mode-prog-btn" onclick="showProgress()">📈 Progresso</button>
-      </div>
-      <div class="day-tabs" id="day-tabs"></div>
-      <div class="card" id="exercise-area"></div>
-      <button class="btn btn-outline btn-full" onclick="exportPDF()" style="margin-top:2px">📄 Exportar / Compartilhar</button>
-    </div>
-
-    <!-- AGENDA -->
-    <div class="screen" id="screen-agenda">
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Agenda Semanal</div>
-      <div id="agenda-date" style="font-size:13px;color:var(--text2);margin-bottom:16px"></div>
-
-      <!-- Resumo rápido -->
-      <div id="agenda-stats-row" class="stats-row" style="margin-bottom:16px"></div>
-
-      <!-- Tabela semanal -->
-      <div class="card" style="padding:0;overflow:hidden;margin-bottom:13px">
-        <div style="padding:13px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-          <div class="card-title" style="margin-bottom:0">📅 Semana Atual</div>
-          <div id="agenda-week-label" style="font-size:11px;color:var(--text3)"></div>
-        </div>
-        <div id="agenda-week-table" style="overflow-x:auto;-webkit-overflow-scrolling:touch"></div>
+        <div id="post-texto" style="font-size:14px;line-height:1.75;color:var(--text);white-space:pre-wrap;word-break:break-word"></div>
+        <div id="post-hashtags" style="margin-top:12px;font-size:13px;color:var(--blue);line-height:1.8;word-break:break-word"></div>
       </div>
 
-      <!-- Lista de atendimentos do dia selecionado -->
-      <div id="agenda-day-panel" style="display:none">
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px" id="agenda-day-title"></div>
-        <div id="agenda-day-list"></div>
-      </div>
-
-      <!-- Presença mensal -->
+      <!-- Compartilhar -->
       <div class="card" style="margin-bottom:13px">
-        <div class="card-title">📊 Presenças do Mês</div>
-        <div id="attendance-month-label" style="font-size:12px;color:var(--text2);margin-bottom:10px"></div>
-        <div id="attendance-list"></div>
+        <div class="card-title">🚀 Compartilhar</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <button class="btn btn-ghost btn-sm" onclick="compartilhar('whatsapp')">💬 WhatsApp</button>
+          <button class="btn btn-ghost btn-sm" onclick="compartilhar('instagram')">📸 Instagram</button>
+          <button class="btn btn-ghost btn-sm" onclick="compartilhar('native')">📤 Compartilhar</button>
+          <button class="btn btn-ghost btn-sm" onclick="salvarPost()">💾 Salvar</button>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- MENSALIDADE -->
-    <div class="screen" id="screen-mensalidade">
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Mensalidades</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Acompanhe pagamentos dos seus alunos</div>
-      <div id="pay-alerts-box" style="margin-bottom:14px"></div>
-      <div class="stats-row" id="pay-stats-row"></div>
-      <div id="pay-list"></div>
+  <!-- ── HISTÓRICO ── -->
+  <div id="cpanel-historico" style="display:none">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Histórico de Posts</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Posts salvos e gerados</div>
+    <div id="historico-lista"></div>
+  </div>
+
+  <!-- ── CALENDÁRIO ── -->
+  <div id="cpanel-calendario" style="display:none">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Calendário de Posts</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Planeje suas publicações</div>
+    <div id="cal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <button class="btn btn-ghost btn-sm" onclick="calNav(-1)">‹</button>
+      <div id="cal-mes-label" style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px"></div>
+      <button class="btn btn-ghost btn-sm" onclick="calNav(1)">›</button>
     </div>
+    <div id="cal-grid" class="card" style="padding:12px"></div>
 
-    <!-- CRIATIVO -->
-    <div class="screen" id="screen-install">
-      <!-- Sub-tabs -->
-      <div style="display:flex;gap:7px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none">
-        <button class="criativo-tab active" id="ctab-gerar" onclick="setCriativoTab('gerar')">✨ Gerar Post</button>
-        <button class="criativo-tab" id="ctab-historico" onclick="setCriativoTab('historico')">📂 Histórico</button>
-        <button class="criativo-tab" id="ctab-calendario" onclick="setCriativoTab('calendario')">📅 Calendário</button>
-        <button class="criativo-tab" id="ctab-ideias" onclick="setCriativoTab('ideias')">💡 Ideias</button>
-      </div>
-
-      <!-- ── GERAR POST ── -->
-      <div id="cpanel-gerar">
-        <!-- API Key -->
-        <div id="api-key-section" class="card" style="margin-bottom:13px">
-          <div class="card-title">🔑 OpenAI API Key</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Insira sua chave para gerar posts com IA. Fica salva apenas no seu celular.</div>
-          <div style="display:flex;gap:8px">
-            <input class="form-input" id="openai-key-input" type="password" placeholder="sk-..." style="flex:1;font-size:13px"/>
-            <button class="btn btn-primary btn-sm" onclick="saveApiKey()">Salvar</button>
-          </div>
-          <div id="api-key-status" style="font-size:11px;margin-top:8px;color:var(--text3)"></div>
+    <!-- Painel de agendamento -->
+    <div id="cal-day-panel" style="display:none;margin-top:13px">
+      <div class="card">
+        <div class="card-title">📅 <span id="cal-day-title"></span></div>
+        <div id="cal-day-posts"></div>
+        <div class="form-group" style="margin-top:10px;margin-bottom:8px">
+          <label class="form-label">Agendar novo post</label>
+          <textarea class="form-textarea" id="cal-novo-post" placeholder="Escreva ou cole o conteúdo do post..." style="height:80px"></textarea>
         </div>
-
-        <!-- Configurações de geração -->
-        <div class="card" style="margin-bottom:13px">
-          <div class="card-title">⚙️ Configurar Post</div>
-          <div class="form-group">
-            <label class="form-label">Tema</label>
-            <select class="form-select" id="post-tema">
-              <option value="dica_exercicio">💪 Dica de Exercício</option>
-              <option value="motivacional">🔥 Post Motivacional</option>
-              <option value="nutricao">🥗 Nutrição e Alimentação</option>
-              <option value="treino_dia">📋 Treino do Dia</option>
-              <option value="resultado">🏆 Resultado de Aluno</option>
-              <option value="curiosidade">🧠 Curiosidade Fitness</option>
-              <option value="recuperacao">😴 Recuperação e Descanso</option>
-              <option value="antes_depois">✨ Antes e Depois</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tom do post</label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-              <button class="tom-btn active" id="tom-motivador" onclick="setTom('motivador')">🔥 Motivador</button>
-              <button class="tom-btn" id="tom-educativo" onclick="setTom('educativo')">📚 Educativo</button>
-              <button class="tom-btn" id="tom-descontraido" onclick="setTom('descontraido')">😄 Descontraído</button>
-              <button class="tom-btn" id="tom-profissional" onclick="setTom('profissional')">💼 Profissional</button>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contexto adicional (opcional)</label>
-            <textarea class="form-textarea" id="post-contexto" placeholder="Ex: foco em glúteos, para iniciantes, pós-treino..." style="height:60px"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Incluir</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <label class="check-opt"><input type="checkbox" id="inc-hashtags" checked> #Hashtags</label>
-              <label class="check-opt"><input type="checkbox" id="inc-emoji" checked> Emojis</label>
-              <label class="check-opt"><input type="checkbox" id="inc-cta"> Call-to-action</label>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-full" id="btn-gerar" onclick="gerarPost()">
-            <span id="btn-gerar-txt">✨ Gerar Post com IA</span>
-          </button>
+        <div class="form-group">
+          <label class="form-label">Horário</label>
+          <input class="form-input" id="cal-horario" type="time" value="09:00" style="width:140px"/>
         </div>
-
-        <!-- Resultado gerado -->
-        <div id="post-resultado" style="display:none">
-          <div class="card" style="margin-bottom:13px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-              <div class="card-title" style="margin-bottom:0">📝 Post Gerado</div>
-              <div style="display:flex;gap:6px">
-                <button class="icon-btn" onclick="regenerarPost()" title="Regenerar">🔄</button>
-                <button class="icon-btn" onclick="copiarPost()" title="Copiar">📋</button>
-              </div>
-            </div>
-            <div id="post-texto" style="font-size:14px;line-height:1.75;color:var(--text);white-space:pre-wrap;word-break:break-word"></div>
-            <div id="post-hashtags" style="margin-top:12px;font-size:13px;color:var(--blue);line-height:1.8;word-break:break-word"></div>
-          </div>
-
-          <!-- Compartilhar -->
-          <div class="card" style="margin-bottom:13px">
-            <div class="card-title">🚀 Compartilhar</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-              <button class="btn btn-ghost btn-sm" onclick="compartilhar('whatsapp')">💬 WhatsApp</button>
-              <button class="btn btn-ghost btn-sm" onclick="compartilhar('instagram')">📸 Instagram</button>
-              <button class="btn btn-ghost btn-sm" onclick="compartilhar('native')">📤 Compartilhar</button>
-              <button class="btn btn-ghost btn-sm" onclick="salvarPost()">💾 Salvar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── HISTÓRICO ── -->
-      <div id="cpanel-historico" style="display:none">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Histórico de Posts</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Posts salvos e gerados</div>
-        <div id="historico-lista"></div>
-      </div>
-
-      <!-- ── CALENDÁRIO ── -->
-      <div id="cpanel-calendario" style="display:none">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Calendário de Posts</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Planeje suas publicações</div>
-        <div id="cal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <button class="btn btn-ghost btn-sm" onclick="calNav(-1)">‹</button>
-          <div id="cal-mes-label" style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px"></div>
-          <button class="btn btn-ghost btn-sm" onclick="calNav(1)">›</button>
-        </div>
-        <div id="cal-grid" class="card" style="padding:12px"></div>
-
-        <!-- Painel de agendamento -->
-        <div id="cal-day-panel" style="display:none;margin-top:13px">
-          <div class="card">
-            <div class="card-title">📅 <span id="cal-day-title"></span></div>
-            <div id="cal-day-posts"></div>
-            <div class="form-group" style="margin-top:10px;margin-bottom:8px">
-              <label class="form-label">Agendar novo post</label>
-              <textarea class="form-textarea" id="cal-novo-post" placeholder="Escreva ou cole o conteúdo do post..." style="height:80px"></textarea>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Horário</label>
-              <input class="form-input" id="cal-horario" type="time" value="09:00" style="width:140px"/>
-            </div>
-            <button class="btn btn-primary btn-full" onclick="agendarPost()">📅 Agendar Post</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── IDEIAS ── -->
-      <div id="cpanel-ideias" style="display:none">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Banco de Ideias</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Guarde inspirações para posts futuros</div>
-        <div class="card" style="margin-bottom:13px">
-          <div class="card-title">💡 Nova Ideia</div>
-          <div class="form-group">
-            <input class="form-input" id="ideia-titulo" placeholder="Título da ideia..." style="margin-bottom:8px"/>
-            <textarea class="form-textarea" id="ideia-texto" placeholder="Descreva a ideia, contexto, referência..." style="height:80px;margin-top:8px"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tag</label>
-            <div style="display:flex;gap:7px;flex-wrap:wrap">
-              <button class="tag-btn active" id="tag-exercicio" onclick="setTag('exercicio')">💪 Exercício</button>
-              <button class="tag-btn" id="tag-nutricao" onclick="setTag('nutricao')">🥗 Nutrição</button>
-              <button class="tag-btn" id="tag-motivacao" onclick="setTag('motivacao')">🔥 Motivação</button>
-              <button class="tag-btn" id="tag-dica" onclick="setTag('dica')">📌 Dica</button>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-full" onclick="salvarIdeia()">💾 Salvar Ideia</button>
-        </div>
-        <div id="ideias-lista"></div>
+        <button class="btn btn-primary btn-full" onclick="agendarPost()">📅 Agendar Post</button>
       </div>
     </div>
+  </div>
+
+  <!-- ── IDEIAS ── -->
+  <div id="cpanel-ideias" style="display:none">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Banco de Ideias</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Guarde inspirações para posts futuros</div>
+    <div class="card" style="margin-bottom:13px">
+      <div class="card-title">💡 Nova Ideia</div>
+      <div class="form-group">
+        <input class="form-input" id="ideia-titulo" placeholder="Título da ideia..." style="margin-bottom:8px"/>
+        <textarea class="form-textarea" id="ideia-texto" placeholder="Descreva a ideia, contexto, referência..." style="height:80px;margin-top:8px"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tag</label>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="tag-btn active" id="tag-exercicio" onclick="setTag('exercicio')">💪 Exercício</button>
+          <button class="tag-btn" id="tag-nutricao" onclick="setTag('nutricao')">🥗 Nutrição</button>
+          <button class="tag-btn" id="tag-motivacao" onclick="setTag('motivacao')">🔥 Motivação</button>
+          <button class="tag-btn" id="tag-dica" onclick="setTag('dica')">📌 Dica</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="salvarIdeia()">💾 Salvar Ideia</button>
+    </div>
+    <div id="ideias-lista"></div>
+  </div>
+</div>
+```
+
   </div>
 
   <nav id="bottomnav">
@@ -628,6 +663,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 </div>
 
 <!-- EXERCISE MODAL -->
+
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal-box">
     <div class="modal-title"><span id="modal-title-text">Novo Exercício</span><button class="modal-close" onclick="closeModal()">✕</button></div>
@@ -648,33 +684,37 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     </div>
     <div class="form-group"><label class="form-label">Dica / Observação</label><textarea class="form-textarea" id="ex-obs" placeholder="Ex: Manter costas retas..."></textarea></div>
 
-    <!-- MÍDIA -->
-    <div style="margin-bottom:6px">
-      <label class="form-label" style="margin-bottom:10px">📸 Fotos / 🎬 Vídeos (até 10s)</label>
-      <div class="media-preview-list" id="modal-media-preview"></div>
-      <div class="vid-warn" id="vid-warn" style="display:none">⚠️ <div>Vídeos cortados em <strong>10 segundos</strong>.</div></div>
+```
+<!-- MÍDIA -->
+<div style="margin-bottom:6px">
+  <label class="form-label" style="margin-bottom:10px">📸 Fotos / 🎬 Vídeos (até 10s)</label>
+  <div class="media-preview-list" id="modal-media-preview"></div>
+  <div class="vid-warn" id="vid-warn" style="display:none">⚠️ <div>Vídeos cortados em <strong>10 segundos</strong>.</div></div>
 
-      <!-- Botões de seleção de mídia -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('image','gallery')">🖼️ Da Galeria</button>
-        <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('image','camera')">📷 Câmera</button>
-        <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('video','gallery')">🎞️ Vídeo Galeria</button>
-        <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('video','camera')">🎬 Gravar Vídeo</button>
-      </div>
-      <input type="file" id="media-gallery-img" accept="image/*" multiple style="display:none" onchange="handleMediaFiles(event)"/>
-      <input type="file" id="media-camera-img" accept="image/*" capture="environment" style="display:none" onchange="handleMediaFiles(event)"/>
-      <input type="file" id="media-gallery-vid" accept="video/*" multiple style="display:none" onchange="handleMediaFiles(event)"/>
-      <input type="file" id="media-camera-vid" accept="video/*" capture="environment" style="display:none" onchange="handleMediaFiles(event)"/>
-    </div>
+  <!-- Botões de seleção de mídia -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+    <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('image','gallery')">🖼️ Da Galeria</button>
+    <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('image','camera')">📷 Câmera</button>
+    <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('video','gallery')">🎞️ Vídeo Galeria</button>
+    <button class="btn btn-ghost btn-sm btn-full" onclick="triggerMediaPick('video','camera')">🎬 Gravar Vídeo</button>
+  </div>
+  <input type="file" id="media-gallery-img" accept="image/*" multiple style="display:none" onchange="handleMediaFiles(event)"/>
+  <input type="file" id="media-camera-img" accept="image/*" capture="environment" style="display:none" onchange="handleMediaFiles(event)"/>
+  <input type="file" id="media-gallery-vid" accept="video/*" multiple style="display:none" onchange="handleMediaFiles(event)"/>
+  <input type="file" id="media-camera-vid" accept="video/*" capture="environment" style="display:none" onchange="handleMediaFiles(event)"/>
+</div>
 
-    <div class="btn-row" style="margin-top:14px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn btn-primary" style="flex:1" onclick="saveExercise()">Salvar Exercício</button>
-    </div>
+<div class="btn-row" style="margin-top:14px">
+  <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+  <button class="btn btn-primary" style="flex:1" onclick="saveExercise()">Salvar Exercício</button>
+</div>
+```
+
   </div>
 </div>
 
 <!-- MEDIA VIEWER -->
+
 <div id="media-viewer">
   <button class="close-viewer" onclick="closeViewer()">✕</button>
   <div id="viewer-content"></div>
@@ -682,6 +722,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 </div>
 
 <!-- DUPLICATE MODAL -->
+
 <div id="dup-overlay" onclick="closeDupModal(event)">
   <div id="dup-box">
     <div class="modal-title"><span>📋 Copiar Treino de Aluno</span><button class="modal-close" onclick="closeDupModal()">✕</button></div>
@@ -691,6 +732,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 </div>
 
 <!-- CONFIRM -->
+
 <div id="confirm-overlay">
   <div id="confirm-box">
     <div class="ci" id="confirm-icon">⚠️</div>
@@ -1305,6 +1347,7 @@ function buildPDFHtml(s) {
   td{padding:8px 9px;border-bottom:1px solid #eee;vertical-align:top}tr:last-child td{border-bottom:none}
   .footer{margin-top:36px;text-align:center;font-size:11px;color:#bbb;border-top:1px solid #eee;padding-top:14px}
   @media print{.action-bar{display:none}body{padding:14px}.day-block{page-break-inside:avoid}}</style></head><body>
+
   <div class="action-bar">
     <button class="btn-print" onclick="window.print()">🖨️ Salvar como PDF</button>
     <button class="btn-download" onclick="downloadHTML()">⬇️ Baixar</button>
@@ -1331,40 +1374,41 @@ function buildPDFHtml(s) {
 }
 
 function exportPDF() {
-  const s = students.find(x => x.id === selectedStudentId);
-  const html = buildPDFHtml(s);
-  const blob = new Blob([html], { type: 'text/html' });
-  const fileName = `treino-${s.name.replace(/\s+/g,'-')}.html`;
-  const file = new File([blob], fileName, { type: 'text/html' });
-  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ title:`Treino - ${s.name}`, text:'Ficha de treino FitPlan Pro!', files:[file] })
-      .then(() => toast('✅ Compartilhado!'))
-      .catch(e => { if (e.name !== 'AbortError') openShareModal(html, s.name); });
-  } else { openShareModal(html, s.name); }
+const s = students.find(x => x.id === selectedStudentId);
+const html = buildPDFHtml(s);
+const blob = new Blob([html], { type: ‘text/html’ });
+const fileName = `treino-${s.name.replace(/\s+/g,'-')}.html`;
+const file = new File([blob], fileName, { type: ‘text/html’ });
+if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+navigator.share({ title:`Treino - ${s.name}`, text:‘Ficha de treino FitPlan Pro!’, files:[file] })
+.then(() => toast(‘✅ Compartilhado!’))
+.catch(e => { if (e.name !== ‘AbortError’) openShareModal(html, s.name); });
+} else { openShareModal(html, s.name); }
 }
 
 function openShareModal(html, studentName) {
-  const fileName = `treino-${studentName.replace(/\s+/g,'-')}.html`;
-  const blob = new Blob([html], { type: 'text/html' });
-  const blobUrl = URL.createObjectURL(blob);
-  let overlay = document.getElementById('share-modal-overlay');
-  if (!overlay) { overlay = document.createElement('div'); overlay.id = 'share-modal-overlay'; overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:flex;align-items:flex-end;backdrop-filter:blur(4px)'; document.body.appendChild(overlay); }
-  overlay.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;animation:slideUp .28s ease">
-    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:6px">📤 Exportar Ficha</div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:20px">${studentName}</div>
-    <div onclick="openPrintWindow('${blobUrl}')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:10px;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:12px;background:rgba(59,255,160,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🖨️</div>
-      <div><div style="font-weight:700;font-size:14px">Salvar como PDF</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Abre opção de salvar PDF</div></div>
-    </div>
-    <a href="${blobUrl}" download="${fileName}" onclick="closeShareModal()" style="text-decoration:none;display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:10px;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:12px;background:rgba(77,159,255,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">⬇️</div>
-      <div><div style="font-weight:700;font-size:14px;color:var(--text)">Baixar arquivo</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Salva nos seus arquivos</div></div>
-    </a>
-    <div onclick="shareViaWhatsApp('${studentName}')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:20px;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💬</div>
-      <div><div style="font-weight:700;font-size:14px">WhatsApp</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Abre WhatsApp com mensagem pronta</div></div>
-    </div>
-    <button onclick="closeShareModal()" style="width:100%;padding:13px;border-radius:12px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Cancelar</button>
+const fileName = `treino-${studentName.replace(/\s+/g,'-')}.html`;
+const blob = new Blob([html], { type: ‘text/html’ });
+const blobUrl = URL.createObjectURL(blob);
+let overlay = document.getElementById(‘share-modal-overlay’);
+if (!overlay) { overlay = document.createElement(‘div’); overlay.id = ‘share-modal-overlay’; overlay.style.cssText = ‘position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:flex;align-items:flex-end;backdrop-filter:blur(4px)’; document.body.appendChild(overlay); }
+overlay.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;animation:slideUp .28s ease">
+<div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:6px">📤 Exportar Ficha</div>
+<div style="font-size:13px;color:var(--text2);margin-bottom:20px">${studentName}</div>
+<div onclick="openPrintWindow('${blobUrl}')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:10px;cursor:pointer">
+<div style="width:44px;height:44px;border-radius:12px;background:rgba(59,255,160,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🖨️</div>
+<div><div style="font-weight:700;font-size:14px">Salvar como PDF</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Abre opção de salvar PDF</div></div>
+</div>
+<a href="${blobUrl}" download="${fileName}" onclick="closeShareModal()" style="text-decoration:none;display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:10px;cursor:pointer">
+<div style="width:44px;height:44px;border-radius:12px;background:rgba(77,159,255,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">⬇️</div>
+<div><div style="font-weight:700;font-size:14px;color:var(--text)">Baixar arquivo</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Salva nos seus arquivos</div></div>
+</a>
+<div onclick="shareViaWhatsApp('${studentName}')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:20px;cursor:pointer">
+<div style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💬</div>
+<div><div style="font-weight:700;font-size:14px">WhatsApp</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Abre WhatsApp com mensagem pronta</div></div>
+</div>
+<button onclick="closeShareModal()" style="width:100%;padding:13px;border-radius:12px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Cancelar</button>
+
   </div>`;
   overlay.onclick = e => { if (e.target === overlay) closeShareModal(); };
   overlay.style.display = 'flex';
@@ -1377,427 +1421,366 @@ function closeShareModal() { const o = document.getElementById('share-modal-over
 // AGENDA — WEEKLY TABLE + ATTENDANCE
 // ══════════════════════════════════════════
 
-// Attendance data stored as: { 'studentId': { 'YYYY-MM-DD': 'present'|'absent' } }
-let attendanceData = JSON.parse(localStorage.getItem('fp_attendance') || '{}');
-function saveAttendance() { localStorage.setItem('fp_attendance', JSON.stringify(attendanceData)); }
+// Attendance data stored as: { ‘studentId’: { ‘YYYY-MM-DD’: ‘present’|‘absent’ } }
+let attendanceData = JSON.parse(localStorage.getItem(‘fp_attendance’) || ‘{}’);
+function saveAttendance() { localStorage.setItem(‘fp_attendance’, JSON.stringify(attendanceData)); }
 
-// Schedule data: { 'studentId': { scheduledDays: [0,1,2..6], time: '08:00' } }
-// 0=Dom,1=Seg,...6=Sáb
-let scheduleData = JSON.parse(localStorage.getItem('fp_schedule') || '{}');
-function saveSchedule() { localStorage.setItem('fp_schedule', JSON.stringify(scheduleData)); }
+// Schedule data: { ‘studentId’: { scheduledDays: [0,1,2..6], time: ‘08:00’ } }
+// 0=Dom,1=Seg,…6=Sáb
+let scheduleData = JSON.parse(localStorage.getItem(‘fp_schedule’) || ‘{}’);
+function saveSchedule() { localStorage.setItem(‘fp_schedule’, JSON.stringify(scheduleData)); }
 
-const DAY_NAMES_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-const DAY_NAMES_FULL  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-const MONTHS_FULL = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const DAY_NAMES_SHORT = [‘Dom’,‘Seg’,‘Ter’,‘Qua’,‘Qui’,‘Sex’,‘Sáb’];
+const DAY_NAMES_FULL  = [‘Domingo’,‘Segunda’,‘Terça’,‘Quarta’,‘Quinta’,‘Sexta’,‘Sábado’];
+const MONTHS_FULL = [‘janeiro’,‘fevereiro’,‘março’,‘abril’,‘maio’,‘junho’,‘julho’,‘agosto’,‘setembro’,‘outubro’,‘novembro’,‘dezembro’];
 
 function getWeekDates(refDate) {
-  // Monday-based week
-  const d = new Date(refDate);
-  const day = d.getDay(); // 0=sun
-  const mon = new Date(d);
-  mon.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
-  return Array.from({length:7}, (_,i) => {
-    const dd = new Date(mon);
-    dd.setDate(mon.getDate() + i);
-    return dd;
-  });
+// Monday-based week
+const d = new Date(refDate);
+const day = d.getDay(); // 0=sun
+const mon = new Date(d);
+mon.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+return Array.from({length:7}, (_,i) => {
+const dd = new Date(mon);
+dd.setDate(mon.getDate() + i);
+return dd;
+});
 }
 
 function dateKey(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
 let agendaSelectedDay = null; // index in weekDates
 
 function renderAgenda() {
-  const now = new Date();
-  document.getElementById('agenda-date').textContent =
-    `${DAY_NAMES_FULL[now.getDay()]}, ${now.getDate()} de ${MONTHS_FULL[now.getMonth()]} de ${now.getFullYear()}`;
+const now = new Date();
+document.getElementById(‘agenda-date’).textContent =
+`${DAY_NAMES_FULL[now.getDay()]}, ${now.getDate()} de ${MONTHS_FULL[now.getMonth()]} de ${now.getFullYear()}`;
 
-  const weekDates = getWeekDates(now);
-  const todayKey = dateKey(now);
+const weekDates = getWeekDates(now);
+const todayKey = dateKey(now);
 
-  // Week label
-  const wStart = weekDates[0], wEnd = weekDates[6];
-  document.getElementById('agenda-week-label').textContent =
-    `${wStart.getDate()}/${wStart.getMonth()+1} – ${wEnd.getDate()}/${wEnd.getMonth()+1}`;
+// Week label
+const wStart = weekDates[0], wEnd = weekDates[6];
+document.getElementById(‘agenda-week-label’).textContent =
+`${wStart.getDate()}/${wStart.getMonth()+1} – ${wEnd.getDate()}/${wEnd.getMonth()+1}`;
 
-  // Stats
-  const total = students.length;
-  let weekPresent = 0, weekAbsent = 0;
+// Stats
+const total = students.length;
+let weekPresent = 0, weekAbsent = 0;
+weekDates.forEach(wd => {
+const dk = dateKey(wd);
+students.forEach(s => {
+const sc = scheduleData[s.id];
+if (!sc) return;
+const wdow = wd.getDay() === 0 ? 6 : wd.getDay() - 1; // mon=0
+if (sc.scheduledDays && sc.scheduledDays.includes(wd.getDay())) {
+const st = attendanceData[s.id]?.[dk];
+if (st === ‘present’) weekPresent++;
+else if (st === ‘absent’) weekAbsent++;
+}
+});
+});
+document.getElementById(‘agenda-stats-row’).innerHTML = ` <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${total}</div><div class="stat-lbl">Alunos</div></div> <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${weekPresent}</div><div class="stat-lbl">Presenças semana</div></div> <div class="stat-card"><div class="stat-val" style="color:var(--red)">${weekAbsent}</div><div class="stat-lbl">Faltas semana</div></div>`;
+
+// Build weekly table
+if (!students.length) {
+document.getElementById(‘agenda-week-table’).innerHTML =
+`<div style="text-align:center;padding:30px;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📅</div><p style="font-size:13px">Nenhum aluno cadastrado.</p></div>`;
+} else {
+const studentsWithSchedule = students.filter(s => scheduleData[s.id]?.scheduledDays?.length);
+const studentsNoSchedule = students.filter(s => !scheduleData[s.id]?.scheduledDays?.length);
+
+```
+let tableHtml = `<table class="week-table"><thead><tr>
+  <th style="text-align:left;padding-left:10px">Aluno</th>`;
+weekDates.forEach(wd => {
+  const dk = dateKey(wd);
+  const isToday = dk === todayKey;
+  tableHtml += `<th class="${isToday?'today-col':''}">${DAY_NAMES_SHORT[wd.getDay()]}<br><span style="font-size:11px;font-weight:400">${wd.getDate()}</span></th>`;
+});
+tableHtml += `</tr></thead><tbody>`;
+
+const renderStudentRow = s => {
+  const sc = scheduleData[s.id] || { scheduledDays: [], time: '' };
+  const name = s.name.split(' ')[0];
+  let row = `<tr><td class="name-col">
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="width:24px;height:24px;border-radius:7px;overflow:hidden;flex-shrink:0;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:11px">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
+      <div>
+        <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px;font-size:11px;font-weight:700;color:var(--text)">${name}</div>
+        ${sc.time?`<div style="font-size:9px;color:var(--accent)">${sc.time}</div>`:''}
+      </div>
+    </div>
+    <button onclick="openScheduleModal('${s.id}')" style="margin-top:4px;font-size:9px;padding:2px 6px;border-radius:5px;border:1px solid var(--border);background:var(--card2);color:var(--text3);cursor:pointer;width:100%">⚙️ Config</button>
+  </td>`;
   weekDates.forEach(wd => {
     const dk = dateKey(wd);
-    students.forEach(s => {
-      const sc = scheduleData[s.id];
-      if (!sc) return;
-      const wdow = wd.getDay() === 0 ? 6 : wd.getDay() - 1; // mon=0
-      if (sc.scheduledDays && sc.scheduledDays.includes(wd.getDay())) {
-        const st = attendanceData[s.id]?.[dk];
-        if (st === 'present') weekPresent++;
-        else if (st === 'absent') weekAbsent++;
-      }
-    });
+    const isToday = dk === todayKey;
+    const hasClass = sc.scheduledDays && sc.scheduledDays.includes(wd.getDay());
+    const status = attendanceData[s.id]?.[dk];
+    let cellClass = 'week-cell';
+    let icon = '', statusText = '';
+    if (!hasClass) {
+      cellClass += ' no-class';
+      icon = '—';
+    } else if (status === 'present') {
+      cellClass += ' present';
+      icon = '✅'; statusText = 'Presente';
+    } else if (status === 'absent') {
+      cellClass += ' absent';
+      icon = '❌'; statusText = 'Falta';
+    } else {
+      cellClass += ' scheduled';
+      icon = '🏋️'; statusText = sc.time || 'Agendado';
+    }
+    if (isToday && hasClass) cellClass += ' today-cell';
+    const clickable = hasClass ? `onclick="toggleAttendance('${s.id}','${dk}')"` : '';
+    row += `<td><div class="${cellClass}" ${clickable}>
+      <div class="wc-icon">${icon}</div>
+      ${statusText ? `<div class="wc-status" style="color:${status==='present'?'var(--accent)':status==='absent'?'var(--red)':'var(--text3)'}">${statusText}</div>` : ''}
+    </div></td>`;
   });
-  document.getElementById('agenda-stats-row').innerHTML = `
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${total}</div><div class="stat-lbl">Alunos</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${weekPresent}</div><div class="stat-lbl">Presenças semana</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--red)">${weekAbsent}</div><div class="stat-lbl">Faltas semana</div></div>`;
+  row += `</tr>`;
+  return row;
+};
 
-  // Build weekly table
-  if (!students.length) {
-    document.getElementById('agenda-week-table').innerHTML =
-      `<div style="text-align:center;padding:30px;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📅</div><p style="font-size:13px">Nenhum aluno cadastrado.</p></div>`;
-  } else {
-    const studentsWithSchedule = students.filter(s => scheduleData[s.id]?.scheduledDays?.length);
-    const studentsNoSchedule = students.filter(s => !scheduleData[s.id]?.scheduledDays?.length);
+studentsWithSchedule.forEach(s => { tableHtml += renderStudentRow(s); });
+studentsNoSchedule.forEach(s => { tableHtml += renderStudentRow(s); });
+tableHtml += `</tbody></table>`;
+document.getElementById('agenda-week-table').innerHTML = tableHtml;
+```
 
-    let tableHtml = `<table class="week-table"><thead><tr>
-      <th style="text-align:left;padding-left:10px">Aluno</th>`;
-    weekDates.forEach(wd => {
-      const dk = dateKey(wd);
-      const isToday = dk === todayKey;
-      tableHtml += `<th class="${isToday?'today-col':''}">${DAY_NAMES_SHORT[wd.getDay()]}<br><span style="font-size:11px;font-weight:400">${wd.getDate()}</span></th>`;
-    });
-    tableHtml += `</tr></thead><tbody>`;
+}
 
-    const renderStudentRow = s => {
-      const sc = scheduleData[s.id] || { scheduledDays: [], time: '' };
-      const name = s.name.split(' ')[0];
-      let row = `<tr><td class="name-col">
-        <div style="display:flex;align-items:center;gap:6px">
-          <div style="width:24px;height:24px;border-radius:7px;overflow:hidden;flex-shrink:0;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:11px">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
-          <div>
-            <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px;font-size:11px;font-weight:700;color:var(--text)">${name}</div>
-            ${sc.time?`<div style="font-size:9px;color:var(--accent)">${sc.time}</div>`:''}
-          </div>
-        </div>
-        <button onclick="openScheduleModal('${s.id}')" style="margin-top:4px;font-size:9px;padding:2px 6px;border-radius:5px;border:1px solid var(--border);background:var(--card2);color:var(--text3);cursor:pointer;width:100%">⚙️ Config</button>
-      </td>`;
-      weekDates.forEach(wd => {
-        const dk = dateKey(wd);
-        const isToday = dk === todayKey;
-        const hasClass = sc.scheduledDays && sc.scheduledDays.includes(wd.getDay());
-        const status = attendanceData[s.id]?.[dk];
-        let cellClass = 'week-cell';
-        let icon = '', statusText = '';
-        if (!hasClass) {
-          cellClass += ' no-class';
-          icon = '—';
-        } else if (status === 'present') {
-          cellClass += ' present';
-          icon = '✅'; statusText = 'Presente';
-        } else if (status === 'absent') {
-          cellClass += ' absent';
-          icon = '❌'; statusText = 'Falta';
-        } else {
-          cellClass += ' scheduled';
-          icon = '🏋️'; statusText = sc.time || 'Agendado';
-        }
-        if (isToday && hasClass) cellClass += ' today-cell';
-        const clickable = hasClass ? `onclick="toggleAttendance('${s.id}','${dk}')"` : '';
-        row += `<td><div class="${cellClass}" ${clickable}>
-          <div class="wc-icon">${icon}</div>
-          ${statusText ? `<div class="wc-status" style="color:${status==='present'?'var(--accent)':status==='absent'?'var(--red)':'var(--text3)'}">${statusText}</div>` : ''}
-        </div></td>`;
-      });
-      row += `</tr>`;
-      return row;
-    };
+// Monthly attendance summary
+const now2 = new Date();
+const monthKey = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}`;
+document.getElementById(‘attendance-month-label’).textContent =
+`${MONTHS_FULL[now2.getMonth()].charAt(0).toUpperCase() + MONTHS_FULL[now2.getMonth()].slice(1)} ${now2.getFullYear()}`;
 
-    studentsWithSchedule.forEach(s => { tableHtml += renderStudentRow(s); });
-    studentsNoSchedule.forEach(s => { tableHtml += renderStudentRow(s); });
-    tableHtml += `</tbody></table>`;
-    document.getElementById('agenda-week-table').innerHTML = tableHtml;
-  }
-
-  // Monthly attendance summary
-  const now2 = new Date();
-  const monthKey = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}`;
-  document.getElementById('attendance-month-label').textContent =
-    `${MONTHS_FULL[now2.getMonth()].charAt(0).toUpperCase() + MONTHS_FULL[now2.getMonth()].slice(1)} ${now2.getFullYear()}`;
-
-  if (!students.length) {
-    document.getElementById('attendance-list').innerHTML = `<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">Nenhum aluno cadastrado.</div>`;
-  } else {
-    document.getElementById('attendance-list').innerHTML = students.map(s => {
-      const att = attendanceData[s.id] || {};
-      let present = 0, absent = 0;
-      Object.entries(att).forEach(([k, v]) => {
-        if (k.startsWith(monthKey)) { if (v==='present') present++; else if (v==='absent') absent++; }
-      });
-      const total = present + absent;
-      const pct = total > 0 ? Math.round(present/total*100) : 0;
-      const name = s.name.split(' ').slice(0,2).join(' ');
-      return `<div class="attend-row">
-        <div style="width:28px;height:28px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:13px">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
-          <div class="attend-bar-wrap" style="margin-top:4px"><div class="attend-bar" style="width:${pct}%"></div></div>
-        </div>
-        <div style="text-align:right;flex-shrink:0;min-width:64px">
-          <div style="font-size:12px;font-weight:700;color:var(--accent)">${present} aulas</div>
-          <div style="font-size:10px;color:var(--red)">${absent} falt.</div>
-        </div>
-      </div>`;
-    }).join('');
-  }
+if (!students.length) {
+document.getElementById(‘attendance-list’).innerHTML = `<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">Nenhum aluno cadastrado.</div>`;
+} else {
+document.getElementById(‘attendance-list’).innerHTML = students.map(s => {
+const att = attendanceData[s.id] || {};
+let present = 0, absent = 0;
+Object.entries(att).forEach(([k, v]) => {
+if (k.startsWith(monthKey)) { if (v===‘present’) present++; else if (v===‘absent’) absent++; }
+});
+const total = present + absent;
+const pct = total > 0 ? Math.round(present/total*100) : 0;
+const name = s.name.split(’ ‘).slice(0,2).join(’ ‘);
+return `<div class="attend-row"> <div style="width:28px;height:28px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:13px">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div> <div style="flex:1;min-width:0"> <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div> <div class="attend-bar-wrap" style="margin-top:4px"><div class="attend-bar" style="width:${pct}%"></div></div> </div> <div style="text-align:right;flex-shrink:0;min-width:64px"> <div style="font-size:12px;font-weight:700;color:var(--accent)">${present} aulas</div> <div style="font-size:10px;color:var(--red)">${absent} falt.</div> </div> </div>`;
+}).join(’’);
+}
 }
 
 function toggleAttendance(studentId, dk) {
-  if (!attendanceData[studentId]) attendanceData[studentId] = {};
-  const cur = attendanceData[studentId][dk];
-  if (!cur || cur === 'absent') {
-    attendanceData[studentId][dk] = 'present';
-    toast('✅ Presença registrada!');
-  } else if (cur === 'present') {
-    attendanceData[studentId][dk] = 'absent';
-    toast('❌ Falta registrada');
-  }
-  saveAttendance();
-  renderAgenda();
+if (!attendanceData[studentId]) attendanceData[studentId] = {};
+const cur = attendanceData[studentId][dk];
+if (!cur || cur === ‘absent’) {
+attendanceData[studentId][dk] = ‘present’;
+toast(‘✅ Presença registrada!’);
+} else if (cur === ‘present’) {
+attendanceData[studentId][dk] = ‘absent’;
+toast(‘❌ Falta registrada’);
+}
+saveAttendance();
+renderAgenda();
 }
 
 // Schedule config modal
 function openScheduleModal(studentId) {
-  const s = students.find(x => x.id === studentId);
-  if (!s) return;
-  const sc = scheduleData[studentId] || { scheduledDays: [], time: '' };
-  const dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const s = students.find(x => x.id === studentId);
+if (!s) return;
+const sc = scheduleData[studentId] || { scheduledDays: [], time: ‘’ };
+const dayNames = [‘Dom’,‘Seg’,‘Ter’,‘Qua’,‘Qui’,‘Sex’,‘Sáb’];
 
-  const modalHtml = `
-    <div id="sched-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:flex-end;backdrop-filter:blur(4px)" onclick="closeSchedModal(event)">
-      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;max-height:80vh;overflow-y:auto;animation:slideUp .28s ease">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;margin-bottom:4px">⚙️ Agenda de ${s.name.split(' ')[0]}</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Defina os dias e horário de atendimento</div>
-        <div class="form-label">Dias da semana</div>
-        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">
-          ${dayNames.map((d,i) => `<button id="sd-${i}" onclick="toggleSchedDay(${i})" style="padding:8px 12px;border-radius:9px;font-weight:700;font-size:12px;cursor:pointer;border:1px solid ${(sc.scheduledDays||[]).includes(i)?'var(--accent)':'var(--border)'};background:${(sc.scheduledDays||[]).includes(i)?'var(--accent-dim)':'var(--card)'};color:${(sc.scheduledDays||[]).includes(i)?'var(--accent)':'var(--text3)'};transition:all .15s;font-family:'DM Sans',sans-serif">${d}</button>`).join('')}
-        </div>
-        <div class="form-label">Horário</div>
-        <input class="form-input" id="sched-time" type="time" value="${sc.time||''}" style="margin-bottom:16px"/>
-        <div class="btn-row">
-          <button class="btn btn-ghost" onclick="closeSchedModal()">Cancelar</button>
-          <button class="btn btn-primary" style="flex:1" onclick="saveSchedModal('${studentId}')">Salvar</button>
-        </div>
-      </div>
-    </div>`;
+const modalHtml = `<div id="sched-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:flex-end;backdrop-filter:blur(4px)" onclick="closeSchedModal(event)"> <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;max-height:80vh;overflow-y:auto;animation:slideUp .28s ease"> <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;margin-bottom:4px">⚙️ Agenda de ${s.name.split(' ')[0]}</div> <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Defina os dias e horário de atendimento</div> <div class="form-label">Dias da semana</div> <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px"> ${dayNames.map((d,i) =>`<button id="sd-${i}" onclick="toggleSchedDay(${i})" style="padding:8px 12px;border-radius:9px;font-weight:700;font-size:12px;cursor:pointer;border:1px solid ${(sc.scheduledDays||[]).includes(i)?'var(--accent)':'var(--border)'};background:${(sc.scheduledDays||[]).includes(i)?'var(--accent-dim)':'var(--card)'};color:${(sc.scheduledDays||[]).includes(i)?'var(--accent)':'var(--text3)'};transition:all .15s;font-family:'DM Sans',sans-serif">${d}</button>`).join('')} </div> <div class="form-label">Horário</div> <input class="form-input" id="sched-time" type="time" value="${sc.time||''}" style="margin-bottom:16px"/> <div class="btn-row"> <button class="btn btn-ghost" onclick="closeSchedModal()">Cancelar</button> <button class="btn btn-primary" style="flex:1" onclick="saveSchedModal('${studentId}')">Salvar</button> </div> </div> </div>`;
 
-  window._schedDays = [...(sc.scheduledDays || [])];
-  document.body.insertAdjacentHTML('beforeend', modalHtml);
+window._schedDays = […(sc.scheduledDays || [])];
+document.body.insertAdjacentHTML(‘beforeend’, modalHtml);
 }
 
 function toggleSchedDay(i) {
-  const idx = window._schedDays.indexOf(i);
-  if (idx >= 0) window._schedDays.splice(idx, 1); else window._schedDays.push(i);
-  const btn = document.getElementById('sd-'+i);
-  const active = window._schedDays.includes(i);
-  btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
-  btn.style.background = active ? 'var(--accent-dim)' : 'var(--card)';
-  btn.style.color = active ? 'var(--accent)' : 'var(--text3)';
+const idx = window._schedDays.indexOf(i);
+if (idx >= 0) window._schedDays.splice(idx, 1); else window._schedDays.push(i);
+const btn = document.getElementById(‘sd-’+i);
+const active = window._schedDays.includes(i);
+btn.style.borderColor = active ? ‘var(–accent)’ : ‘var(–border)’;
+btn.style.background = active ? ‘var(–accent-dim)’ : ‘var(–card)’;
+btn.style.color = active ? ‘var(–accent)’ : ‘var(–text3)’;
 }
 
 function saveSchedModal(studentId) {
-  const time = document.getElementById('sched-time').value;
-  scheduleData[studentId] = { scheduledDays: window._schedDays.sort((a,b)=>a-b), time };
-  saveSchedule();
-  closeSchedModal();
-  toast('✅ Agenda salva!');
-  renderAgenda();
+const time = document.getElementById(‘sched-time’).value;
+scheduleData[studentId] = { scheduledDays: window._schedDays.sort((a,b)=>a-b), time };
+saveSchedule();
+closeSchedModal();
+toast(‘✅ Agenda salva!’);
+renderAgenda();
 }
 
 function closeSchedModal(e) {
-  const overlay = document.getElementById('sched-modal-overlay');
-  if (!overlay) return;
-  if (e && e.target !== overlay) return;
-  overlay.remove();
+const overlay = document.getElementById(‘sched-modal-overlay’);
+if (!overlay) return;
+if (e && e.target !== overlay) return;
+overlay.remove();
 }
 
 // ══════════════════════════════════════════
 // MENSALIDADE
 // ══════════════════════════════════════════
 function renderMensalidade() {
-  const today = new Date();
-  const day = today.getDate();
-  const tomorrow = day + 1;
+const today = new Date();
+const day = today.getDate();
+const tomorrow = day + 1;
 
-  // Alerts: vence hoje ou amanhã (só pendentes)
-  const alertsEl = document.getElementById('pay-alerts-box');
-  const alertsHtml = [];
-  students.forEach(s => {
-    if (!s.payDay || s.payStatus !== 'late') {
-      const pd = parseInt(s.payDay);
-      if (pd === day) alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🔴</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--red)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence HOJE (dia ${pd})</div></div><button class="btn btn-sm btn-danger" onclick="markPaid('${s.id}')">Marcar pago</button></div>`);
-      else if (pd === tomorrow) alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🟡</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--orange)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence amanhã (dia ${pd})</div></div></div>`);
-    }
-  });
-  alertsEl.innerHTML = alertsHtml.length ? `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚠️ Alertas</div>${alertsHtml.join('')}` : '';
+// Alerts: vence hoje ou amanhã (só pendentes)
+const alertsEl = document.getElementById(‘pay-alerts-box’);
+const alertsHtml = [];
+students.forEach(s => {
+if (!s.payDay || s.payStatus !== ‘late’) {
+const pd = parseInt(s.payDay);
+if (pd === day) alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🔴</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--red)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence HOJE (dia ${pd})</div></div><button class="btn btn-sm btn-danger" onclick="markPaid('${s.id}')">Marcar pago</button></div>`);
+else if (pd === tomorrow) alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🟡</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--orange)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence amanhã (dia ${pd})</div></div></div>`);
+}
+});
+alertsEl.innerHTML = alertsHtml.length ? `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚠️ Alertas</div>${alertsHtml.join('')}` : ‘’;
 
-  // Stats
-  const comVenc = students.filter(s => s.payDay).length;
-  const pagos = students.filter(s => s.payDay && s.payStatus !== 'late').length;
-  const pend = students.filter(s => s.payDay && s.payStatus === 'late').length;
-  document.getElementById('pay-stats-row').innerHTML = `
-    <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${comVenc}</div><div class="stat-lbl">Com venc.</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${pagos}</div><div class="stat-lbl">Em dia</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--red)">${pend}</div><div class="stat-lbl">Pendentes</div></div>`;
+// Stats
+const comVenc = students.filter(s => s.payDay).length;
+const pagos = students.filter(s => s.payDay && s.payStatus !== ‘late’).length;
+const pend = students.filter(s => s.payDay && s.payStatus === ‘late’).length;
+document.getElementById(‘pay-stats-row’).innerHTML = ` <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${comVenc}</div><div class="stat-lbl">Com venc.</div></div> <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${pagos}</div><div class="stat-lbl">Em dia</div></div> <div class="stat-card"><div class="stat-val" style="color:var(--red)">${pend}</div><div class="stat-lbl">Pendentes</div></div>`;
 
-  // List
-  const payList = document.getElementById('pay-list');
-  const withPay = students.filter(s => s.payDay);
-  if (!withPay.length) {
-    payList.innerHTML = `<div style="text-align:center;padding:36px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">💰</div><p style="font-size:13px">Nenhum aluno com vencimento cadastrado.</p></div>`;
-    return;
-  }
-  payList.innerHTML = withPay.sort((a,b) => parseInt(a.payDay)-parseInt(b.payDay)).map(s => {
-    const pi = payInfo(s);
-    const isPend = s.payStatus === 'late';
-    const pd = parseInt(s.payDay);
-    // Countdown calculation
-    const now2 = new Date();
-    const todayDay = now2.getDate();
-    let daysLeft = pd - todayDay;
-    if (daysLeft < 0) {
-      // Next month
-      const daysInMonth = new Date(now2.getFullYear(), now2.getMonth()+2, 0).getDate();
-      daysLeft = daysInMonth - todayDay + pd;
-    }
-    let countdownHtml = '';
-    if (!isPend) {
-      const countdownColor = daysLeft <= 3 ? 'var(--red)' : daysLeft <= 7 ? 'var(--orange)' : 'var(--accent)';
-      countdownHtml = `<div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:10px">
-        <span style="font-size:18px">⏳</span>
-        <div style="flex:1">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;font-weight:600">Próximo pagamento</div>
-          <div style="font-size:13px;font-weight:700;color:${countdownColor};margin-top:1px">${daysLeft === 0 ? 'Vence HOJE!' : daysLeft === 1 ? 'Vence amanhã!' : `Faltam ${daysLeft} dias`}</div>
-        </div>
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:${countdownColor}">${daysLeft}</div>
-      </div>`;
-    }
-    return `<div class="pay-section">
-      <div class="pay-row">
-        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-          <div style="width:38px;height:38px;border-radius:11px;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
-          <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:1px">Vence dia ${s.payDay}</div></div>
-        </div>
-        ${pi ? `<span class="pay-badge ${pi.cls}">${pi.label}</span>` : ''}
-      </div>
-      ${countdownHtml}
-      <div style="display:flex;gap:8px">
-        ${isPend ? `<button class="btn btn-sm btn-outline" style="flex:1" onclick="markPaid('${s.id}')">✅ Marcar pago</button>` : `<button class="btn btn-sm btn-ghost" style="flex:1" onclick="markPending('${s.id}')">❌ Marcar pendente</button>`}
-      </div>
-    </div>`;
-  }).join('');
+// List
+const payList = document.getElementById(‘pay-list’);
+const withPay = students.filter(s => s.payDay);
+if (!withPay.length) {
+payList.innerHTML = `<div style="text-align:center;padding:36px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">💰</div><p style="font-size:13px">Nenhum aluno com vencimento cadastrado.</p></div>`;
+return;
+}
+payList.innerHTML = withPay.sort((a,b) => parseInt(a.payDay)-parseInt(b.payDay)).map(s => {
+const pi = payInfo(s);
+const isPend = s.payStatus === ‘late’;
+const pd = parseInt(s.payDay);
+// Countdown calculation
+const now2 = new Date();
+const todayDay = now2.getDate();
+let daysLeft = pd - todayDay;
+if (daysLeft < 0) {
+// Next month
+const daysInMonth = new Date(now2.getFullYear(), now2.getMonth()+2, 0).getDate();
+daysLeft = daysInMonth - todayDay + pd;
+}
+let countdownHtml = ‘’;
+if (!isPend) {
+const countdownColor = daysLeft <= 3 ? ‘var(–red)’ : daysLeft <= 7 ? ‘var(–orange)’ : ‘var(–accent)’;
+countdownHtml = `<div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:10px"> <span style="font-size:18px">⏳</span> <div style="flex:1"> <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;font-weight:600">Próximo pagamento</div> <div style="font-size:13px;font-weight:700;color:${countdownColor};margin-top:1px">${daysLeft === 0 ? 'Vence HOJE!' : daysLeft === 1 ? 'Vence amanhã!' : `Faltam ${daysLeft} dias`}</div> </div> <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:${countdownColor}">${daysLeft}</div> </div>`;
+}
+return `<div class="pay-section"> <div class="pay-row"> <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0"> <div style="width:38px;height:38px;border-radius:11px;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div> <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div> <div style="font-size:11px;color:var(--text2);margin-top:1px">Vence dia ${s.payDay}</div></div> </div> ${pi ? `<span class="pay-badge ${pi.cls}">${pi.label}</span>`: ''} </div> ${countdownHtml} <div style="display:flex;gap:8px"> ${isPend ?`<button class="btn btn-sm btn-outline" style="flex:1" onclick="markPaid('${s.id}')">✅ Marcar pago</button>`:`<button class="btn btn-sm btn-ghost" style="flex:1" onclick="markPending('${s.id}')">❌ Marcar pendente</button>`} </div> </div>`;
+}).join(’’);
 }
 
 function markPaid(id) {
-  const s = students.find(x => x.id === id);
-  if (s) { s.payStatus = 'ok'; save(); renderMensalidade(); renderHome(); toast(`✅ ${s.name} marcado como pago!`); }
+const s = students.find(x => x.id === id);
+if (s) { s.payStatus = ‘ok’; save(); renderMensalidade(); renderHome(); toast(`✅ ${s.name} marcado como pago!`); }
 }
 function markPending(id) {
-  const s = students.find(x => x.id === id);
-  if (s) { s.payStatus = 'late'; save(); renderMensalidade(); renderHome(); toast(`⚠️ ${s.name} marcado como pendente`); }
+const s = students.find(x => x.id === id);
+if (s) { s.payStatus = ‘late’; save(); renderMensalidade(); renderHome(); toast(`⚠️ ${s.name} marcado como pendente`); }
 }
 
 // ══════════════════════════════════════════
 // PROGRESSO
 // ══════════════════════════════════════════
 function showProgress() {
-  const s = students.find(x => x.id === selectedStudentId);
-  if (!s) return;
-  document.getElementById('top-title').textContent = 'Progresso';
-  const avatar = document.getElementById('progress-avatar');
-  avatar.innerHTML = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍';
-  document.getElementById('progress-name').textContent = s.name;
-  document.getElementById('prog-weight').value = s.weight || '';
-  document.getElementById('prog-fat').value = s.bodyFat || '';
-  document.getElementById('prog-muscle').value = s.muscleMass || '';
-  const bmi = calcBMI(parseFloat(s.weight), parseFloat(s.height));
-  document.getElementById('prog-bmi').value = bmi || '';
-  renderProgressChart(s);
-  showScreen('progress');
+const s = students.find(x => x.id === selectedStudentId);
+if (!s) return;
+document.getElementById(‘top-title’).textContent = ‘Progresso’;
+const avatar = document.getElementById(‘progress-avatar’);
+avatar.innerHTML = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : ‘🧍’;
+document.getElementById(‘progress-name’).textContent = s.name;
+document.getElementById(‘prog-weight’).value = s.weight || ‘’;
+document.getElementById(‘prog-fat’).value = s.bodyFat || ‘’;
+document.getElementById(‘prog-muscle’).value = s.muscleMass || ‘’;
+const bmi = calcBMI(parseFloat(s.weight), parseFloat(s.height));
+document.getElementById(‘prog-bmi’).value = bmi || ‘’;
+renderProgressChart(s);
+showScreen(‘progress’);
 }
 
 function saveProgressEntry() {
-  const s = students.find(x => x.id === selectedStudentId);
-  if (!s) return;
-  const w = document.getElementById('prog-weight').value;
-  const fat = document.getElementById('prog-fat').value;
-  const muscle = document.getElementById('prog-muscle').value;
-  if (!w) { toast('⚠️ Informe o peso'); return; }
-  const bmi = calcBMI(parseFloat(w), parseFloat(s.height));
-  document.getElementById('prog-bmi').value = bmi || '';
-  const entry = { date: new Date().toISOString(), weight: w, bodyFat: fat, muscleMass: muscle, bmi };
-  if (!s.progressHistory) s.progressHistory = [];
-  s.progressHistory.push(entry);
-  // Also update main data
-  s.weight = w; s.bodyFat = fat; s.muscleMass = muscle;
-  save(); toast('✅ Medição registrada!'); renderProgressChart(s);
+const s = students.find(x => x.id === selectedStudentId);
+if (!s) return;
+const w = document.getElementById(‘prog-weight’).value;
+const fat = document.getElementById(‘prog-fat’).value;
+const muscle = document.getElementById(‘prog-muscle’).value;
+if (!w) { toast(‘⚠️ Informe o peso’); return; }
+const bmi = calcBMI(parseFloat(w), parseFloat(s.height));
+document.getElementById(‘prog-bmi’).value = bmi || ‘’;
+const entry = { date: new Date().toISOString(), weight: w, bodyFat: fat, muscleMass: muscle, bmi };
+if (!s.progressHistory) s.progressHistory = [];
+s.progressHistory.push(entry);
+// Also update main data
+s.weight = w; s.bodyFat = fat; s.muscleMass = muscle;
+save(); toast(‘✅ Medição registrada!’); renderProgressChart(s);
 }
 
 function renderProgressChart(s) {
-  const history = s.progressHistory || [];
-  const chartArea = document.getElementById('progress-chart-area');
-  const histEl = document.getElementById('progress-history');
+const history = s.progressHistory || [];
+const chartArea = document.getElementById(‘progress-chart-area’);
+const histEl = document.getElementById(‘progress-history’);
 
-  if (!history.length) {
-    chartArea.innerHTML = '';
-    histEl.innerHTML = `<div style="text-align:center;padding:32px 0;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📈</div><p style="font-size:13px">Nenhuma medição registrada ainda.</p></div>`;
-    return;
-  }
+if (!history.length) {
+chartArea.innerHTML = ‘’;
+histEl.innerHTML = `<div style="text-align:center;padding:32px 0;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📈</div><p style="font-size:13px">Nenhuma medição registrada ainda.</p></div>`;
+return;
+}
 
-  // Simple SVG mini-chart for weight
-  const weights = history.map(e => parseFloat(e.weight)||0).filter(v => v > 0);
-  const labels = history.map(e => {
-    const d = new Date(e.date);
-    return `${d.getDate()}/${d.getMonth()+1}`;
-  });
+// Simple SVG mini-chart for weight
+const weights = history.map(e => parseFloat(e.weight)||0).filter(v => v > 0);
+const labels = history.map(e => {
+const d = new Date(e.date);
+return `${d.getDate()}/${d.getMonth()+1}`;
+});
 
-  let chartHtml = '';
-  if (weights.length >= 2) {
-    const W = 320, H = 90, pad = 16;
-    const min = Math.min(...weights) - 1, max = Math.max(...weights) + 1;
-    const xStep = (W - pad*2) / (weights.length - 1);
-    const yScale = (H - pad*2) / (max - min);
-    const points = weights.map((v,i) => `${pad + i*xStep},${H - pad - (v-min)*yScale}`).join(' ');
-    const first = weights[0], last = weights[weights.length-1];
-    const trend = last < first ? `<span style="color:var(--accent)">▼ ${(first-last).toFixed(1)}kg</span>` : last > first ? `<span style="color:var(--orange)">▲ ${(last-first).toFixed(1)}kg</span>` : `<span style="color:var(--text2)">= Estável</span>`;
-    chartHtml = `<div class="card" style="margin-bottom:13px">
-      <div class="card-title">⚖️ Evolução do Peso ${trend}</div>
-      <svg viewBox="0 0 ${W} ${H}" style="width:100%;overflow:visible">
-        <polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>
-        ${weights.map((v,i) => `<circle cx="${pad+i*xStep}" cy="${H-pad-(v-min)*yScale}" r="3.5" fill="var(--accent)"/><text x="${pad+i*xStep}" y="${H-pad-(v-min)*yScale-8}" text-anchor="middle" font-size="9" fill="var(--text2)">${v}</text>`).join('')}
-        ${labels.map((l,i) => `<text x="${pad+i*xStep}" y="${H-2}" text-anchor="middle" font-size="9" fill="var(--text3)">${l}</text>`).join('')}
-      </svg>
-    </div>`;
-  }
+let chartHtml = ‘’;
+if (weights.length >= 2) {
+const W = 320, H = 90, pad = 16;
+const min = Math.min(…weights) - 1, max = Math.max(…weights) + 1;
+const xStep = (W - pad*2) / (weights.length - 1);
+const yScale = (H - pad*2) / (max - min);
+const points = weights.map((v,i) => `${pad + i*xStep},${H - pad - (v-min)*yScale}`).join(’ ’);
+const first = weights[0], last = weights[weights.length-1];
+const trend = last < first ? `<span style="color:var(--accent)">▼ ${(first-last).toFixed(1)}kg</span>` : last > first ? `<span style="color:var(--orange)">▲ ${(last-first).toFixed(1)}kg</span>` : `<span style="color:var(--text2)">= Estável</span>`;
+chartHtml = `<div class="card" style="margin-bottom:13px"> <div class="card-title">⚖️ Evolução do Peso ${trend}</div> <svg viewBox="0 0 ${W} ${H}" style="width:100%;overflow:visible"> <polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/> ${weights.map((v,i) => `<circle cx="${pad+i*xStep}" cy="${H-pad-(v-min)*yScale}" r="3.5" fill="var(--accent)"/><text x="${pad+i*xStep}" y="${H-pad-(v-min)*yScale-8}" text-anchor="middle" font-size="9" fill="var(--text2)">${v}</text>`).join('')} ${labels.map((l,i) => `<text x="${pad+i*xStep}" y="${H-2}" text-anchor="middle" font-size="9" fill="var(--text3)">${l}</text>`).join('')} </svg> </div>`;
+}
 
-  // Table
-  const rows = [...history].reverse().map(e => {
-    const d = new Date(e.date);
-    const dateStr = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'2-digit'});
-    return `<tr>
-      <td style="font-size:11px;color:var(--text2);padding:9px 0">${dateStr}</td>
-      <td style="font-size:13px;font-weight:700;text-align:center">${e.weight||'—'} kg</td>
-      <td style="font-size:12px;text-align:center;color:var(--orange)">${e.bodyFat||'—'}%</td>
-      <td style="font-size:12px;text-align:center;color:var(--blue)">${e.muscleMass||'—'}%</td>
-      <td style="font-size:12px;text-align:center;color:var(--accent)">${e.bmi||'—'}</td>
-    </tr>`;
-  }).join('');
+// Table
+const rows = […history].reverse().map(e => {
+const d = new Date(e.date);
+const dateStr = d.toLocaleDateString(‘pt-BR’,{day:‘2-digit’,month:‘short’,year:‘2-digit’});
+return `<tr> <td style="font-size:11px;color:var(--text2);padding:9px 0">${dateStr}</td> <td style="font-size:13px;font-weight:700;text-align:center">${e.weight||'—'} kg</td> <td style="font-size:12px;text-align:center;color:var(--orange)">${e.bodyFat||'—'}%</td> <td style="font-size:12px;text-align:center;color:var(--blue)">${e.muscleMass||'—'}%</td> <td style="font-size:12px;text-align:center;color:var(--accent)">${e.bmi||'—'}</td> </tr>`;
+}).join(’’);
 
-  chartArea.innerHTML = chartHtml;
-  histEl.innerHTML = `<div class="card">
-    <div class="card-title">📋 Histórico completo</div>
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr>
-        <th style="font-size:10px;color:var(--text3);text-align:left;padding-bottom:8px;font-weight:600;text-transform:uppercase">Data</th>
-        <th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Peso</th>
-        <th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Gord.</th>
-        <th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Musc.</th>
-        <th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">IMC</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
+chartArea.innerHTML = chartHtml;
+histEl.innerHTML = `<div class="card">
+<div class="card-title">📋 Histórico completo</div>
+<table style="width:100%;border-collapse:collapse">
+<thead><tr>
+<th style="font-size:10px;color:var(--text3);text-align:left;padding-bottom:8px;font-weight:600;text-transform:uppercase">Data</th>
+<th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Peso</th>
+<th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Gord.</th>
+<th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">Musc.</th>
+<th style="font-size:10px;color:var(--text3);text-align:center;padding-bottom:8px;font-weight:600;text-transform:uppercase">IMC</th>
+</tr></thead>
+<tbody>${rows}</tbody>
+</table>
+
   </div>`;
 }
 
@@ -1805,362 +1788,472 @@ function renderProgressChart(s) {
 // PAYMENT ALERTS ON LOAD
 // ══════════════════════════════════════════
 function checkPaymentAlerts() {
-  const today = new Date().getDate();
-  const tomorrow = today + 1;
-  const alertStudents = students.filter(s => {
-    if (!s.payDay || s.payStatus === 'late') return false;
-    const pd = parseInt(s.payDay);
-    return pd === today || pd === tomorrow;
-  });
-  if (alertStudents.length) {
-    const msgs = alertStudents.map(s => `${s.name}: vence ${parseInt(s.payDay)===today?'HOJE':'amanhã'}`);
-    setTimeout(() => toast(`💰 ${msgs[0]}${msgs.length>1?` (+${msgs.length-1})`:''}`, 4000), 800);
-  }
+const today = new Date().getDate();
+const tomorrow = today + 1;
+const alertStudents = students.filter(s => {
+if (!s.payDay || s.payStatus === ‘late’) return false;
+const pd = parseInt(s.payDay);
+return pd === today || pd === tomorrow;
+});
+if (alertStudents.length) {
+const msgs = alertStudents.map(s => `${s.name}: vence ${parseInt(s.payDay)===today?'HOJE':'amanhã'}`);
+setTimeout(() => toast(`💰 ${msgs[0]}${msgs.length>1?` (+${msgs.length-1})`:''}`, 4000), 800);
+}
 }
 
 // ══════════════════════════════════════════
 // CRIATIVO — STATE & STORAGE
 // ══════════════════════════════════════════
-let criativoTab = 'gerar';
-let postTom = 'motivador';
-let ideiaTag = 'exercicio';
+let criativoTab = ‘gerar’;
+let postTom = ‘motivador’;
+let ideiaTag = ‘exercicio’;
 let calDate = new Date();
 let calDaySelected = null;
 let lastGeneratedPost = null;
 
 function getCriativoData() {
-  return JSON.parse(localStorage.getItem('fp_criativo') || '{"historico":[],"ideias":[],"calendario":{}}');
+return JSON.parse(localStorage.getItem(‘fp_criativo’) || ‘{“historico”:[],“ideias”:[],“calendario”:{}}’);
 }
-function saveCriativoData(d) { localStorage.setItem('fp_criativo', JSON.stringify(d)); }
+function saveCriativoData(d) { localStorage.setItem(‘fp_criativo’, JSON.stringify(d)); }
 
 function initCriativo() {
-  // Load API key status
-  const k = localStorage.getItem('fp_openai_key');
-  const status = document.getElementById('api-key-status');
-  if (k) { status.textContent = '✅ Chave salva'; status.style.color = 'var(--accent)'; }
-  else { status.textContent = '⚠️ Sem chave — insira para gerar com IA'; status.style.color = 'var(--orange)'; }
-  renderHistorico();
-  renderIdeias();
-  renderCalendario();
+// Load API key status
+const k = localStorage.getItem(‘fp_openai_key’);
+const status = document.getElementById(‘api-key-status’);
+if (k) { status.textContent = ‘✅ Chave salva’; status.style.color = ‘var(–accent)’; }
+else { status.textContent = ‘⚠️ Sem chave — insira para gerar com IA’; status.style.color = ‘var(–orange)’; }
+renderHistorico();
+renderIdeias();
+renderCalendario();
 }
 
 function saveApiKey() {
-  const k = document.getElementById('openai-key-input').value.trim();
-  if (!k) { toast('⚠️ Insira a chave'); return; }
-  localStorage.setItem('fp_openai_key', k);
-  document.getElementById('openai-key-input').value = '';
-  document.getElementById('api-key-status').textContent = '✅ Chave salva!';
-  document.getElementById('api-key-status').style.color = 'var(--accent)';
-  toast('🔑 API Key salva!');
+const k = document.getElementById(‘openai-key-input’).value.trim();
+if (!k) { toast(‘⚠️ Insira a chave’); return; }
+localStorage.setItem(‘fp_openai_key’, k);
+document.getElementById(‘openai-key-input’).value = ‘’;
+document.getElementById(‘api-key-status’).textContent = ‘✅ Chave salva!’;
+document.getElementById(‘api-key-status’).style.color = ‘var(–accent)’;
+toast(‘🔑 API Key salva!’);
 }
 
 // ── SUB-TABS ──
 function setCriativoTab(tab) {
-  criativoTab = tab;
-  ['gerar','historico','calendario','ideias'].forEach(t => {
-    document.getElementById('ctab-'+t).classList.toggle('active', t === tab);
-    document.getElementById('cpanel-'+t).style.display = t === tab ? 'block' : 'none';
-  });
-  if (tab === 'historico') renderHistorico();
-  if (tab === 'ideias') renderIdeias();
-  if (tab === 'calendario') renderCalendario();
+criativoTab = tab;
+[‘gerar’,‘historico’,‘calendario’,‘ideias’].forEach(t => {
+document.getElementById(‘ctab-’+t).classList.toggle(‘active’, t === tab);
+document.getElementById(‘cpanel-’+t).style.display = t === tab ? ‘block’ : ‘none’;
+});
+if (tab === ‘historico’) renderHistorico();
+if (tab === ‘ideias’) renderIdeias();
+if (tab === ‘calendario’) renderCalendario();
 }
 
 // ── TOM ──
 function setTom(t) {
-  postTom = t;
-  ['motivador','educativo','descontraido','profissional'].forEach(x => {
-    document.getElementById('tom-'+x).classList.toggle('active', x === t);
-  });
+postTom = t;
+[‘motivador’,‘educativo’,‘descontraido’,‘profissional’].forEach(x => {
+document.getElementById(‘tom-’+x).classList.toggle(‘active’, x === t);
+});
 }
 
 // ── TAG ──
 function setTag(t) {
-  ideiaTag = t;
-  ['exercicio','nutricao','motivacao','dica'].forEach(x => {
-    document.getElementById('tag-'+x).classList.toggle('active', x === t);
-  });
+ideiaTag = t;
+[‘exercicio’,‘nutricao’,‘motivacao’,‘dica’].forEach(x => {
+document.getElementById(‘tag-’+x).classList.toggle(‘active’, x === t);
+});
 }
 
 // ── GERAR POST ──
 const temaLabels = {
-  dica_exercicio:'Dica de Exercício', motivacional:'Motivacional', nutricao:'Nutrição',
-  treino_dia:'Treino do Dia', resultado:'Resultado de Aluno', curiosidade:'Curiosidade Fitness',
-  recuperacao:'Recuperação', antes_depois:'Antes e Depois'
+dica_exercicio:‘Dica de Exercício’, motivacional:‘Motivacional’, nutricao:‘Nutrição’,
+treino_dia:‘Treino do Dia’, resultado:‘Resultado de Aluno’, curiosidade:‘Curiosidade Fitness’,
+recuperacao:‘Recuperação’, antes_depois:‘Antes e Depois’
 };
 
 async function gerarPost() {
-  const apiKey = localStorage.getItem('fp_openai_key');
-  if (!apiKey) { toast('⚠️ Adicione sua OpenAI API Key primeiro'); return; }
+const apiKey = localStorage.getItem(‘fp_openai_key’);
+if (!apiKey) { toast(‘⚠️ Adicione sua OpenAI API Key primeiro’); return; }
 
-  const tema = document.getElementById('post-tema').value;
-  const contexto = document.getElementById('post-contexto').value.trim();
-  const incHashtags = document.getElementById('inc-hashtags').checked;
-  const incEmoji = document.getElementById('inc-emoji').checked;
-  const incCta = document.getElementById('inc-cta').checked;
+const tema = document.getElementById(‘post-tema’).value;
+const contexto = document.getElementById(‘post-contexto’).value.trim();
+const incHashtags = document.getElementById(‘inc-hashtags’).checked;
+const incEmoji = document.getElementById(‘inc-emoji’).checked;
+const incCta = document.getElementById(‘inc-cta’).checked;
 
-  const tomDesc = {
-    motivador:'Motivador e energético, com frases de impacto',
-    educativo:'Educativo e informativo, com dados e explicações claras',
-    descontraido:'Descontraído, informal e divertido',
-    profissional:'Profissional e sério, autoridade no assunto'
-  }[postTom];
+const tomDesc = {
+motivador:‘Motivador e energético, com frases de impacto’,
+educativo:‘Educativo e informativo, com dados e explicações claras’,
+descontraido:‘Descontraído, informal e divertido’,
+profissional:‘Profissional e sério, autoridade no assunto’
+}[postTom];
 
-  const prompt = `Você é um personal trainer especialista em marketing digital para redes sociais. Crie um post para Instagram sobre "${temaLabels[tema]}".
+const prompt = `Você é um personal trainer especialista em marketing digital para redes sociais. Crie um post para Instagram sobre “${temaLabels[tema]}”.
 
 Tom: ${tomDesc}
-${contexto ? `Contexto adicional: ${contexto}` : ''}
-${incEmoji ? 'Use emojis relevantes ao longo do texto.' : 'Não use emojis.'}
-${incCta ? 'Inclua um call-to-action no final (ex: salve este post, marque um amigo, etc).' : ''}
+${contexto ? `Contexto adicional: ${contexto}` : ‘’}
+${incEmoji ? ‘Use emojis relevantes ao longo do texto.’ : ‘Não use emojis.’}
+${incCta ? ‘Inclua um call-to-action no final (ex: salve este post, marque um amigo, etc).’ : ‘’}
 
 Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do JSON):
 {
-  "post": "texto completo do post sem hashtags",
-  "hashtags": "${incHashtags ? 'lista de 10-15 hashtags relevantes separadas por espaço começando com #' : ''}"
+“post”: “texto completo do post sem hashtags”,
+“hashtags”: “${incHashtags ? ‘lista de 10-15 hashtags relevantes separadas por espaço começando com #’ : ‘’}”
 }`;
 
-  const btn = document.getElementById('btn-gerar');
-  const btnTxt = document.getElementById('btn-gerar-txt');
-  btn.disabled = true;
-  btnTxt.innerHTML = '<span class="spinner"></span>Gerando...';
+const btn = document.getElementById(‘btn-gerar’);
+const btnTxt = document.getElementById(‘btn-gerar-txt’);
+btn.disabled = true;
+btnTxt.innerHTML = ‘<span class="spinner"></span>Gerando…’;
 
-  try {
-    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 700, temperature: 0.85
-      })
-    });
+try {
+const resp = await fetch(‘https://api.openai.com/v1/chat/completions’, {
+method: ‘POST’,
+headers: { ‘Content-Type’: ‘application/json’, ‘Authorization’: `Bearer ${apiKey}` },
+body: JSON.stringify({
+model: ‘gpt-4o-mini’,
+messages: [{ role: ‘user’, content: prompt }],
+max_tokens: 700, temperature: 0.85
+})
+});
 
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      throw new Error(err.error?.message || `Erro ${resp.status}`);
-    }
+```
+if (!resp.ok) {
+  const err = await resp.json().catch(() => ({}));
+  throw new Error(err.error?.message || `Erro ${resp.status}`);
+}
 
-    const data = await resp.json();
-    let raw = data.choices[0].message.content.trim();
-    raw = raw.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(raw);
+const data = await resp.json();
+let raw = data.choices[0].message.content.trim();
+raw = raw.replace(/```json|```/g, '').trim();
+const parsed = JSON.parse(raw);
 
-    lastGeneratedPost = { tema, temaLabel: temaLabels[tema], post: parsed.post, hashtags: parsed.hashtags || '', data: new Date().toISOString() };
+lastGeneratedPost = { tema, temaLabel: temaLabels[tema], post: parsed.post, hashtags: parsed.hashtags || '', data: new Date().toISOString() };
 
-    document.getElementById('post-texto').textContent = parsed.post;
-    document.getElementById('post-hashtags').textContent = parsed.hashtags || '';
-    document.getElementById('post-resultado').style.display = 'block';
-    document.getElementById('main').scrollBy({ top: 200, behavior: 'smooth' });
-    toast('✅ Post gerado!');
+document.getElementById('post-texto').textContent = parsed.post;
+document.getElementById('post-hashtags').textContent = parsed.hashtags || '';
+document.getElementById('post-resultado').style.display = 'block';
+document.getElementById('main').scrollBy({ top: 200, behavior: 'smooth' });
+toast('✅ Post gerado!');
+```
 
-  } catch(e) {
-    toast('❌ Erro: ' + (e.message || 'Tente novamente'));
-  } finally {
-    btn.disabled = false;
-    btnTxt.textContent = '✨ Gerar Post com IA';
-  }
+} catch(e) {
+toast(’❌ Erro: ’ + (e.message || ‘Tente novamente’));
+} finally {
+btn.disabled = false;
+btnTxt.textContent = ‘✨ Gerar Post com IA’;
+}
 }
 
 function regenerarPost() { gerarPost(); }
 
 function copiarPost() {
-  if (!lastGeneratedPost) return;
-  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n' + lastGeneratedPost.hashtags : '');
-  navigator.clipboard?.writeText(txt).then(() => toast('📋 Copiado!')).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = txt; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta); toast('📋 Copiado!');
-  });
+if (!lastGeneratedPost) return;
+const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? ‘\n\n’ + lastGeneratedPost.hashtags : ‘’);
+navigator.clipboard?.writeText(txt).then(() => toast(‘📋 Copiado!’)).catch(() => {
+const ta = document.createElement(‘textarea’);
+ta.value = txt; document.body.appendChild(ta); ta.select();
+document.execCommand(‘copy’); document.body.removeChild(ta); toast(‘📋 Copiado!’);
+});
 }
 
 function compartilhar(plataforma) {
-  if (!lastGeneratedPost) return;
-  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n' + lastGeneratedPost.hashtags : '');
-  if (plataforma === 'whatsapp') {
-    window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
-  } else if (plataforma === 'instagram') {
-    navigator.clipboard?.writeText(txt).then(() => {
-      toast('📋 Copiado! Abra o Instagram e cole o texto');
-    });
-  } else if (plataforma === 'native') {
-    if (navigator.share) {
-      navigator.share({ text: txt }).catch(() => {});
-    } else {
-      copiarPost();
-    }
-  }
+if (!lastGeneratedPost) return;
+const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? ‘\n\n’ + lastGeneratedPost.hashtags : ‘’);
+if (plataforma === ‘whatsapp’) {
+window.open(‘https://wa.me/?text=’ + encodeURIComponent(txt), ‘_blank’);
+} else if (plataforma === ‘instagram’) {
+navigator.clipboard?.writeText(txt).then(() => {
+toast(‘📋 Copiado! Abra o Instagram e cole o texto’);
+});
+} else if (plataforma === ‘native’) {
+if (navigator.share) {
+navigator.share({ text: txt }).catch(() => {});
+} else {
+copiarPost();
+}
+}
 }
 
 function salvarPost() {
-  if (!lastGeneratedPost) return;
-  const d = getCriativoData();
-  d.historico.unshift({ ...lastGeneratedPost, id: uid() });
-  saveCriativoData(d);
-  toast('💾 Post salvo no histórico!');
+if (!lastGeneratedPost) return;
+const d = getCriativoData();
+d.historico.unshift({ …lastGeneratedPost, id: uid() });
+saveCriativoData(d);
+toast(‘💾 Post salvo no histórico!’);
+}
+
+// ── GERAR IMAGEM COM DALL-E ──
+let lastGeneratedImageUrl = null;
+
+async function gerarImagem() {
+const apiKey = localStorage.getItem(‘fp_openai_key’);
+if (!apiKey) { toast(‘⚠️ Adicione sua OpenAI API Key primeiro’); return; }
+
+const tema = document.getElementById(‘post-tema’).value;
+const customPrompt = document.getElementById(‘img-prompt’).value.trim();
+const style = document.getElementById(‘img-style’).value;
+
+const temaPrompts = {
+dica_exercicio: ‘personal trainer demonstrating exercise technique in modern gym, professional fitness photography’,
+motivacional: ‘athlete training hard, motivational fitness scene, dynamic lighting, high energy’,
+nutricao: ‘healthy meal prep for athletes, colorful nutritious food, clean eating aesthetic’,
+treino_dia: ‘gym workout session, person lifting weights, modern fitness center’,
+resultado: ‘fitness transformation, before and after, athlete achievement celebration’,
+curiosidade: ‘human body anatomy fitness infographic style, professional illustration’,
+recuperacao: ‘athlete resting and recovering, stretching, foam rolling, peaceful gym scene’,
+antes_depois: ‘fitness journey transformation, athletic body, motivational scene’
+};
+
+const basePrompt = customPrompt || temaPrompts[tema] || ‘personal trainer fitness post’;
+const fullPrompt = `${basePrompt}. Instagram fitness post style, high quality, professional photography, ${style === 'vivid' ? 'vibrant colors, dynamic' : 'natural lighting, realistic'}. No text overlay.`;
+
+const btn = document.getElementById(‘btn-gerar-img’);
+const btnTxt = document.getElementById(‘btn-gerar-img-txt’);
+btn.disabled = true;
+btnTxt.innerHTML = ‘<span class="spinner"></span>Gerando imagem…’;
+
+try {
+const resp = await fetch(‘https://api.openai.com/v1/images/generations’, {
+method: ‘POST’,
+headers: { ‘Content-Type’: ‘application/json’, ‘Authorization’: `Bearer ${apiKey}` },
+body: JSON.stringify({
+model: ‘dall-e-3’,
+prompt: fullPrompt,
+n: 1,
+size: ‘1024x1024’,
+quality: ‘standard’,
+style: style
+})
+});
+
+```
+if (!resp.ok) {
+  const err = await resp.json().catch(() => ({}));
+  const msg = err.error?.message || `Erro ${resp.status}`;
+  // Specific error messages in Portuguese
+  if (resp.status === 401) throw new Error('API Key inválida. Verifique sua chave OpenAI.');
+  if (resp.status === 429) throw new Error('Limite de requisições atingido. Aguarde e tente novamente.');
+  if (resp.status === 400) throw new Error('Prompt inválido ou recusado. Tente uma descrição diferente.');
+  throw new Error(msg);
+}
+
+const data = await resp.json();
+const imageUrl = data.data[0].url;
+lastGeneratedImageUrl = imageUrl;
+
+const imgEl = document.getElementById('img-gerada');
+imgEl.src = imageUrl;
+imgEl.onload = () => {
+  document.getElementById('img-resultado').style.display = 'block';
+  document.getElementById('main').scrollBy({ top: 300, behavior: 'smooth' });
+  toast('✅ Imagem gerada!');
+};
+imgEl.onerror = () => {
+  toast('❌ Erro ao carregar imagem gerada');
+};
+```
+
+} catch(e) {
+toast(’❌ ’ + (e.message || ‘Erro ao gerar imagem’));
+console.error(‘DALL-E error:’, e);
+} finally {
+btn.disabled = false;
+btnTxt.textContent = ‘🖼️ Gerar Imagem com IA’;
+}
+}
+
+async function baixarImagem() {
+if (!lastGeneratedImageUrl) return;
+try {
+// Fetch image as blob to force download
+const resp = await fetch(lastGeneratedImageUrl);
+const blob = await resp.blob();
+const url = URL.createObjectURL(blob);
+const a = document.createElement(‘a’);
+a.href = url;
+a.download = `fitplan-post-${Date.now()}.png`;
+a.click();
+URL.revokeObjectURL(url);
+toast(‘⬇️ Download iniciado!’);
+} catch(e) {
+// Fallback: open in new tab
+window.open(lastGeneratedImageUrl, ‘_blank’);
+toast(‘💡 Abra a imagem e salve manualmente’);
+}
+}
+
+async function compartilharImagem() {
+if (!lastGeneratedImageUrl) return;
+try {
+const resp = await fetch(lastGeneratedImageUrl);
+const blob = await resp.blob();
+const file = new File([blob], ‘fitplan-post.png’, { type: ‘image/png’ });
+if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+await navigator.share({ title: ‘Post FitPlan Pro’, files: [file] });
+toast(‘✅ Imagem compartilhada!’);
+} else if (navigator.share) {
+await navigator.share({ title: ‘Post FitPlan Pro’, url: lastGeneratedImageUrl });
+} else {
+window.open(lastGeneratedImageUrl, ‘_blank’);
+toast(‘💡 Salve a imagem que abriu’);
+}
+} catch(e) {
+if (e.name !== ‘AbortError’) {
+window.open(lastGeneratedImageUrl, ‘_blank’);
+toast(‘💡 Salve a imagem que abriu’);
+}
+}
 }
 
 // ── HISTÓRICO ──
 function renderHistorico() {
-  const d = getCriativoData();
-  const el = document.getElementById('historico-lista');
-  if (!d.historico.length) {
-    el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">📂</div><p style="font-size:13px">Nenhum post salvo ainda.<br>Gere e salve posts na aba Gerar.</p></div>`;
-    return;
-  }
-  el.innerHTML = d.historico.map((p, i) => {
-    const dt = new Date(p.data).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    return `<div class="post-hist-item">
-      <div class="post-hist-header">
-        <span class="post-hist-tema">${p.temaLabel || p.tema}</span>
-        <span class="post-hist-date">${dt}</span>
-      </div>
-      <div class="post-hist-text">${p.post}</div>
-      <div class="post-hist-actions">
-        <button class="btn btn-ghost btn-sm" onclick="copiarHistPost(${i})">📋 Copiar</button>
-        <button class="btn btn-ghost btn-sm" onclick="compartilharHistPost(${i})">📤 Compartilhar</button>
-        <button class="btn btn-danger btn-sm" onclick="deletarHistPost(${i})">🗑</button>
-      </div>
-    </div>`;
-  }).join('');
+const d = getCriativoData();
+const el = document.getElementById(‘historico-lista’);
+if (!d.historico.length) {
+el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">📂</div><p style="font-size:13px">Nenhum post salvo ainda.<br>Gere e salve posts na aba Gerar.</p></div>`;
+return;
+}
+el.innerHTML = d.historico.map((p, i) => {
+const dt = new Date(p.data).toLocaleDateString(‘pt-BR’, {day:‘2-digit’,month:‘short’,hour:‘2-digit’,minute:‘2-digit’});
+return `<div class="post-hist-item"> <div class="post-hist-header"> <span class="post-hist-tema">${p.temaLabel || p.tema}</span> <span class="post-hist-date">${dt}</span> </div> <div class="post-hist-text">${p.post}</div> <div class="post-hist-actions"> <button class="btn btn-ghost btn-sm" onclick="copiarHistPost(${i})">📋 Copiar</button> <button class="btn btn-ghost btn-sm" onclick="compartilharHistPost(${i})">📤 Compartilhar</button> <button class="btn btn-danger btn-sm" onclick="deletarHistPost(${i})">🗑</button> </div> </div>`;
+}).join(’’);
 }
 
 function copiarHistPost(i) {
-  const d = getCriativoData();
-  const p = d.historico[i];
-  const txt = p.post + (p.hashtags ? '\n\n' + p.hashtags : '');
-  navigator.clipboard?.writeText(txt).then(() => toast('📋 Copiado!')).catch(() => toast('📋 Copiado!'));
+const d = getCriativoData();
+const p = d.historico[i];
+const txt = p.post + (p.hashtags ? ‘\n\n’ + p.hashtags : ‘’);
+navigator.clipboard?.writeText(txt).then(() => toast(‘📋 Copiado!’)).catch(() => toast(‘📋 Copiado!’));
 }
 function compartilharHistPost(i) {
-  const d = getCriativoData();
-  const p = d.historico[i];
-  const txt = p.post + (p.hashtags ? '\n\n' + p.hashtags : '');
-  if (navigator.share) navigator.share({ text: txt }).catch(() => {});
-  else { navigator.clipboard?.writeText(txt); toast('📋 Texto copiado!'); }
+const d = getCriativoData();
+const p = d.historico[i];
+const txt = p.post + (p.hashtags ? ‘\n\n’ + p.hashtags : ‘’);
+if (navigator.share) navigator.share({ text: txt }).catch(() => {});
+else { navigator.clipboard?.writeText(txt); toast(‘📋 Texto copiado!’); }
 }
 function deletarHistPost(i) {
-  const d = getCriativoData();
-  d.historico.splice(i, 1);
-  saveCriativoData(d); renderHistorico(); toast('🗑 Removido');
+const d = getCriativoData();
+d.historico.splice(i, 1);
+saveCriativoData(d); renderHistorico(); toast(‘🗑 Removido’);
 }
 
 // ── CALENDÁRIO ──
 function calNav(dir) {
-  calDate = new Date(calDate.getFullYear(), calDate.getMonth() + dir, 1);
-  renderCalendario();
+calDate = new Date(calDate.getFullYear(), calDate.getMonth() + dir, 1);
+renderCalendario();
 }
 
 function renderCalendario() {
-  const d = getCriativoData();
-  const year = calDate.getFullYear(), month = calDate.getMonth();
-  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  document.getElementById('cal-mes-label').textContent = `${meses[month]} ${year}`;
+const d = getCriativoData();
+const year = calDate.getFullYear(), month = calDate.getMonth();
+const meses = [‘Janeiro’,‘Fevereiro’,‘Março’,‘Abril’,‘Maio’,‘Junho’,‘Julho’,‘Agosto’,‘Setembro’,‘Outubro’,‘Novembro’,‘Dezembro’];
+document.getElementById(‘cal-mes-label’).textContent = `${meses[month]} ${year}`;
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const today = new Date();
-  const dow = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const firstDay = new Date(year, month, 1).getDay();
+const daysInMonth = new Date(year, month + 1, 0).getDate();
+const today = new Date();
+const dow = [‘Dom’,‘Seg’,‘Ter’,‘Qua’,‘Qui’,‘Sex’,‘Sáb’];
 
-  let html = '<div class="cal-grid-inner">';
-  dow.forEach(d => { html += `<div class="cal-dow">${d}</div>`; });
-  for (let i = 0; i < firstDay; i++) html += '<div class="cal-day other-month"></div>';
-  for (let d2 = 1; d2 <= daysInMonth; d2++) {
-    const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d2).padStart(2,'0')}`;
-    const isToday = today.getDate()===d2 && today.getMonth()===month && today.getFullYear()===year;
-    const hasPosts = d.calendario[key]?.length > 0;
-    html += `<div class="cal-day${isToday?' today':''}${hasPosts?' has-post':''}" onclick="selectCalDay('${key}',${d2})">
-      <div class="cal-day-num">${d2}</div>
-    </div>`;
-  }
-  html += '</div>';
-  document.getElementById('cal-grid').innerHTML = html;
+let html = ‘<div class="cal-grid-inner">’;
+dow.forEach(d => { html += `<div class="cal-dow">${d}</div>`; });
+for (let i = 0; i < firstDay; i++) html += ‘<div class="cal-day other-month"></div>’;
+for (let d2 = 1; d2 <= daysInMonth; d2++) {
+const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d2).padStart(2,'0')}`;
+const isToday = today.getDate()===d2 && today.getMonth()===month && today.getFullYear()===year;
+const hasPosts = d.calendario[key]?.length > 0;
+html += `<div class="cal-day${isToday?' today':''}${hasPosts?' has-post':''}" onclick="selectCalDay('${key}',${d2})"> <div class="cal-day-num">${d2}</div> </div>`;
+}
+html += ‘</div>’;
+document.getElementById(‘cal-grid’).innerHTML = html;
 }
 
 function selectCalDay(key, dayNum) {
-  calDaySelected = key;
-  const d = getCriativoData();
-  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const [y,m,dd] = key.split('-');
-  document.getElementById('cal-day-title').textContent = `${parseInt(dd)} de ${meses[parseInt(m)-1]} de ${y}`;
-  const posts = d.calendario[key] || [];
-  const postsHtml = posts.length
-    ? posts.map((p,i) => `<div class="cal-post-chip"><span style="font-size:12px">${p.horario||''}</span><span class="chip-text">${p.texto.substring(0,60)}...</span><button style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;flex-shrink:0" onclick="deletarCalPost('${key}',${i})">✕</button></div>`).join('')
-    : `<div style="font-size:12px;color:var(--text3);margin-bottom:10px">Nenhum post agendado para este dia.</div>`;
-  document.getElementById('cal-day-posts').innerHTML = postsHtml;
-  document.getElementById('cal-day-panel').style.display = 'block';
-  document.getElementById('cal-novo-post').value = lastGeneratedPost?.post || '';
+calDaySelected = key;
+const d = getCriativoData();
+const meses = [‘Jan’,‘Fev’,‘Mar’,‘Abr’,‘Mai’,‘Jun’,‘Jul’,‘Ago’,‘Set’,‘Out’,‘Nov’,‘Dez’];
+const [y,m,dd] = key.split(’-’);
+document.getElementById(‘cal-day-title’).textContent = `${parseInt(dd)} de ${meses[parseInt(m)-1]} de ${y}`;
+const posts = d.calendario[key] || [];
+const postsHtml = posts.length
+? posts.map((p,i) => `<div class="cal-post-chip"><span style="font-size:12px">${p.horario||''}</span><span class="chip-text">${p.texto.substring(0,60)}...</span><button style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;flex-shrink:0" onclick="deletarCalPost('${key}',${i})">✕</button></div>`).join(’’)
+: `<div style="font-size:12px;color:var(--text3);margin-bottom:10px">Nenhum post agendado para este dia.</div>`;
+document.getElementById(‘cal-day-posts’).innerHTML = postsHtml;
+document.getElementById(‘cal-day-panel’).style.display = ‘block’;
+document.getElementById(‘cal-novo-post’).value = lastGeneratedPost?.post || ‘’;
 }
 
 function agendarPost() {
-  if (!calDaySelected) return;
-  const texto = document.getElementById('cal-novo-post').value.trim();
-  const horario = document.getElementById('cal-horario').value;
-  if (!texto) { toast('⚠️ Escreva o conteúdo do post'); return; }
-  const d = getCriativoData();
-  if (!d.calendario[calDaySelected]) d.calendario[calDaySelected] = [];
-  d.calendario[calDaySelected].push({ texto, horario, id: uid() });
-  saveCriativoData(d);
-  document.getElementById('cal-novo-post').value = '';
-  selectCalDay(calDaySelected, null);
-  renderCalendario();
-  toast('📅 Post agendado!');
+if (!calDaySelected) return;
+const texto = document.getElementById(‘cal-novo-post’).value.trim();
+const horario = document.getElementById(‘cal-horario’).value;
+if (!texto) { toast(‘⚠️ Escreva o conteúdo do post’); return; }
+const d = getCriativoData();
+if (!d.calendario[calDaySelected]) d.calendario[calDaySelected] = [];
+d.calendario[calDaySelected].push({ texto, horario, id: uid() });
+saveCriativoData(d);
+document.getElementById(‘cal-novo-post’).value = ‘’;
+selectCalDay(calDaySelected, null);
+renderCalendario();
+toast(‘📅 Post agendado!’);
 }
 
 function deletarCalPost(key, i) {
-  const d = getCriativoData();
-  d.calendario[key].splice(i, 1);
-  if (!d.calendario[key].length) delete d.calendario[key];
-  saveCriativoData(d);
-  selectCalDay(key, null);
-  renderCalendario();
-  toast('🗑 Removido');
+const d = getCriativoData();
+d.calendario[key].splice(i, 1);
+if (!d.calendario[key].length) delete d.calendario[key];
+saveCriativoData(d);
+selectCalDay(key, null);
+renderCalendario();
+toast(‘🗑 Removido’);
 }
 
 // ── IDEIAS ──
 function salvarIdeia() {
-  const titulo = document.getElementById('ideia-titulo').value.trim();
-  const texto = document.getElementById('ideia-texto').value.trim();
-  if (!titulo) { toast('⚠️ Informe o título da ideia'); return; }
-  const d = getCriativoData();
-  d.ideias.unshift({ id: uid(), titulo, texto, tag: ideiaTag, data: new Date().toISOString() });
-  saveCriativoData(d);
-  document.getElementById('ideia-titulo').value = '';
-  document.getElementById('ideia-texto').value = '';
-  renderIdeias();
-  toast('💡 Ideia salva!');
+const titulo = document.getElementById(‘ideia-titulo’).value.trim();
+const texto = document.getElementById(‘ideia-texto’).value.trim();
+if (!titulo) { toast(‘⚠️ Informe o título da ideia’); return; }
+const d = getCriativoData();
+d.ideias.unshift({ id: uid(), titulo, texto, tag: ideiaTag, data: new Date().toISOString() });
+saveCriativoData(d);
+document.getElementById(‘ideia-titulo’).value = ‘’;
+document.getElementById(‘ideia-texto’).value = ‘’;
+renderIdeias();
+toast(‘💡 Ideia salva!’);
 }
 
 function renderIdeias() {
-  const d = getCriativoData();
-  const el = document.getElementById('ideias-lista');
-  if (!d.ideias.length) {
-    el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">💡</div><p style="font-size:13px">Nenhuma ideia salva ainda.</p></div>`;
-    return;
-  }
-  const tagEmoji = { exercicio:'💪', nutricao:'🥗', motivacao:'🔥', dica:'📌' };
-  el.innerHTML = d.ideias.map((id2, i) => `<div class="ideia-item">
-    <div class="ideia-tag">${tagEmoji[id2.tag]||''} ${id2.tag}</div>
-    <div class="ideia-titulo">${id2.titulo}</div>
-    ${id2.texto ? `<div class="ideia-texto">${id2.texto}</div>` : ''}
-    <div style="display:flex;gap:7px;align-items:center">
-      <span style="font-size:11px;color:var(--text3);flex:1">${new Date(id2.data).toLocaleDateString('pt-BR')}</span>
-      <button class="btn btn-ghost btn-sm" onclick="usarIdeia(${i})">✨ Usar</button>
-      <button class="btn btn-danger btn-sm" onclick="deletarIdeia(${i})">🗑</button>
-    </div>
+const d = getCriativoData();
+const el = document.getElementById(‘ideias-lista’);
+if (!d.ideias.length) {
+el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">💡</div><p style="font-size:13px">Nenhuma ideia salva ainda.</p></div>`;
+return;
+}
+const tagEmoji = { exercicio:‘💪’, nutricao:‘🥗’, motivacao:‘🔥’, dica:‘📌’ };
+el.innerHTML = d.ideias.map((id2, i) => `<div class="ideia-item"> <div class="ideia-tag">${tagEmoji[id2.tag]||''} ${id2.tag}</div> <div class="ideia-titulo">${id2.titulo}</div> ${id2.texto ? `<div class="ideia-texto">${id2.texto}</div>` : ‘’}
+<div style="display:flex;gap:7px;align-items:center">
+<span style="font-size:11px;color:var(--text3);flex:1">${new Date(id2.data).toLocaleDateString(‘pt-BR’)}</span>
+<button class="btn btn-ghost btn-sm" onclick="usarIdeia(${i})">✨ Usar</button>
+<button class="btn btn-danger btn-sm" onclick="deletarIdeia(${i})">🗑</button>
+</div>
+
   </div>`).join('');
 }
 
 function deletarIdeia(i) {
-  const d = getCriativoData();
-  d.ideias.splice(i, 1);
-  saveCriativoData(d); renderIdeias(); toast('🗑 Ideia removida');
+const d = getCriativoData();
+d.ideias.splice(i, 1);
+saveCriativoData(d); renderIdeias(); toast(‘🗑 Ideia removida’);
 }
 
 function usarIdeia(i) {
-  const d = getCriativoData();
-  const ideia = d.ideias[i];
-  document.getElementById('post-contexto').value = ideia.titulo + (ideia.texto ? ': ' + ideia.texto : '');
-  setCriativoTab('gerar');
-  toast('💡 Ideia aplicada no contexto!');
+const d = getCriativoData();
+const ideia = d.ideias[i];
+document.getElementById(‘post-contexto’).value = ideia.titulo + (ideia.texto ? ’: ’ + ideia.texto : ‘’);
+setCriativoTab(‘gerar’);
+toast(‘💡 Ideia aplicada no contexto!’);
 }
 
 // ══════════════════════════════════════════
@@ -2169,5 +2262,6 @@ function usarIdeia(i) {
 renderHome();
 checkPaymentAlerts();
 </script>
+
 </body>
 </html>

@@ -477,14 +477,12 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <!-- ── GERAR POST ── -->
       <div id="cpanel-gerar">
         <!-- API Key -->
-        <div id="api-key-section" class="card" style="margin-bottom:13px">
-          <div class="card-title">🔑 OpenAI API Key</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Insira sua chave para gerar posts com IA. Fica salva apenas no seu celular.</div>
-          <div style="display:flex;gap:8px">
-            <input class="form-input" id="openai-key-input" type="password" placeholder="sk-..." style="flex:1;font-size:13px"/>
-            <button class="btn btn-primary btn-sm" onclick="saveApiKey()">Salvar</button>
+        <div id="api-key-section" class="card" style="margin-bottom:13px;background:var(--accent-dim);border-color:var(--accent-mid)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:18px">✨</span>
+            <div class="card-title" style="margin:0;color:var(--accent)">IA Pronta para Usar</div>
           </div>
-          <div id="api-key-status" style="font-size:11px;margin-top:8px;color:var(--text3)"></div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6">Geração de texto <b style="color:var(--text)">e imagem</b> integrados — sem precisar de chave de API.</div>
         </div>
 
         <!-- Configurações de geração -->
@@ -1845,25 +1843,12 @@ function getCriativoData() {
 function saveCriativoData(d) { localStorage.setItem('fp_criativo', JSON.stringify(d)); }
 
 function initCriativo() {
-  // Load API key status
-  const k = localStorage.getItem('fp_openai_key');
-  const status = document.getElementById('api-key-status');
-  if (k) { status.textContent = '✅ Chave salva'; status.style.color = 'var(--accent)'; }
-  else { status.textContent = '⚠️ Sem chave — insira para gerar com IA'; status.style.color = 'var(--orange)'; }
   renderHistorico();
   renderIdeias();
   renderCalendario();
 }
 
-function saveApiKey() {
-  const k = document.getElementById('openai-key-input').value.trim();
-  if (!k) { toast('⚠️ Insira a chave'); return; }
-  localStorage.setItem('fp_openai_key', k);
-  document.getElementById('openai-key-input').value = '';
-  document.getElementById('api-key-status').textContent = '✅ Chave salva!';
-  document.getElementById('api-key-status').style.color = 'var(--accent)';
-  toast('🔑 API Key salva!');
-}
+function saveApiKey() { /* no longer needed */ }
 
 // ── SUB-TABS ──
 function setCriativoTab(tab) {
@@ -1900,10 +1885,9 @@ const temaLabels = {
   recuperacao:'Recuperação', antes_depois:'Antes e Depois'
 };
 
-async function gerarPost() {
-  const apiKey = localStorage.getItem('fp_openai_key');
-  if (!apiKey) { toast('⚠️ Adicione sua OpenAI API Key primeiro'); return; }
+let currentSvgSeed = 0;
 
+async function gerarPost() {
   const tema = document.getElementById('post-tema').value;
   const contexto = document.getElementById('post-contexto').value.trim();
   const incHashtags = document.getElementById('inc-hashtags').checked;
@@ -1927,7 +1911,8 @@ ${incCta ? 'Inclua um call-to-action no final (ex: salve este post, marque um am
 Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do JSON):
 {
   "post": "texto completo do post sem hashtags",
-  "hashtags": "${incHashtags ? 'lista de 10-15 hashtags relevantes separadas por espaço começando com #' : ''}"
+  "hashtags": "${incHashtags ? 'lista de 10-15 hashtags relevantes separadas por espaço começando com #' : ''}",
+  "imagemDescricao": "uma frase curta em inglês descrevendo o visual ideal para este post (para gerar imagem)"
 }`;
 
   const btn = document.getElementById('btn-gerar');
@@ -1936,13 +1921,13 @@ Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do J
   btnTxt.innerHTML = '<span class="spinner"></span>Gerando...';
 
   try {
-    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 700, temperature: 0.85
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: prompt }]
       })
     });
 
@@ -1952,15 +1937,26 @@ Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do J
     }
 
     const data = await resp.json();
-    let raw = data.choices[0].message.content.trim();
+    let raw = data.content.map(b => b.text || '').join('').trim();
     raw = raw.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(raw);
 
-    lastGeneratedPost = { tema, temaLabel: temaLabels[tema], post: parsed.post, hashtags: parsed.hashtags || '', data: new Date().toISOString() };
+    lastGeneratedPost = {
+      tema, temaLabel: temaLabels[tema],
+      post: parsed.post,
+      hashtags: parsed.hashtags || '',
+      imagemDescricao: parsed.imagemDescricao || tema,
+      data: new Date().toISOString()
+    };
 
     document.getElementById('post-texto').textContent = parsed.post;
     document.getElementById('post-hashtags').textContent = parsed.hashtags || '';
     document.getElementById('post-resultado').style.display = 'block';
+
+    // Generate image
+    currentSvgSeed = Math.floor(Math.random() * 9999);
+    await renderPostImage(tema, parsed.imagemDescricao || '', currentSvgSeed);
+
     document.getElementById('main').scrollBy({ top: 200, behavior: 'smooth' });
     toast('✅ Post gerado!');
 
@@ -1970,6 +1966,91 @@ Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do J
     btn.disabled = false;
     btnTxt.textContent = '✨ Gerar Post com IA';
   }
+}
+
+async function renderPostImage(tema, descricao, seed) {
+  const box = document.getElementById('svg-img-box');
+  box.innerHTML = `<div style="height:200px;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:12px"><span class="spinner"></span></div>`;
+
+  // Use Pollinations.ai — free, no key needed
+  const searchTerms = {
+    dica_exercicio: 'fitness workout gym exercise',
+    motivacional: 'athletic motivation sport energy',
+    nutricao: 'healthy food nutrition meal prep',
+    treino_dia: 'gym training workout session',
+    resultado: 'fitness transformation body progress',
+    curiosidade: 'science health body anatomy',
+    recuperacao: 'rest recovery sleep wellness',
+    antes_depois: 'fitness transformation strength',
+  };
+  const base = searchTerms[tema] || 'fitness gym workout';
+  const finalPrompt = encodeURIComponent(`${base}, ${descricao}, professional fitness photo, high quality, vibrant`);
+  const imgUrl = `https://image.pollinations.ai/prompt/${finalPrompt}?width=600&height=600&seed=${seed}&nologo=true`;
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    box.innerHTML = '';
+    img.style.cssText = 'width:100%;border-radius:12px;display:block';
+    box.appendChild(img);
+  };
+  img.onerror = () => {
+    // Fallback: beautiful SVG card
+    box.innerHTML = gerarSvgCard(tema, seed);
+  };
+  img.src = imgUrl;
+}
+
+function gerarSvgCard(tema, seed) {
+  const palettes = {
+    dica_exercicio: ['#1a1a2e','#16213e','#0f3460','#e94560'],
+    motivacional:   ['#0d0d0d','#1a0533','#2d1b69','#ff6b35'],
+    nutricao:       ['#0a1628','#0d2137','#1a4a2e','#4caf50'],
+    treino_dia:     ['#0d0d0d','#1a1a2e','#2d2d44','#00d4ff'],
+    resultado:      ['#1a0a00','#2d1500','#4a2000','#ffd700'],
+    curiosidade:    ['#0a0a1a','#1a1a3e','#2d2d6e','#a855f7'],
+    recuperacao:    ['#0a1a2a','#1a2a3a','#2a3a4a','#60a5fa'],
+    antes_depois:   ['#1a0a1a','#2d1a2d','#4a2a4a','#ec4899'],
+  };
+  const emojis = {
+    dica_exercicio:'💪', motivacional:'🔥', nutricao:'🥗', treino_dia:'📋',
+    resultado:'🏆', curiosidade:'🧠', recuperacao:'😴', antes_depois:'✨'
+  };
+  const labels = temaLabels || {};
+  const p = palettes[tema] || palettes.motivacional;
+  const emoji = emojis[tema] || '💪';
+  const titulo = (labels[tema] || tema).toUpperCase();
+  const r = (n) => ((seed * 9301 + n * 49297 + 233) % 233280) / 233280;
+
+  const circles = Array.from({length:6}, (_,i) => {
+    const cx = 50 + r(i*3)*400, cy = 50 + r(i*3+1)*400;
+    const rad = 40 + r(i*3+2)*120;
+    return `<circle cx="${cx}" cy="${cy}" r="${rad}" fill="${p[i%p.length]}" opacity="${0.3+r(i)*0.4}"/>`;
+  }).join('');
+
+  return `<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:12px;display:block">
+    <defs>
+      <radialGradient id="bg${seed}" cx="50%" cy="50%" r="70%">
+        <stop offset="0%" stop-color="${p[2]}"/>
+        <stop offset="100%" stop-color="${p[0]}"/>
+      </radialGradient>
+      <filter id="blur${seed}"><feGaussianBlur stdDeviation="20"/></filter>
+    </defs>
+    <rect width="600" height="600" fill="url(#bg${seed})"/>
+    <g filter="url(#blur${seed})" opacity="0.7">${circles}</g>
+    <rect x="40" y="40" width="520" height="520" rx="20" fill="none" stroke="${p[3]}" stroke-width="1.5" opacity="0.4"/>
+    <text x="300" y="240" text-anchor="middle" font-size="110" opacity="0.9">${emoji}</text>
+    <text x="300" y="330" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="800" font-size="36" fill="white" letter-spacing="2">${titulo}</text>
+    <rect x="200" y="348" width="200" height="3" rx="2" fill="${p[3]}" opacity="0.8"/>
+    <text x="300" y="390" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="18" fill="white" opacity="0.7">FitPlan Pro</text>
+  </svg>`;
+}
+
+async function trocaImagem() {
+  if (!lastGeneratedPost) return;
+  currentSvgSeed = Math.floor(Math.random() * 9999);
+  await renderPostImage(lastGeneratedPost.tema, lastGeneratedPost.imagemDescricao || '', currentSvgSeed);
+  toast('🔄 Nova imagem gerada!');
 }
 
 function regenerarPost() { gerarPost(); }

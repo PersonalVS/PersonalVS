@@ -480,9 +480,9 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
         <div id="api-key-section" class="card" style="margin-bottom:13px;background:var(--accent-dim);border-color:var(--accent-mid)">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
             <span style="font-size:18px">✨</span>
-            <div class="card-title" style="margin:0;color:var(--accent)">IA Pronta para Usar</div>
+            <div class="card-title" style="margin:0;color:var(--accent)">Romanos 8:28</div>
           </div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.6">Geração de texto <b style="color:var(--text)">e imagem</b> integrados — sem precisar de chave de API.</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6">Todas as coisas cooperam para o bem daqueles que amam ao <b style="color:var(--text)">Senhor</b>.</div>
         </div>
 
         <!-- Configurações de geração -->
@@ -1894,286 +1894,115 @@ async function gerarPost() {
   const incEmoji = document.getElementById('inc-emoji').checked;
   const incCta = document.getElementById('inc-cta').checked;
 
-  const tomDesc = {
-    motivador:'Motivador e energético, com frases de impacto',
-    educativo:'Educativo e informativo, com dados e explicações claras',
-    descontraido:'Descontraído, informal e divertido',
-    profissional:'Profissional e sério, autoridade no assunto'
-  }[postTom];
-
-  const prompt = `Você é um personal trainer especialista em marketing digital para redes sociais. Crie um post para Instagram sobre "${temaLabels[tema]}".
-
-Tom: ${tomDesc}
-${contexto ? `Contexto adicional: ${contexto}` : ''}
-${incEmoji ? 'Use emojis relevantes ao longo do texto.' : 'Não use emojis.'}
-${incCta ? 'Inclua um call-to-action no final (ex: salve este post, marque um amigo, etc).' : ''}
-
-Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do JSON):
-{
-  "post": "texto completo do post sem hashtags",
-  "hashtags": "${incHashtags ? 'lista de 10-15 hashtags relevantes separadas por espaço começando com #' : ''}",
-  "imagemDescricao": "uma frase curta em inglês descrevendo o visual ideal para este post (para gerar imagem)"
-}`;
-
   const btn = document.getElementById('btn-gerar');
   const btnTxt = document.getElementById('btn-gerar-txt');
   btn.disabled = true;
   btnTxt.innerHTML = '<span class="spinner"></span>Gerando...';
 
+  // STEP 1: imagem local IMEDIATA (sem API, sem rede)
+  currentSvgSeed = Math.floor(Math.random() * 99999);
+  lastGeneratedPost = { tema, temaLabel: temaLabels[tema], post: '', hashtags: '', data: new Date().toISOString() };
+  document.getElementById('post-resultado').style.display = 'block';
+  renderPostImage(tema, currentSvgSeed);
+
+  // STEP 2: tenta texto via API
+  const tomDesc = { motivador:'Motivador e energético', educativo:'Educativo e informativo', descontraido:'Descontraído e divertido', profissional:'Profissional e sério' }[postTom];
+  const prompt = `Personal trainer especialista em redes sociais. Post Instagram sobre "${temaLabels[tema]}". Tom: ${tomDesc}. ${contexto?'Contexto: '+contexto+'.':''} ${incEmoji?'Use emojis.':'Sem emojis.'} ${incCta?'Inclua call-to-action.':''} Retorne APENAS JSON: {"post":"texto","hashtags":"${incHashtags?'10 hashtags com #':''}"}`;
+
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 800,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 700, messages: [{ role: 'user', content: prompt }] })
     });
-
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      throw new Error(err.error?.message || `Erro ${resp.status}`);
-    }
-
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
-    let raw = data.content.map(b => b.text || '').join('').trim();
-    raw = raw.replace(/```json|```/g, '').trim();
+    let raw = data.content.map(b => b.text||'').join('').trim().replace(/```json|```/g,'').trim();
     const parsed = JSON.parse(raw);
-
-    lastGeneratedPost = {
-      tema, temaLabel: temaLabels[tema],
-      post: parsed.post,
-      hashtags: parsed.hashtags || '',
-      imagemDescricao: parsed.imagemDescricao || tema,
-      data: new Date().toISOString()
-    };
-
-    document.getElementById('post-texto').textContent = parsed.post;
-    document.getElementById('post-hashtags').textContent = parsed.hashtags || '';
-    document.getElementById('post-resultado').style.display = 'block';
-
-    // Generate image
-    currentSvgSeed = Math.floor(Math.random() * 99999);
-    renderPostImage(tema, parsed.post || '', currentSvgSeed);
-
-    document.getElementById('main').scrollBy({ top: 200, behavior: 'smooth' });
+    lastGeneratedPost.post = parsed.post||''; lastGeneratedPost.hashtags = parsed.hashtags||'';
+    document.getElementById('post-texto').textContent = parsed.post||'';
+    document.getElementById('post-hashtags').textContent = parsed.hashtags||'';
     toast('✅ Post gerado!');
-
   } catch(e) {
-    toast('❌ Erro: ' + (e.message || 'Tente novamente'));
+    const fallbacks = {
+      dica_exercicio:'A consistência é o segredo do resultado. Cada treino conta, cada rep importa. Não é sobre perfeição — é sobre presença. 💪',
+      motivacional:'Você não precisa ser o mais forte. Só precisa aparecer. Todo dia. Isso é o que separa quem sonha de quem realiza. 🔥',
+      nutricao:'O que você come é tão importante quanto o que você treina. Alimente seu corpo com o combustível certo. 🥗',
+      treino_dia:'Hoje é dia de treino! Foco total, energia máxima. Cada série é uma conquista. Vamos! 📋💪',
+      resultado:'Resultados não acontecem da noite pro dia — eles acontecem todos os dias. Parabéns a quem nunca desistiu! 🏆',
+      curiosidade:'Músculos continuam queimando calorias por até 48h após treino intenso. O descanso também faz parte do processo. 🧠',
+      recuperacao:'Descanso não é fraqueza — é parte do treinamento. É durante o repouso que seus músculos crescem. 😴',
+      antes_depois:'A transformação começa na decisão. Não espere o momento perfeito. Comece agora, com o que você tem. ✨',
+    };
+    const ht = '#personaltrainer #fitness #treino #saude #academia #workout #musculacao #resultados #vidafit #exercicio';
+    const txt = fallbacks[tema]||fallbacks.motivacional;
+    lastGeneratedPost.post = txt; lastGeneratedPost.hashtags = incHashtags?ht:'';
+    document.getElementById('post-texto').textContent = txt;
+    document.getElementById('post-hashtags').textContent = incHashtags?ht:'';
+    toast('✅ Post criado!');
   } finally {
-    btn.disabled = false;
-    btnTxt.textContent = '✨ Gerar Post com IA';
+    btn.disabled = false; btnTxt.textContent = '✨ Gerar Post com IA';
+    document.getElementById('main').scrollBy({ top: 300, behavior: 'smooth' });
   }
 }
 
-function renderPostImage(tema, postTexto, seed) {
+function renderPostImage(tema, seed) {
   const box = document.getElementById('svg-img-box');
-  try {
-
-  // Seeded random helper
-  const rng = (n) => ((seed * 9301 + n * 49297 + 233) % 233280) / 233280;
-
-  const configs = {
-    dica_exercicio: { bg: ['#0f0c29','#302b63','#24243e'], accent: '#e94560', accent2: '#ff9a56', emoji: '💪', label: 'DICA DE EXERCÍCIO', shapes: 'bars' },
-    motivacional:   { bg: ['#0d0d0d','#1a0533','#3a0d6e'], accent: '#ff6b35', accent2: '#ffd700', emoji: '🔥', label: 'MOTIVAÇÃO',         shapes: 'spark' },
-    nutricao:       { bg: ['#0a1f0a','#0d2e1a','#1a4a2e'], accent: '#4caf50', accent2: '#a8e063', emoji: '🥗', label: 'NUTRIÇÃO',          shapes: 'circles' },
-    treino_dia:     { bg: ['#0d0d1a','#1a1a3e','#0d2a3e'], accent: '#00d4ff', accent2: '#7b2ff7', emoji: '📋', label: 'TREINO DO DIA',     shapes: 'grid' },
-    resultado:      { bg: ['#1a0e00','#2d1800','#4a2800'], accent: '#ffd700', accent2: '#ff9500', emoji: '🏆', label: 'RESULTADO',         shapes: 'star' },
-    curiosidade:    { bg: ['#0a0a1a','#0d1a3e','#1a0a3e'], accent: '#a855f7', accent2: '#3b82f6', emoji: '🧠', label: 'CURIOSIDADE',       shapes: 'dots' },
-    recuperacao:    { bg: ['#0a1220','#0f1f35','#1a2a40'], accent: '#60a5fa', accent2: '#818cf8', emoji: '😴', label: 'RECUPERAÇÃO',       shapes: 'waves' },
-    antes_depois:   { bg: ['#1a0a1a','#2d1040','#4a0a4a'], accent: '#ec4899', accent2: '#f472b6', emoji: '✨', label: 'TRANSFORMAÇÃO',    shapes: 'split' },
+  const cfgs = {
+    dica_exercicio:{ bg:['#0f0c29','#302b63','#24243e'], a:'#e94560', b:'#ff9a56', e:'💪', l:'DICA DE EXERCÍCIO' },
+    motivacional:  { bg:['#0d0d0d','#1a0533','#3a0d6e'], a:'#ff6b35', b:'#ffd700', e:'🔥', l:'MOTIVAÇÃO' },
+    nutricao:      { bg:['#0a1f0a','#0d2e1a','#1a4a2e'], a:'#4caf50', b:'#a8e063', e:'🥗', l:'NUTRIÇÃO' },
+    treino_dia:    { bg:['#0d0d1a','#1a1a3e','#0d2a3e'], a:'#00d4ff', b:'#7b2ff7', e:'📋', l:'TREINO DO DIA' },
+    resultado:     { bg:['#1a0e00','#2d1800','#4a2800'], a:'#ffd700', b:'#ff9500', e:'🏆', l:'RESULTADO' },
+    curiosidade:   { bg:['#0a0a1a','#0d1a3e','#1a0a3e'], a:'#a855f7', b:'#3b82f6', e:'🧠', l:'CURIOSIDADE' },
+    recuperacao:   { bg:['#0a1220','#0f1f35','#1a2a40'], a:'#60a5fa', b:'#818cf8', e:'😴', l:'RECUPERAÇÃO' },
+    antes_depois:  { bg:['#1a0a1a','#2d1040','#4a0a4a'], a:'#ec4899', b:'#f472b6', e:'✨', l:'TRANSFORMAÇÃO' },
   };
+  const c = cfgs[tema]||cfgs.motivacional;
 
-  const cfg = configs[tema] || configs.motivacional;
-  const S = 600;
+  // Always use SVG — zero Canvas API, works everywhere
+  const rn = (n) => { let s=(seed*9301+n*49297+233)%233280; return s/233280; };
+  const blobs = Array.from({length:5},(_,i)=>{
+    const x=Math.round(rn(i*4)*400), y=Math.round(rn(i*4+1)*400), r=Math.round(60+rn(i*4+2)*130);
+    const col=i%2===0?c.a:c.b;
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="0.18"/>`;
+  }).join('');
+  const dots = Array.from({length:12},(_,i)=>{
+    const x=Math.round(rn(i+50)*380+10), y=Math.round(rn(i+51)*380+10), r=Math.round(2+rn(i+52)*5);
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${i%2===0?c.a:c.b}" opacity="0.35"/>`;
+  }).join('');
 
-  const canvas = document.createElement('canvas');
-  canvas.width = S; canvas.height = S;
-  const ctx = canvas.getContext('2d');
-
-  // Background gradient
-  const grd = ctx.createLinearGradient(0, 0, S, S);
-  grd.addColorStop(0, cfg.bg[0]);
-  grd.addColorStop(0.5, cfg.bg[1]);
-  grd.addColorStop(1, cfg.bg[2]);
-  ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, S, S);
-
-  // Decorative blobs
-  for (let i = 0; i < 5; i++) {
-    const x = rng(i*4) * S, y = rng(i*4+1) * S;
-    const r = 60 + rng(i*4+2) * 160;
-    const g2 = ctx.createRadialGradient(x, y, 0, x, y, r);
-    const col = i % 2 === 0 ? cfg.accent : cfg.accent2;
-    g2.addColorStop(0, col + '55');
-    g2.addColorStop(1, col + '00');
-    ctx.fillStyle = g2;
-    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
-  }
-
-  // Shape decorations per theme
-  ctx.save();
-  if (cfg.shapes === 'bars') {
-    for (let i = 0; i < 7; i++) {
-      const h = 30 + rng(i+20) * 120;
-      const x = 40 + i * 78;
-      ctx.fillStyle = (i % 2 === 0 ? cfg.accent : cfg.accent2) + '44';
-      ctx.beginPath();
-      const rx2 = 8, bx = x, by = S - 80 - h, bw = 50, bh = h;
-      ctx.moveTo(bx+rx2, by); ctx.lineTo(bx+bw-rx2, by);
-      ctx.quadraticCurveTo(bx+bw, by, bx+bw, by+rx2);
-      ctx.lineTo(bx+bw, by+bh); ctx.lineTo(bx, by+bh); ctx.lineTo(bx, by+rx2);
-      ctx.quadraticCurveTo(bx, by, bx+rx2, by);
-      ctx.closePath(); ctx.fill();
-    }
-  } else if (cfg.shapes === 'circles') {
-    for (let i = 0; i < 8; i++) {
-      ctx.strokeStyle = (i%2===0?cfg.accent:cfg.accent2) + '33';
-      ctx.lineWidth = 2 + rng(i+10)*4;
-      ctx.beginPath();
-      ctx.arc(S/2, S/2, 80 + i*45, 0, Math.PI*2);
-      ctx.stroke();
-    }
-  } else if (cfg.shapes === 'grid') {
-    ctx.strokeStyle = cfg.accent + '22';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < S; i += 50) {
-      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, S); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(S, i); ctx.stroke();
-    }
-  } else if (cfg.shapes === 'dots') {
-    for (let i = 0; i < 30; i++) {
-      ctx.fillStyle = (i%2===0?cfg.accent:cfg.accent2) + '66';
-      ctx.beginPath();
-      ctx.arc(rng(i+40)*S, rng(i+41)*S, 3+rng(i+42)*8, 0, Math.PI*2);
-      ctx.fill();
-    }
-  } else if (cfg.shapes === 'waves') {
-    ctx.strokeStyle = cfg.accent + '33';
-    ctx.lineWidth = 3;
-    for (let w = 0; w < 5; w++) {
-      ctx.beginPath();
-      for (let x = 0; x <= S; x += 4) {
-        const y = 200 + w*70 + Math.sin((x/S)*Math.PI*4 + rng(w)*Math.PI*2)*30;
-        x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-      }
-      ctx.stroke();
-    }
-  } else if (cfg.shapes === 'split') {
-    const gS = ctx.createLinearGradient(0, 0, S, 0);
-    gS.addColorStop(0, cfg.accent + '33');
-    gS.addColorStop(0.5, 'transparent');
-    gS.addColorStop(1, cfg.accent2 + '33');
-    ctx.fillStyle = gS;
-    ctx.fillRect(0, 0, S, S);
-    ctx.strokeStyle = cfg.accent + '88';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([10, 8]);
-    ctx.beginPath(); ctx.moveTo(S/2, 0); ctx.lineTo(S/2, S); ctx.stroke();
-    ctx.setLineDash([]);
-  } else if (cfg.shapes === 'star') {
-    for (let i = 0; i < 6; i++) {
-      const angle = (i/6)*Math.PI*2 + rng(i+50)*0.5;
-      const len = 150 + rng(i+51)*100;
-      ctx.strokeStyle = cfg.accent + '44';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(S/2, S/2);
-      ctx.lineTo(S/2 + Math.cos(angle)*len, S/2 + Math.sin(angle)*len);
-      ctx.stroke();
-    }
-  } else if (cfg.shapes === 'spark') {
-    for (let i = 0; i < 25; i++) {
-      ctx.strokeStyle = (i%2===0?cfg.accent:cfg.accent2) + '55';
-      ctx.lineWidth = 1;
-      const x1=rng(i*3)*S, y1=rng(i*3+1)*S;
-      ctx.beginPath(); ctx.moveTo(x1,y1);
-      ctx.lineTo(x1+(rng(i*3+2)-.5)*100, y1+(rng(i*3+3)-.5)*100);
-      ctx.stroke();
-    }
-  }
-  ctx.restore();
-
-  // Border frame (iOS-safe, no roundRect)
-  const fr = 24, fx = 24, fy = 24, fw = S-48, fh = S-48;
-  ctx.strokeStyle = cfg.accent + '55';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(fx+fr, fy); ctx.lineTo(fx+fw-fr, fy);
-  ctx.quadraticCurveTo(fx+fw, fy, fx+fw, fy+fr);
-  ctx.lineTo(fx+fw, fy+fh-fr);
-  ctx.quadraticCurveTo(fx+fw, fy+fh, fx+fw-fr, fy+fh);
-  ctx.lineTo(fx+fr, fy+fh);
-  ctx.quadraticCurveTo(fx, fy+fh, fx, fy+fh-fr);
-  ctx.lineTo(fx, fy+fr);
-  ctx.quadraticCurveTo(fx, fy, fx+fr, fy);
-  ctx.closePath(); ctx.stroke();
-
-  // Corner accents
-  const cSize = 22;
-  const corners = [[24,24],[S-24,24],[24,S-24],[S-24,S-24]];
-  corners.forEach(([cx,cy], i) => {
-    ctx.strokeStyle = cfg.accent;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    const dx = i%2===0?1:-1, dy = i<2?1:-1;
-    ctx.moveTo(cx+dx*cSize, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy+dy*cSize);
-    ctx.stroke();
-  });
-
-  // Emoji (large)
-  ctx.font = '110px serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(cfg.emoji, S/2, S/2 - 60);
-
-  // Label
-  ctx.font = 'bold 28px sans-serif';
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText(cfg.label, S/2, S/2 + 65);
-
-  // Divider line
-  const lw = 160;
-  const lg = ctx.createLinearGradient(S/2-lw, 0, S/2+lw, 0);
-  lg.addColorStop(0, 'transparent');
-  lg.addColorStop(0.5, cfg.accent);
-  lg.addColorStop(1, 'transparent');
-  ctx.strokeStyle = lg;
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.moveTo(S/2-lw, S/2+85); ctx.lineTo(S/2+lw, S/2+85);
-  ctx.stroke();
-
-  // Branding
-  ctx.font = '15px sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.45)';
-  ctx.fillText('FitPlan Pro', S/2, S/2 + 115);
-
-  // Render to box
-  box.innerHTML = '';
-  canvas.style.cssText = 'width:100%;border-radius:12px;display:block';
-  box.appendChild(canvas);
-
-  // Store as dataURL for sharing
-  try { lastGeneratedPost && (lastGeneratedPost.imgDataUrl = canvas.toDataURL('image/jpeg', 0.9)); } catch(e) {}
-
-  } catch(err) {
-    // Visible fallback so user knows something happened
-    box.innerHTML = `<div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#1a1a3e,#2d1b69);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
-      <div style="font-size:72px">💪</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#fff;text-align:center;padding:0 20px">FITPLAN PRO</div>
-      <div style="width:80px;height:3px;background:#3bffa0;border-radius:2px"></div>
-      <div style="font-size:13px;color:rgba(255,255,255,.5)">Post gerado com IA</div>
-    </div>`;
-  }
+  box.innerHTML = `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:12px;display:block">
+    <defs>
+      <linearGradient id="bg${seed}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${c.bg[0]}"/>
+        <stop offset="50%" stop-color="${c.bg[1]}"/>
+        <stop offset="100%" stop-color="${c.bg[2]}"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="400" fill="url(#bg${seed})"/>
+    ${blobs}
+    ${dots}
+    <rect x="12" y="12" width="376" height="376" fill="none" stroke="${c.a}" stroke-width="1.5" opacity="0.4"/>
+    <line x1="12" y1="12" x2="42" y2="12" stroke="${c.a}" stroke-width="3"/>
+    <line x1="12" y1="12" x2="12" y2="42" stroke="${c.a}" stroke-width="3"/>
+    <line x1="388" y1="12" x2="358" y2="12" stroke="${c.a}" stroke-width="3"/>
+    <line x1="388" y1="12" x2="388" y2="42" stroke="${c.a}" stroke-width="3"/>
+    <line x1="12" y1="388" x2="42" y2="388" stroke="${c.a}" stroke-width="3"/>
+    <line x1="12" y1="388" x2="12" y2="358" stroke="${c.a}" stroke-width="3"/>
+    <line x1="388" y1="388" x2="358" y2="388" stroke="${c.a}" stroke-width="3"/>
+    <line x1="388" y1="388" x2="388" y2="358" stroke="${c.a}" stroke-width="3"/>
+    <text x="200" y="185" text-anchor="middle" dominant-baseline="middle" font-size="90">${c.e}</text>
+    <text x="200" y="240" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="22" fill="white" opacity="0.95">${c.l}</text>
+    <line x1="120" y1="262" x2="280" y2="262" stroke="${c.a}" stroke-width="2" opacity="0.7"/>
+    <text x="200" y="285" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="13" fill="rgba(255,255,255,0.4)">FitPlan Pro</text>
+  </svg>`;
 }
 
 async function trocaImagem() {
   if (!lastGeneratedPost) return;
   currentSvgSeed = Math.floor(Math.random() * 99999);
-  renderPostImage(lastGeneratedPost.tema, lastGeneratedPost.post || '', currentSvgSeed);
+  renderPostImage(lastGeneratedPost.tema, currentSvgSeed);
   toast('🔄 Nova variação!');
 }
 

@@ -531,21 +531,17 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
         <!-- Resultado gerado -->
         <div id="post-resultado" style="display:none">
-
-          <!-- Imagem SVG do post -->
+          <!-- Imagem do post — preenchida diretamente pelo JS via innerHTML -->
           <div class="card" style="margin-bottom:13px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
               <div class="card-title" style="margin-bottom:0">🖼️ Imagem do Post</div>
-              <button class="icon-btn" onclick="novaImagemPost()" title="Próxima imagem">🔄</button>
+              <button class="icon-btn" onclick="trocaImagem()" title="Trocar imagem">🔄</button>
             </div>
-            <div id="post-img-wrap" style="width:100%;border-radius:12px;overflow:hidden;background:var(--card2);margin-bottom:10px"></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <button class="btn btn-ghost btn-sm" onclick="novaImagemPost()">🔄 Outra imagem</button>
-              <button class="btn btn-ghost btn-sm" onclick="compartilharImagemSVG()">📤 Compartilhar</button>
-            </div>
+            <div id="svg-img-box" style="width:100%;border-radius:12px;overflow:hidden;line-height:0"></div>
+            <button class="btn btn-ghost btn-sm btn-full" onclick="trocaImagem()" style="margin-top:10px">🔄 Próxima variação</button>
           </div>
 
-          <!-- Texto do post -->
+          <!-- Texto -->
           <div class="card" style="margin-bottom:13px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
               <div class="card-title" style="margin-bottom:0">📝 Post Gerado</div>
@@ -1965,11 +1961,6 @@ Retorne APENAS um JSON com este formato exato (sem markdown, sem texto fora do J
     document.getElementById('post-texto').textContent = parsed.post;
     document.getElementById('post-hashtags').textContent = parsed.hashtags || '';
     document.getElementById('post-resultado').style.display = 'block';
-
-    // Renderizar imagem SVG embutida por tema
-    currentImgIndex = Math.floor(Math.random() * ((fitnessSVGs[temaToImgKey[tema]] || fitnessSVGs.motivacional).length));
-    renderImagemPost(tema);
-
     document.getElementById('main').scrollBy({ top: 200, behavior: 'smooth' });
     toast('✅ Post gerado!');
 
@@ -2017,184 +2008,6 @@ function salvarPost() {
   d.historico.unshift({ ...lastGeneratedPost, id: uid() });
   saveCriativoData(d);
   toast('💾 Post salvo no histórico!');
-}
-
-// ══════════════════════════════════════════
-// BANCO DE IMAGENS SVG FITNESS (embutidas — sem dependência externa)
-// ══════════════════════════════════════════
-let currentImgIndex = 0;
-let currentImgTema = 'motivacional';
-
-const fitnessSVGs = {
-  motivacional: [
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a1628"/><stop offset="100%" stop-color="#1a2f4a"/></linearGradient></defs>
-      <rect width="400" height="300" fill="url(#g1)"/>
-      <circle cx="200" cy="120" r="55" fill="none" stroke="#3bffa0" stroke-width="3" opacity="0.3"/>
-      <circle cx="200" cy="120" r="40" fill="none" stroke="#3bffa0" stroke-width="2" opacity="0.6"/>
-      <circle cx="200" cy="120" r="25" fill="#3bffa0" opacity="0.15"/>
-      <text x="200" y="128" text-anchor="middle" font-size="26" fill="#3bffa0">💪</text>
-      <text x="200" y="200" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="22" font-weight="900" fill="#ffffff">SEM LIMITES</text>
-      <text x="200" y="224" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#3bffa0" letter-spacing="4">PERSONAL TRAINER</text>
-      <line x1="80" y1="240" x2="320" y2="240" stroke="#3bffa0" stroke-width="1" opacity="0.4"/>
-      <rect x="0" y="0" width="400" height="4" fill="#3bffa0" opacity="0.8"/>
-    </svg>`,
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#0d0f14"/>
-      <rect x="0" y="0" width="400" height="300" fill="none" stroke="#3bffa0" stroke-width="6" opacity="0.15"/>
-      <text x="200" y="110" text-anchor="middle" font-size="52" fill="#3bffa0" opacity="0.2">🔥</text>
-      <text x="200" y="160" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#3bffa0">FOCO.</text>
-      <text x="200" y="190" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#ffffff">FORÇA.</text>
-      <text x="200" y="220" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="28" font-weight="900" fill="#3bffa0">RESULTADO.</text>
-      <text x="200" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#5a6480" letter-spacing="3">PERSONAL TRAINER PRO</text>
-    </svg>`
-  ],
-  dica_exercicio: [
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#0a0c10"/>
-      <rect x="20" y="20" width="360" height="260" rx="16" fill="#181c26" stroke="#3bffa0" stroke-width="1.5" opacity="0.6"/>
-      <text x="200" y="75" text-anchor="middle" font-size="36" fill="#3bffa0">🏋️</text>
-      <text x="200" y="115" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#ffffff">DICA DE TREINO</text>
-      <line x1="60" y1="128" x2="340" y2="128" stroke="#3bffa0" stroke-width="1" opacity="0.4"/>
-      <text x="200" y="158" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">Postura correta é</text>
-      <text x="200" y="178" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">o primeiro passo</text>
-      <text x="200" y="198" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" fill="#3bffa0">para o resultado</text>
-      <rect x="120" y="228" width="160" height="32" rx="16" fill="#3bffa0"/>
-      <text x="200" y="249" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="12" fill="#0a0c10">APLIQUE HOJE</text>
-    </svg>`,
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#111827"/>
-      <circle cx="200" cy="130" r="80" fill="#1e2330" stroke="#4d9fff" stroke-width="2" stroke-dasharray="8,4"/>
-      <text x="200" y="118" text-anchor="middle" font-size="40" fill="#4d9fff">⚡</text>
-      <text x="200" y="155" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="15" fill="#ffffff">ATIVE SEU POTENCIAL</text>
-      <text x="200" y="240" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#9aa3b8">Série · Repetição · Evolução</text>
-      <rect x="140" y="255" width="120" height="28" rx="14" fill="#4d9fff" opacity="0.2" stroke="#4d9fff" stroke-width="1"/>
-      <text x="200" y="273" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#4d9fff">PERSONAL TRAINER</text>
-    </svg>`
-  ],
-  nutricao: [
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#0a1a0f"/>
-      <circle cx="200" cy="130" r="70" fill="#0d2b12" stroke="#3bffa0" stroke-width="2"/>
-      <text x="200" y="118" text-anchor="middle" font-size="42" fill="#3bffa0">🥗</text>
-      <text x="200" y="150" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#3bffa0">NUTRIÇÃO É TREINO</text>
-      <text x="200" y="215" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">Proteína · Carboidrato · Gordura</text>
-      <text x="200" y="238" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">O equilíbrio é a chave</text>
-      <text x="200" y="272" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#3bffa0" letter-spacing="2">PERSONAL TRAINER PRO</text>
-    </svg>`
-  ],
-  treino_dia: [
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#0a0c10"/>
-      <rect x="16" y="16" width="368" height="268" rx="12" fill="#12151c" stroke="#252c3d" stroke-width="1"/>
-      <rect x="16" y="16" width="368" height="52" rx="12" fill="#3bffa0"/>
-      <text x="200" y="50" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" fill="#0a0c10">TREINO DO DIA 💪</text>
-      <rect x="36" y="84" width="328" height="36" rx="8" fill="#1e2330"/>
-      <text x="56" y="108" font-family="Arial,sans-serif" font-size="13" fill="#3bffa0">01</text>
-      <text x="80" y="108" font-family="Arial,sans-serif" font-size="13" fill="#ffffff">Aquecimento — 5 min</text>
-      <rect x="36" y="128" width="328" height="36" rx="8" fill="#181c26"/>
-      <text x="56" y="152" font-family="Arial,sans-serif" font-size="13" fill="#3bffa0">02</text>
-      <text x="80" y="152" font-family="Arial,sans-serif" font-size="13" fill="#ffffff">Força — 4x12 reps</text>
-      <rect x="36" y="172" width="328" height="36" rx="8" fill="#1e2330"/>
-      <text x="56" y="196" font-family="Arial,sans-serif" font-size="13" fill="#3bffa0">03</text>
-      <text x="80" y="196" font-family="Arial,sans-serif" font-size="13" fill="#ffffff">Cardio — 20 min</text>
-      <rect x="36" y="216" width="328" height="36" rx="8" fill="#181c26"/>
-      <text x="56" y="240" font-family="Arial,sans-serif" font-size="13" fill="#3bffa0">04</text>
-      <text x="80" y="240" font-family="Arial,sans-serif" font-size="13" fill="#ffffff">Alongamento — 5 min</text>
-    </svg>`
-  ],
-  resultado: [
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#0a0c10"/>
-      <rect x="0" y="0" width="400" height="300" fill="none"/>
-      <text x="200" y="80" text-anchor="middle" font-size="44" fill="#ffaa3b">🏆</text>
-      <text x="200" y="130" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="24" fill="#ffffff">RESULTADO</text>
-      <text x="200" y="158" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="24" fill="#3bffa0">REAL.</text>
-      <line x1="80" y1="175" x2="320" y2="175" stroke="#ffaa3b" stroke-width="1.5" opacity="0.5"/>
-      <text x="200" y="205" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">Consistência + Método</text>
-      <text x="200" y="225" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">= Transformação</text>
-      <text x="200" y="268" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#ffaa3b" letter-spacing="3">PERSONAL TRAINER PRO</text>
-    </svg>`
-  ],
-  curiosidade: [
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#0d0a1a"/>
-      <circle cx="200" cy="120" r="60" fill="#1a1030" stroke="#a78bfa" stroke-width="2"/>
-      <text x="200" y="108" text-anchor="middle" font-size="36" fill="#a78bfa">🧠</text>
-      <text x="200" y="140" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#a78bfa">VOCÊ SABIA?</text>
-      <text x="200" y="205" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">O corpo humano tem</text>
-      <text x="200" y="225" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#ffffff">600+ músculos</text>
-      <text x="200" y="245" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">prontos para evoluir</text>
-      <text x="200" y="278" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#a78bfa" letter-spacing="2">PERSONAL TRAINER PRO</text>
-    </svg>`
-  ],
-  recuperacao: [
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#0a0f1a"/>
-      <circle cx="200" cy="115" r="65" fill="#0d1525" stroke="#4d9fff" stroke-width="1.5" opacity="0.6"/>
-      <text x="200" y="103" text-anchor="middle" font-size="38" fill="#4d9fff">😴</text>
-      <text x="200" y="135" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" fill="#4d9fff">DESCANSO É TREINO</text>
-      <text x="200" y="205" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#9aa3b8">Durante o sono seu músculo</text>
-      <text x="200" y="225" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" fill="#ffffff">cresce e se recupera</text>
-      <text x="200" y="252" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#4d9fff">8h de sono = mais resultado</text>
-      <text x="200" y="280" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#5a6480" letter-spacing="2">PERSONAL TRAINER PRO</text>
-    </svg>`
-  ],
-  antes_depois: [
-    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="400" height="300" fill="#0a0c10"/>
-      <rect x="10" y="10" width="180" height="280" rx="12" fill="#181c26" stroke="#252c3d" stroke-width="1"/>
-      <rect x="210" y="10" width="180" height="280" rx="12" fill="#1a2f1a" stroke="#3bffa0" stroke-width="1.5"/>
-      <text x="100" y="100" text-anchor="middle" font-size="44" fill="#5a6480">😔</text>
-      <text x="100" y="145" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" fill="#5a6480">ANTES</text>
-      <text x="100" y="168" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#3d4555">Semana 1</text>
-      <text x="300" y="100" text-anchor="middle" font-size="44" fill="#3bffa0">💪</text>
-      <text x="300" y="145" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" fill="#3bffa0">DEPOIS</text>
-      <text x="300" y="168" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#3bffa0">Semana 12</text>
-      <text x="100" y="240" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#5a6480">-8kg gordura</text>
-      <text x="300" y="240" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#3bffa0">+5kg músculo</text>
-      <circle cx="200" cy="155" r="16" fill="#3bffa0"/>
-      <text x="200" y="161" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="14" fill="#0a0c10">→</text>
-    </svg>`
-  ]
-};
-
-// Mapeamento de fallback para temas sem variações
-const temaToImgKey = {
-  dica_exercicio:'dica_exercicio', motivacional:'motivacional', nutricao:'nutricao',
-  treino_dia:'treino_dia', resultado:'resultado', curiosidade:'curiosidade',
-  recuperacao:'recuperacao', antes_depois:'antes_depois'
-};
-
-function renderImagemPost(tema) {
-  const key = temaToImgKey[tema] || 'motivacional';
-  const arr = fitnessSVGs[key] || fitnessSVGs.motivacional;
-  currentImgTema = tema;
-  currentImgIndex = currentImgIndex % arr.length;
-  const wrap = document.getElementById('post-img-wrap');
-  if (wrap) {
-    wrap.innerHTML = arr[currentImgIndex];
-    const svg = wrap.querySelector('svg');
-    if (svg) svg.style.cssText = 'width:100%;height:auto;display:block;border-radius:12px';
-  }
-}
-
-function novaImagemPost() {
-  const key = temaToImgKey[currentImgTema] || 'motivacional';
-  const arr = fitnessSVGs[key] || fitnessSVGs.motivacional;
-  currentImgIndex = (currentImgIndex + 1) % arr.length;
-  renderImagemPost(currentImgTema);
-  toast('🖼️ Nova imagem!');
-}
-
-function compartilharImagemSVG() {
-  if (!lastGeneratedPost) return;
-  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n' + lastGeneratedPost.hashtags : '');
-  if (navigator.share) {
-    navigator.share({ title: 'Post FitPlan Pro', text: txt }).catch(() => {});
-  } else {
-    navigator.clipboard?.writeText(txt).then(() => toast('📋 Texto copiado para compartilhar!'));
-  }
 }
 
 // ── HISTÓRICO ──

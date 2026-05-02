@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#0a0c10"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="FitPlan"/>
-<title>FitPlan Pro</title>
+<meta name="apple-mobile-web-app-title" content="PersonalVS"/>
+<title>PersonalVS</title>
 <script>
-const manifestData={name:"FitPlan Pro",short_name:"FitPlan",description:"App de Personal Trainer",start_url:"./",display:"standalone",background_color:"#0a0c10",theme_color:"#0a0c10",orientation:"portrait",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230a0c10'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"}]};
+const manifestData={name:"PersonalVS",short_name:"PersonalVS",description:"App de Personal Trainer",start_url:"./",display:"standalone",background_color:"#0a0c10",theme_color:"#0a0c10",orientation:"portrait",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230a0c10'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"}]};
 const blob=new Blob([JSON.stringify(manifestData)],{type:'application/json'});
 document.write('<link rel="manifest" href="'+URL.createObjectURL(blob)+'">');
 </script>
@@ -272,7 +272,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 <div id="app">
   <div id="topbar">
     <button class="back-btn" id="back-btn" onclick="goBack()">‹</button>
-    <div class="logo">Fit<span>Plan</span> <span style="font-size:12px;color:var(--text3);font-weight:400">Pro</span></div>
+    <div class="logo">Personal<span>VS</span></div>
     <div id="top-title"></div>
     <div class="spacer"></div>
   </div>
@@ -476,45 +476,87 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
       <!-- ── GERAR POST ── -->
       <div id="cpanel-gerar">
-        <!-- API Key -->
-        <div id="api-key-section" class="card" style="margin-bottom:13px;background:var(--accent-dim);border-color:var(--accent-mid)">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <!-- Banner IA -->
+        <div class="card" style="margin-bottom:13px;background:var(--accent-dim);border-color:var(--accent-mid)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="font-size:18px">✨</span>
-            <div class="card-title" style="margin:0;color:var(--accent)">Romanos 8:28</div>
+            <div class="card-title" style="margin:0;color:var(--accent)">IA com Alta Diversidade</div>
           </div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.6">Todas as coisas cooperam para o bem daqueles que amam ao <b style="color:var(--text)">Senhor</b>.</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6">10 temas · 10 paletas · 4 layouts · 8 estilos de escrita. Cada post é único.</div>
         </div>
 
-        <!-- Configurações de geração -->
+        <!-- 1. TEMA -->
         <div class="card" style="margin-bottom:13px">
-          <div class="card-title">⚙️ Configurar Post</div>
-          <div class="form-group">
-            <label class="form-label">Tema</label>
-            <select class="form-select" id="post-tema">
-              <option value="dica_exercicio">💪 Dica de Exercício</option>
-              <option value="motivacional">🔥 Post Motivacional</option>
-              <option value="nutricao">🥗 Nutrição e Alimentação</option>
-              <option value="treino_dia">📋 Treino do Dia</option>
-              <option value="resultado">🏆 Resultado de Aluno</option>
-              <option value="curiosidade">🧠 Curiosidade Fitness</option>
-              <option value="recuperacao">😴 Recuperação e Descanso</option>
-              <option value="antes_depois">✨ Antes e Depois</option>
-            </select>
+          <div class="card-title">🎯 1. Tema do Post</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="tema-grid">
+            <button class="tom-btn" id="tema-motivacao"     onclick="setTema('motivacao')">💥 Motivação</button>
+            <button class="tom-btn" id="tema-dica"          onclick="setTema('dica')">💡 Dica Fitness</button>
+            <button class="tom-btn" id="tema-transformacao" onclick="setTema('transformacao')">🔥 Transformação</button>
+            <button class="tom-btn" id="tema-mito"          onclick="setTema('mito')">❌ Mito vs Fato</button>
+            <button class="tom-btn" id="tema-nutricao"      onclick="setTema('nutricao')">🥗 Nutrição</button>
+            <button class="tom-btn" id="tema-desafio"       onclick="setTema('desafio')">🏆 Desafio</button>
+            <button class="tom-btn" id="tema-bastidores"    onclick="setTema('bastidores')">🎬 Bastidores</button>
+            <button class="tom-btn" id="tema-resultado"     onclick="setTema('resultado')">📈 Resultado</button>
+            <button class="tom-btn" id="tema-pergunta"      onclick="setTema('pergunta')">🤔 Pergunta</button>
+            <button class="tom-btn" id="tema-ciencia"       onclick="setTema('ciencia')">🧬 Ciência</button>
           </div>
-          <div class="form-group">
-            <label class="form-label">Tom do post</label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-              <button class="tom-btn active" id="tom-motivador" onclick="setTom('motivador')">🔥 Motivador</button>
-              <button class="tom-btn" id="tom-educativo" onclick="setTom('educativo')">📚 Educativo</button>
-              <button class="tom-btn" id="tom-descontraido" onclick="setTom('descontraido')">😄 Descontraído</button>
-              <button class="tom-btn" id="tom-profissional" onclick="setTom('profissional')">💼 Profissional</button>
+          <button onclick="setTemaAleatorio()" style="margin-top:10px;width:100%;padding:8px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">🎲 Tema Aleatório</button>
+        </div>
+
+        <!-- 2. PALETA DE CORES -->
+        <div class="card" style="margin-bottom:13px">
+          <div class="card-title">🎨 2. Paleta de Cores</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center" id="palette-grid">
+            <!-- preenchido pelo JS -->
+          </div>
+          <button onclick="setPaletaAleatoria()" style="margin-top:10px;width:100%;padding:8px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">🎲 Paleta Aleatória</button>
+        </div>
+
+        <!-- 3. FORMATO + LAYOUT -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px">
+          <div class="card" style="margin-bottom:0">
+            <div class="card-title">📐 3. Formato</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button class="tom-btn" id="fmt-quadrado" onclick="setFormato('quadrado')">⬛ Quadrado 1:1</button>
+              <button class="tom-btn" id="fmt-story"    onclick="setFormato('story')">📱 Stories 9:16</button>
+              <button class="tom-btn" id="fmt-retrato"  onclick="setFormato('retrato')">🖼 Retrato 4:5</button>
             </div>
           </div>
+          <div class="card" style="margin-bottom:0">
+            <div class="card-title">🎭 4. Estilo Visual</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button class="tom-btn" id="layout-diagonal"  onclick="setLayout('diagonal')">⟋ Diagonal</button>
+              <button class="tom-btn" id="layout-dots"      onclick="setLayout('dots')">· · Grid Dots</button>
+              <button class="tom-btn" id="layout-linhas"    onclick="setLayout('linhas')">≡ Linhas</button>
+              <button class="tom-btn" id="layout-circulos"  onclick="setLayout('circulos')">◎ Círculos</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. TOM DE ESCRITA -->
+        <div class="card" style="margin-bottom:13px">
+          <div class="card-title">✍️ 5. Estilo de Escrita</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+            <button class="tom-btn" id="tom-provocativo"  onclick="setTom('provocativo')">⚡ Provocativo</button>
+            <button class="tom-btn" id="tom-poetico"      onclick="setTom('poetico')">🎭 Poético</button>
+            <button class="tom-btn" id="tom-tecnico"      onclick="setTom('tecnico')">🔬 Técnico</button>
+            <button class="tom-btn" id="tom-descontraido" onclick="setTom('descontraido')">😄 Descontraído</button>
+            <button class="tom-btn" id="tom-story"        onclick="setTom('story')">📖 Storytelling</button>
+            <button class="tom-btn" id="tom-desafio"      onclick="setTom('desafio')">🏆 Desafiador</button>
+            <button class="tom-btn" id="tom-lista"        onclick="setTom('lista')">📋 Listas</button>
+            <button class="tom-btn" id="tom-humor"        onclick="setTom('humor')">😂 Bem-humorado</button>
+          </div>
+          <button onclick="setTomAleatorio()" style="margin-top:10px;width:100%;padding:8px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">🎲 Estilo Aleatório</button>
+        </div>
+
+        <!-- 5. CONTEXTO + OPÇÕES -->
+        <div class="card" style="margin-bottom:13px">
+          <div class="card-title">⚙️ 6. Configurações</div>
           <div class="form-group">
             <label class="form-label">Contexto adicional (opcional)</label>
-            <textarea class="form-textarea" id="post-contexto" placeholder="Ex: foco em glúteos, para iniciantes, pós-treino..." style="height:60px"></textarea>
+            <textarea class="form-textarea" id="post-contexto" placeholder="Ex: foco em glúteos, para iniciantes, semana de resultados..." style="height:60px"></textarea>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom:0">
             <label class="form-label">Incluir</label>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <label class="check-opt"><input type="checkbox" id="inc-hashtags" checked> #Hashtags</label>
@@ -522,24 +564,24 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
               <label class="check-opt"><input type="checkbox" id="inc-cta"> Call-to-action</label>
             </div>
           </div>
-          <button class="btn btn-primary btn-full" id="btn-gerar" onclick="gerarPost()">
-            <span id="btn-gerar-txt">✨ Gerar Post com IA</span>
-          </button>
         </div>
+
+        <!-- BOTÃO GERAR -->
+        <button class="btn btn-primary btn-full" id="btn-gerar" onclick="gerarPost()" style="margin-bottom:13px;padding:15px;font-size:15px">
+          <span id="btn-gerar-txt">✨ Gerar Post com IA</span>
+        </button>
 
         <!-- Resultado gerado -->
         <div id="post-resultado" style="display:none">
-          <!-- Imagem do post — preenchida diretamente pelo JS via innerHTML -->
           <div class="card" style="margin-bottom:13px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
               <div class="card-title" style="margin-bottom:0">🖼️ Imagem do Post</div>
-              <button class="icon-btn" onclick="trocaImagem()" title="Trocar imagem">🔄</button>
+              <button class="icon-btn" onclick="trocaImagem()" title="Nova variação">🔄</button>
             </div>
             <div id="svg-img-box" style="width:100%;border-radius:12px;overflow:hidden;line-height:0"></div>
             <button class="btn btn-ghost btn-sm btn-full" onclick="trocaImagem()" style="margin-top:10px">🔄 Próxima variação</button>
           </div>
 
-          <!-- Texto -->
           <div class="card" style="margin-bottom:13px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
               <div class="card-title" style="margin-bottom:0">📝 Post Gerado</div>
@@ -552,7 +594,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
             <div id="post-hashtags" style="margin-top:12px;font-size:13px;color:var(--blue);line-height:1.8;word-break:break-word"></div>
           </div>
 
-          <!-- Compartilhar -->
           <div class="card" style="margin-bottom:13px">
             <div class="card-title">🚀 Compartilhar</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -582,8 +623,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
           <button class="btn btn-ghost btn-sm" onclick="calNav(1)">›</button>
         </div>
         <div id="cal-grid" class="card" style="padding:12px"></div>
-
-        <!-- Painel de agendamento -->
         <div id="cal-day-panel" style="display:none;margin-top:13px">
           <div class="card">
             <div class="card-title">📅 <span id="cal-day-title"></span></div>
@@ -1831,11 +1870,60 @@ function checkPaymentAlerts() {
 // CRIATIVO — STATE & STORAGE
 // ══════════════════════════════════════════
 let criativoTab = 'gerar';
-let postTom = 'motivador';
 let ideiaTag = 'exercicio';
 let calDate = new Date();
 let calDaySelected = null;
 let lastGeneratedPost = null;
+
+// ── 10 TEMAS ──
+const TEMAS = {
+  motivacao:     { label:'💥 Motivação',      emoji:'💥', headline:'SEM DESCULPAS' },
+  dica:          { label:'💡 Dica Fitness',   emoji:'💡', headline:'DICA DE OURO' },
+  transformacao: { label:'🔥 Transformação',  emoji:'🔥', headline:'TRANSFORMAÇÃO' },
+  mito:          { label:'❌ Mito vs Fato',   emoji:'❌', headline:'MITO OU FATO?' },
+  nutricao:      { label:'🥗 Nutrição',       emoji:'🥗', headline:'COMA CERTO' },
+  desafio:       { label:'🏆 Desafio',        emoji:'🏆', headline:'ACEITA?' },
+  bastidores:    { label:'🎬 Bastidores',     emoji:'🎬', headline:'MEU TRABALHO' },
+  resultado:     { label:'📈 Resultado',      emoji:'📈', headline:'RESULTADO REAL' },
+  pergunta:      { label:'🤔 Pergunta',       emoji:'🤔', headline:'E VOCÊ?' },
+  ciencia:       { label:'🧬 Ciência',        emoji:'🧬', headline:'CIÊNCIA EXPLICA' },
+};
+let postTema = 'motivacao';
+
+// ── 10 PALETAS ──
+const PALETAS = [
+  { nome:'Neon Verde',   bg0:'#0a0c10', bg1:'#0d1f14', bg2:'#122a1c', ac:'#3bffa0', tx:'#ffffff' },
+  { nome:'Fogo',         bg0:'#1a0800', bg1:'#2d1000', bg2:'#3d1800', ac:'#ff6b1a', tx:'#ffffff' },
+  { nome:'Elétrico',     bg0:'#050a1a', bg1:'#0a1530', bg2:'#0f2040', ac:'#4d9fff', tx:'#ffffff' },
+  { nome:'Roxo',         bg0:'#0d0514', bg1:'#1a0a2e', bg2:'#240f40', ac:'#a855f7', tx:'#ffffff' },
+  { nome:'Vermelho',     bg0:'#150005', bg1:'#2a0010', bg2:'#3a0015', ac:'#ff2d55', tx:'#ffffff' },
+  { nome:'Dourado',      bg0:'#0c0a00', bg1:'#1a1400', bg2:'#281e00', ac:'#ffcc00', tx:'#ffffff' },
+  { nome:'Ciano',        bg0:'#001414', bg1:'#002020', bg2:'#002828', ac:'#00e5e5', tx:'#ffffff' },
+  { nome:'Rosa',         bg0:'#150010', bg1:'#250020', bg2:'#300030', ac:'#ff69b4', tx:'#ffffff' },
+  { nome:'Clean',        bg0:'#f0f0f0', bg1:'#e4e4e4', bg2:'#d8d8d8', ac:'#111111', tx:'#111111' },
+  { nome:'Bege Luxo',    bg0:'#1c1710', bg1:'#252018', bg2:'#2e2820', ac:'#d4a855', tx:'#ffffff' },
+];
+let postPaleta = 0;
+
+// ── FORMATOS ──
+const FORMATOS = { quadrado:{w:400,h:400}, story:{w:400,h:710}, retrato:{w:400,h:500} };
+let postFormato = 'quadrado';
+
+// ── LAYOUTS VISUAIS ──
+let postLayout = 'diagonal';
+
+// ── 8 ESTILOS DE ESCRITA ──
+const TOMS = {
+  provocativo: 'provocativo e direto, com frases curtas e impacto emocional forte',
+  poetico:     'inspiracional e poético, usando metáforas do esporte e da superação',
+  tecnico:     'técnico e educativo, com tom de especialista e dados concretos',
+  descontraido:'descontraído e próximo, como conversa informal entre amigos',
+  story:       'storytelling, contando uma mini-história com início, meio e fim',
+  desafio:     'desafiador, usando perguntas retóricas e chamadas à ação fortes',
+  lista:       'listas claras com emojis, fácil de ler e compartilhar',
+  humor:       'bem-humorado e irônico, mas sempre motivador no final',
+};
+let postTom = 'provocativo';
 
 function getCriativoData() {
   return JSON.parse(localStorage.getItem('fp_criativo') || '{"historico":[],"ideias":[],"calendario":{}}');
@@ -1843,6 +1931,21 @@ function getCriativoData() {
 function saveCriativoData(d) { localStorage.setItem('fp_criativo', JSON.stringify(d)); }
 
 function initCriativo() {
+  // Inicializa paletas visuais
+  const pg = document.getElementById('palette-grid');
+  if (pg) {
+    pg.innerHTML = PALETAS.map((p,i) => `
+      <div onclick="setPaleta(${i})" id="pal-${i}" title="${p.nome}"
+        style="width:40px;height:40px;border-radius:10px;background:${p.bg0};border:2px solid ${i===postPaleta?p.ac:'var(--border)'};cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .15s">
+        <div style="width:16px;height:16px;border-radius:50%;background:${p.ac}"></div>
+      </div>`).join('');
+  }
+  // Marca seleções iniciais aleatórias
+  setTemaAleatorio();
+  setTomAleatorio();
+  setPaletaAleatoria();
+  setFormato('quadrado');
+  setLayout('diagonal');
   renderHistorico();
   renderIdeias();
   renderCalendario();
@@ -1850,159 +1953,287 @@ function initCriativo() {
 
 function saveApiKey() { /* no longer needed */ }
 
+// ── SELETORES ──
+function setTema(t) {
+  postTema = t;
+  document.querySelectorAll('#tema-grid .tom-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tema-'+t);
+  if (el) el.classList.add('active');
+}
+function setTemaAleatorio() {
+  const temas = Object.keys(TEMAS);
+  setTema(temas[Math.floor(Math.random()*temas.length)]);
+}
+
+function setPaleta(i) {
+  postPaleta = i;
+  document.querySelectorAll('#palette-grid div[id^="pal-"]').forEach((el,j) => {
+    el.style.borderColor = j===i ? PALETAS[i].ac : 'var(--border)';
+  });
+}
+function setPaletaAleatoria() {
+  setPaleta(Math.floor(Math.random()*PALETAS.length));
+}
+
+function setFormato(f) {
+  postFormato = f;
+  ['quadrado','story','retrato'].forEach(x => {
+    const el = document.getElementById('fmt-'+x);
+    if (el) el.classList.toggle('active', x===f);
+  });
+}
+
+function setLayout(l) {
+  postLayout = l;
+  ['diagonal','dots','linhas','circulos'].forEach(x => {
+    const el = document.getElementById('layout-'+x);
+    if (el) el.classList.toggle('active', x===l);
+  });
+}
+
+function setTom(t) {
+  postTom = t;
+  document.querySelectorAll('[id^="tom-"]').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tom-'+t);
+  if (el) el.classList.add('active');
+}
+function setTomAleatorio() {
+  const toms = Object.keys(TOMS);
+  setTom(toms[Math.floor(Math.random()*toms.length)]);
+}
+
+function setTag(t) {
+  ideiaTag = t;
+  ['exercicio','nutricao','motivacao','dica'].forEach(x => {
+    document.getElementById('tag-'+x).classList.toggle('active', x===t);
+  });
+}
+
 // ── SUB-TABS ──
 function setCriativoTab(tab) {
   criativoTab = tab;
   ['gerar','historico','calendario','ideias'].forEach(t => {
-    document.getElementById('ctab-'+t).classList.toggle('active', t === tab);
-    document.getElementById('cpanel-'+t).style.display = t === tab ? 'block' : 'none';
+    document.getElementById('ctab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('cpanel-'+t).style.display = t===tab ? 'block' : 'none';
   });
-  if (tab === 'historico') renderHistorico();
-  if (tab === 'ideias') renderIdeias();
-  if (tab === 'calendario') renderCalendario();
-}
-
-// ── TOM ──
-function setTom(t) {
-  postTom = t;
-  ['motivador','educativo','descontraido','profissional'].forEach(x => {
-    document.getElementById('tom-'+x).classList.toggle('active', x === t);
-  });
-}
-
-// ── TAG ──
-function setTag(t) {
-  ideiaTag = t;
-  ['exercicio','nutricao','motivacao','dica'].forEach(x => {
-    document.getElementById('tag-'+x).classList.toggle('active', x === t);
-  });
+  if (tab==='historico') renderHistorico();
+  if (tab==='ideias') renderIdeias();
+  if (tab==='calendario') renderCalendario();
 }
 
 // ── GERAR POST ──
-const temaLabels = {
-  dica_exercicio:'Dica de Exercício', motivacional:'Motivacional', nutricao:'Nutrição',
-  treino_dia:'Treino do Dia', resultado:'Resultado de Aluno', curiosidade:'Curiosidade Fitness',
-  recuperacao:'Recuperação', antes_depois:'Antes e Depois'
-};
-
+const temaLabels = Object.fromEntries(Object.entries(TEMAS).map(([k,v])=>[k,v.label]));
 let currentSvgSeed = 0;
 
 async function gerarPost() {
-  const tema = document.getElementById('post-tema').value;
-  const contexto = document.getElementById('post-contexto').value.trim();
+  const contexto  = document.getElementById('post-contexto').value.trim();
   const incHashtags = document.getElementById('inc-hashtags').checked;
-  const incEmoji = document.getElementById('inc-emoji').checked;
-  const incCta = document.getElementById('inc-cta').checked;
+  const incEmoji    = document.getElementById('inc-emoji').checked;
+  const incCta      = document.getElementById('inc-cta').checked;
 
-  const btn = document.getElementById('btn-gerar');
+  const btn    = document.getElementById('btn-gerar');
   const btnTxt = document.getElementById('btn-gerar-txt');
   btn.disabled = true;
   btnTxt.innerHTML = '<span class="spinner"></span>Gerando...';
 
-  // STEP 1: imagem local IMEDIATA (sem API, sem rede)
-  currentSvgSeed = Math.floor(Math.random() * 99999);
-  lastGeneratedPost = { tema, temaLabel: temaLabels[tema], post: '', hashtags: '', data: new Date().toISOString() };
+  // STEP 1: imagem local IMEDIATA
+  currentSvgSeed = Math.floor(Math.random()*99999);
+  lastGeneratedPost = { tema: postTema, temaLabel: TEMAS[postTema]?.label||postTema, post:'', hashtags:'', data: new Date().toISOString() };
   document.getElementById('post-resultado').style.display = 'block';
-  renderPostImage(tema, currentSvgSeed);
+  renderPostImage(postTema, currentSvgSeed, postPaleta, postFormato, postLayout);
 
-  // STEP 2: tenta texto via API
-  const tomDesc = { motivador:'Motivador e energético', educativo:'Educativo e informativo', descontraido:'Descontraído e divertido', profissional:'Profissional e sério' }[postTom];
-  const prompt = `Personal trainer especialista em redes sociais. Post Instagram sobre "${temaLabels[tema]}". Tom: ${tomDesc}. ${contexto?'Contexto: '+contexto+'.':''} ${incEmoji?'Use emojis.':'Sem emojis.'} ${incCta?'Inclua call-to-action.':''} Retorne APENAS JSON: {"post":"texto","hashtags":"${incHashtags?'10 hashtags com #':''}"}`;
+  // STEP 2: seed de diversidade para texto
+  const seed = `horario:${new Date().getHours()}h${new Date().getMinutes()}m · rand:${Math.floor(Math.random()*99999)}`;
+  const tomDesc = TOMS[postTom] || TOMS.provocativo;
+  const temaInfo = TEMAS[postTema] || TEMAS.motivacao;
+
+  const prompt = `Você é um especialista em marketing fitness para redes sociais brasileiras.
+
+TEMA: ${temaInfo.label}
+ESTILO DE ESCRITA: ${tomDesc}
+SEED (use para criar algo ÚNICO e diferente): ${seed}
+${contexto ? 'CONTEXTO EXTRA: ' + contexto : ''}
+${incEmoji ? 'USE emojis criativos.' : 'Sem emojis.'}
+${incCta ? 'INCLUA call-to-action forte no final.' : ''}
+
+Regras: evite clichês óbvios, seja original, use o seed para variar o ângulo do conteúdo.
+Retorne APENAS JSON válido: {"post":"texto do post aqui","hashtags":"${incHashtags?'10 hashtags relevantes com #':''}"}`;
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 700, messages: [{ role: 'user', content: prompt }] })
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:700, messages:[{role:'user',content:prompt}] })
     });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    if (!resp.ok) throw new Error('HTTP '+resp.status);
     const data = await resp.json();
-    let raw = data.content.map(b => b.text||'').join('').trim().replace(/```json|```/g,'').trim();
+    let raw = data.content.map(b=>b.text||'').join('').trim().replace(/```json|```/g,'').trim();
     const parsed = JSON.parse(raw);
-    lastGeneratedPost.post = parsed.post||''; lastGeneratedPost.hashtags = parsed.hashtags||'';
+    lastGeneratedPost.post = parsed.post||'';
+    lastGeneratedPost.hashtags = parsed.hashtags||'';
     document.getElementById('post-texto').textContent = parsed.post||'';
     document.getElementById('post-hashtags').textContent = parsed.hashtags||'';
     toast('✅ Post gerado!');
   } catch(e) {
-    const fallbacks = {
-      dica_exercicio:'A consistência é o segredo do resultado. Cada treino conta, cada rep importa. Não é sobre perfeição — é sobre presença. 💪',
-      motivacional:'Você não precisa ser o mais forte. Só precisa aparecer. Todo dia. Isso é o que separa quem sonha de quem realiza. 🔥',
-      nutricao:'O que você come é tão importante quanto o que você treina. Alimente seu corpo com o combustível certo. 🥗',
-      treino_dia:'Hoje é dia de treino! Foco total, energia máxima. Cada série é uma conquista. Vamos! 📋💪',
-      resultado:'Resultados não acontecem da noite pro dia — eles acontecem todos os dias. Parabéns a quem nunca desistiu! 🏆',
-      curiosidade:'Músculos continuam queimando calorias por até 48h após treino intenso. O descanso também faz parte do processo. 🧠',
-      recuperacao:'Descanso não é fraqueza — é parte do treinamento. É durante o repouso que seus músculos crescem. 😴',
-      antes_depois:'A transformação começa na decisão. Não espere o momento perfeito. Comece agora, com o que você tem. ✨',
+    // Fallback local com ALTA variação por tema + seed
+    const seedN = seed.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    const pick = arr => arr[seedN % arr.length];
+    const fallbackPorTema = {
+      motivacao:  ['Ninguém chegou ao topo esperando a vontade aparecer. Você age ou você cede. 💥','Seu corpo aguenta mais do que sua mente deixa. A limitação é mental. Quebre ela. 🔥','Cada treino é um voto para a pessoa que você quer ser. Vote todos os dias. 💪'],
+      dica:       ['Descanso é parte do treino. Ignorar isso é sabotar seu resultado. 😴💡','Consistência por 3 meses supera intensidade por 3 semanas. Sempre. 📅','A técnica certa em peso menor bate a técnica errada em peso alto. Aprenda antes de carregar. 🎯'],
+      transformacao:['Não existe transformação sem desconforto. O processo dói porque está funcionando. 🔥','A pessoa que você quer ser está do outro lado do treino que você quer pular. 💥','Você não está falhando. Está aprendendo como o seu corpo funciona. Siga em frente. ✨'],
+      mito:       ['MITO: Treino em jejum queima mais gordura. FATO: O que importa é o déficit calórico total do dia. ❌✅','MITO: Mulher que levanta peso fica "grande". FATO: Fica forte, definida e saudável. ❌💪','MITO: Suplemento substitui treino ruim. FATO: Suplemento complementa treino BOM. ❌🧬'],
+      nutricao:   ['Proteína em cada refeição. Não é dieta — é estratégia. 🥗💪','Você não precisa comer perfeito 100% do tempo. Precisa ser consistente 80%. 🍽️','Hidratação é o suplemento mais barato e mais ignorado do mercado. Beba água. 💧'],
+      desafio:    ['7 dias. 1 treino por dia. Quem entra? Comenta ✅ abaixo! 🏆','Desafio: uma semana sem açúcar refinado. Simples na teoria, difícil na prática. Vai encarar? 💪','30 segundos de prancha todos os dias por 30 dias. Você consegue? Me conta no DM! ⏱️'],
+      bastidores: ['Por trás de cada treino personalizado existe horas de estudo e planejamento. Isso é o que faz a diferença. 🎬','Ser personal não é só mostrar exercício. É entender o corpo, a mente e a rotina de cada aluno. 💡','Cada ficha de treino que entrego foi pensada especificamente para aquela pessoa. Isso é cuidado de verdade. 🎯'],
+      resultado:  ['Mais um aluno chegando onde se propôs. Consistência + acompanhamento = resultado real. 📈🏆','O resultado não mente. O processo é o que a maioria não aguenta. Parabéns a quem persiste! 🔥','Transformação real acontece quando a mudança de hábito vira estilo de vida. Orgulho total! ✨'],
+      pergunta:   ['Qual é o exercício que você mais evita fazer (mas sabe que precisa)? Comenta aqui! 🤔','Treino de manhã ou à noite? Me conta o seu horário ideal e por quê! ⏰','Se você pudesse mudar UMA coisa na sua rotina de treino hoje, o que seria? 💭'],
+      ciencia:    ['Seus músculos crescem durante o DESCANSO, não durante o treino. O treino é o estímulo. 🧬','O cortisol elevado (estresse) pode sabotar seus resultados mais do que uma refeição fora. Durma bem. 😴🧬','Treino de força aumenta a densidade óssea além de massa muscular. É prevenção de osteoporose também. 💪🔬'],
     };
-    const ht = '#personaltrainer #fitness #treino #saude #academia #workout #musculacao #resultados #vidafit #exercicio';
-    const txt = fallbacks[tema]||fallbacks.motivacional;
-    lastGeneratedPost.post = txt; lastGeneratedPost.hashtags = incHashtags?ht:'';
+    const textos = fallbackPorTema[postTema] || fallbackPorTema.motivacao;
+    const txt = pick(textos);
+    const ht = '#personaltrainer #fitness #treino #saude #academia #workout #musculacao #resultados #vidafit #personalvs';
+    lastGeneratedPost.post = txt;
+    lastGeneratedPost.hashtags = incHashtags ? ht : '';
     document.getElementById('post-texto').textContent = txt;
-    document.getElementById('post-hashtags').textContent = incHashtags?ht:'';
+    document.getElementById('post-hashtags').textContent = incHashtags ? ht : '';
     toast('✅ Post criado!');
   } finally {
-    btn.disabled = false; btnTxt.textContent = '✨ Gerar Post com IA';
-    document.getElementById('main').scrollBy({ top: 300, behavior: 'smooth' });
+    btn.disabled = false;
+    btnTxt.textContent = 'Romanos 8:28';
+    document.getElementById('main').scrollBy({top:300, behavior:'smooth'});
   }
 }
 
-function renderPostImage(tema, seed) {
+// ── RENDERIZAÇÃO DE IMAGEM — 10 PALETAS × 4 LAYOUTS × SEED INFINITO ──
+function renderPostImage(tema, seed, paletaIdx, formato, layout) {
   const box = document.getElementById('svg-img-box');
-  const cfgs = {
-    dica_exercicio:{ bg:['#0f0c29','#302b63','#24243e'], a:'#e94560', b:'#ff9a56', e:'💪', l:'DICA DE EXERCÍCIO' },
-    motivacional:  { bg:['#0d0d0d','#1a0533','#3a0d6e'], a:'#ff6b35', b:'#ffd700', e:'🔥', l:'MOTIVAÇÃO' },
-    nutricao:      { bg:['#0a1f0a','#0d2e1a','#1a4a2e'], a:'#4caf50', b:'#a8e063', e:'🥗', l:'NUTRIÇÃO' },
-    treino_dia:    { bg:['#0d0d1a','#1a1a3e','#0d2a3e'], a:'#00d4ff', b:'#7b2ff7', e:'📋', l:'TREINO DO DIA' },
-    resultado:     { bg:['#1a0e00','#2d1800','#4a2800'], a:'#ffd700', b:'#ff9500', e:'🏆', l:'RESULTADO' },
-    curiosidade:   { bg:['#0a0a1a','#0d1a3e','#1a0a3e'], a:'#a855f7', b:'#3b82f6', e:'🧠', l:'CURIOSIDADE' },
-    recuperacao:   { bg:['#0a1220','#0f1f35','#1a2a40'], a:'#60a5fa', b:'#818cf8', e:'😴', l:'RECUPERAÇÃO' },
-    antes_depois:  { bg:['#1a0a1a','#2d1040','#4a0a4a'], a:'#ec4899', b:'#f472b6', e:'✨', l:'TRANSFORMAÇÃO' },
-  };
-  const c = cfgs[tema]||cfgs.motivacional;
+  const pal = PALETAS[paletaIdx] || PALETAS[0];
+  const fmt = FORMATOS[formato] || FORMATOS.quadrado;
+  const W = fmt.w, H = fmt.h;
+  const temaInfo = TEMAS[tema] || TEMAS.motivacao;
 
-  // Always use SVG — zero Canvas API, works everywhere
+  // Função de pseudo-random determinística pelo seed
   const rn = (n) => { let s=(seed*9301+n*49297+233)%233280; return s/233280; };
-  const blobs = Array.from({length:5},(_,i)=>{
-    const x=Math.round(rn(i*4)*400), y=Math.round(rn(i*4+1)*400), r=Math.round(60+rn(i*4+2)*130);
-    const col=i%2===0?c.a:c.b;
-    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="0.18"/>`;
-  }).join('');
-  const dots = Array.from({length:12},(_,i)=>{
-    const x=Math.round(rn(i+50)*380+10), y=Math.round(rn(i+51)*380+10), r=Math.round(2+rn(i+52)*5);
-    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${i%2===0?c.a:c.b}" opacity="0.35"/>`;
+
+  // Gera gradiente de fundo único
+  const bgGrad = `<linearGradient id="bg${seed}" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="${pal.bg0}"/>
+    <stop offset="50%" stop-color="${pal.bg1}"/>
+    <stop offset="100%" stop-color="${pal.bg2}"/>
+  </linearGradient>`;
+
+  // Blobs de cor de fundo (posição e tamanho variam pelo seed)
+  const blobs = Array.from({length:6},(_,i)=>{
+    const x=Math.round(rn(i*5)*W), y=Math.round(rn(i*5+1)*H);
+    const r=Math.round(50+rn(i*5+2)*Math.min(W,H)*0.35);
+    const col = i%2===0 ? pal.ac : (pal.ac==='#111111'?'#444':'#ffffff');
+    const op = 0.08 + rn(i*5+3)*0.14;
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${op.toFixed(2)}"/>`;
   }).join('');
 
-  box.innerHTML = `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:12px;display:block">
-    <defs>
-      <linearGradient id="bg${seed}" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="${c.bg[0]}"/>
-        <stop offset="50%" stop-color="${c.bg[1]}"/>
-        <stop offset="100%" stop-color="${c.bg[2]}"/>
-      </linearGradient>
-    </defs>
-    <rect width="400" height="400" fill="url(#bg${seed})"/>
-    ${blobs}
-    ${dots}
-    <rect x="12" y="12" width="376" height="376" fill="none" stroke="${c.a}" stroke-width="1.5" opacity="0.4"/>
-    <line x1="12" y1="12" x2="42" y2="12" stroke="${c.a}" stroke-width="3"/>
-    <line x1="12" y1="12" x2="12" y2="42" stroke="${c.a}" stroke-width="3"/>
-    <line x1="388" y1="12" x2="358" y2="12" stroke="${c.a}" stroke-width="3"/>
-    <line x1="388" y1="12" x2="388" y2="42" stroke="${c.a}" stroke-width="3"/>
-    <line x1="12" y1="388" x2="42" y2="388" stroke="${c.a}" stroke-width="3"/>
-    <line x1="12" y1="388" x2="12" y2="358" stroke="${c.a}" stroke-width="3"/>
-    <line x1="388" y1="388" x2="358" y2="388" stroke="${c.a}" stroke-width="3"/>
-    <line x1="388" y1="388" x2="388" y2="358" stroke="${c.a}" stroke-width="3"/>
-    <text x="200" y="185" text-anchor="middle" dominant-baseline="middle" font-size="90">${c.e}</text>
-    <text x="200" y="240" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="22" fill="white" opacity="0.95">${c.l}</text>
-    <line x1="120" y1="262" x2="280" y2="262" stroke="${c.a}" stroke-width="2" opacity="0.7"/>
-    <text x="200" y="285" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="13" fill="rgba(255,255,255,0.4)">FitPlan Pro</text>
-  </svg>`;
+  // Elemento decorativo — muda completamente conforme o layout escolhido
+  let deco = '';
+  if (layout === 'diagonal') {
+    // Linhas diagonais em espaçamento variável pelo seed
+    const spacing = 60 + Math.round(rn(200)*80);
+    deco = Array.from({length:12},(_,i)=>{
+      const off = -H + i*spacing;
+      return `<line x1="${off}" y1="0" x2="${off+H}" y2="${H}" stroke="${pal.ac}" stroke-width="1" opacity="0.15"/>`;
+    }).join('');
+  } else if (layout === 'dots') {
+    // Grid de pontos com densidade variável
+    const step = 35 + Math.round(rn(201)*35);
+    deco = '';
+    for(let x=step/2; x<W; x+=step) {
+      for(let y=step/2; y<H; y+=step) {
+        const r = 1.5 + rn(Math.round(x+y*W+seed)%300)*3;
+        deco += `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(1)}" fill="${pal.ac}" opacity="0.2"/>`;
+      }
+    }
+  } else if (layout === 'linhas') {
+    // Linhas horizontais com espessura e espaçamento variáveis
+    const gap = 28 + Math.round(rn(202)*30);
+    deco = Array.from({length:Math.ceil(H/gap)},(_,i)=>{
+      const y = i*gap + Math.round(rn(i+300)*gap*0.5);
+      const w2 = 0.3 + rn(i+350)*0.5;
+      return `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="${pal.ac}" stroke-width="${w2.toFixed(1)}" opacity="0.18"/>`;
+    }).join('');
+  } else { // circulos
+    // Círculos concêntricos centrados em posição que varia pelo seed
+    const cx = W*0.3 + rn(400)*W*0.4;
+    const cy = H*0.3 + rn(401)*H*0.4;
+    const maxR = Math.max(W,H)*0.9;
+    deco = Array.from({length:8},(_,i)=>{
+      const r = 30 + i*(maxR/8);
+      return `<circle cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" r="${r.toFixed(0)}" fill="none" stroke="${pal.ac}" stroke-width="1" opacity="${(0.25-i*0.025).toFixed(2)}"/>`;
+    }).join('');
+  }
+
+  // Texto principal — headline com font-size adaptado ao formato
+  const headFS = Math.round(W * (formato==='story' ? 0.095 : 0.085));
+  const subFS  = Math.round(headFS * 0.42);
+  const brandFS= Math.round(headFS * 0.3);
+  const centerY = H * (formato==='story' ? 0.48 : 0.5);
+
+  // Bloco semi-transparente atrás do texto
+  const boxPad = W*0.07;
+  const boxW2 = W - boxPad*2;
+  const boxH2 = H * 0.55;
+  const boxY2 = centerY - boxH2/2;
+
+  // CTA badge
+  const ctaFS = Math.round(headFS*0.34);
+
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;border-radius:12px">
+  <defs>
+    ${bgGrad}
+    <filter id="blur${seed}"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <!-- fundo -->
+  <rect width="${W}" height="${H}" fill="url(#bg${seed})"/>
+  <!-- blobs desfocados -->
+  <g filter="url(#blur${seed})">${blobs}</g>
+  <!-- decoração de layout -->
+  ${deco}
+  <!-- barra accent topo/baixo -->
+  <rect x="0" y="0" width="${W}" height="4" fill="${pal.ac}"/>
+  <rect x="0" y="${H-4}" width="${W}" height="4" fill="${pal.ac}"/>
+  <!-- cantos decorativos -->
+  <line x1="12" y1="12" x2="40" y2="12" stroke="${pal.ac}" stroke-width="3"/>
+  <line x1="12" y1="12" x2="12" y2="40" stroke="${pal.ac}" stroke-width="3"/>
+  <line x1="${W-12}" y1="12" x2="${W-40}" y2="12" stroke="${pal.ac}" stroke-width="3"/>
+  <line x1="${W-12}" y1="12" x2="${W-12}" y2="40" stroke="${pal.ac}" stroke-width="3"/>
+  <line x1="12" y1="${H-12}" x2="40" y2="${H-12}" stroke="${pal.ac}" stroke-width="3"/>
+  <line x1="12" y1="${H-12}" x2="12" y2="${H-40}" stroke="${pal.ac}" stroke-width="3"/>
+  <line x1="${W-12}" y1="${H-12}" x2="${W-40}" y2="${H-12}" stroke="${pal.ac}" stroke-width="3"/>
+  <line x1="${W-12}" y1="${H-12}" x2="${W-12}" y2="${H-40}" stroke="${pal.ac}" stroke-width="3"/>
+  <!-- bloco glassmorphism -->
+  <rect x="${boxPad}" y="${boxY2.toFixed(0)}" width="${boxW2.toFixed(0)}" height="${boxH2.toFixed(0)}" rx="18" fill="${pal.bg1}" opacity="0.6"/>
+  <rect x="${boxPad}" y="${boxY2.toFixed(0)}" width="${boxW2.toFixed(0)}" height="${boxH2.toFixed(0)}" rx="18" fill="none" stroke="${pal.ac}" stroke-width="1.5" opacity="0.35"/>
+  <!-- emoji grande -->
+  <text x="${W/2}" y="${(centerY-headFS*0.7).toFixed(0)}" text-anchor="middle" dominant-baseline="middle" font-size="${Math.round(headFS*1.1)}">${temaInfo.emoji}</text>
+  <!-- headline -->
+  <text x="${W/2}" y="${centerY.toFixed(0)}" text-anchor="middle" dominant-baseline="middle"
+    font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="${headFS}" fill="${pal.ac}" letter-spacing="2">${temaInfo.headline}</text>
+  <!-- separador -->
+  <line x1="${(W*0.25).toFixed(0)}" y1="${(centerY+headFS*0.75).toFixed(0)}" x2="${(W*0.75).toFixed(0)}" y2="${(centerY+headFS*0.75).toFixed(0)}" stroke="${pal.ac}" stroke-width="2" opacity="0.6"/>
+  <!-- sub-headline -->
+  <text x="${W/2}" y="${(centerY+headFS*1.1).toFixed(0)}" text-anchor="middle" dominant-baseline="middle"
+    font-family="Arial, sans-serif" font-weight="600" font-size="${subFS}" fill="${pal.tx}" opacity="0.85">PersonalVS · Fitness</text>
+  <!-- CTA badge -->
+  <rect x="${(W/2-ctaFS*2.8).toFixed(0)}" y="${(centerY+headFS*1.65).toFixed(0)}" width="${(ctaFS*5.6).toFixed(0)}" height="${(ctaFS*1.8).toFixed(0)}" rx="${(ctaFS*0.9).toFixed(0)}" fill="${pal.ac}"/>
+  <text x="${W/2}" y="${(centerY+headFS*1.65+ctaFS*0.9).toFixed(0)}" text-anchor="middle" dominant-baseline="middle"
+    font-family="Arial, sans-serif" font-weight="800" font-size="${ctaFS}" fill="${pal.bg0}">SIGA E COMPARTILHE</text>
+  <!-- marca d'água -->
+  <text x="${W/2}" y="${H-14}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${brandFS}" fill="${pal.tx}" opacity="0.3">@personalvs</text>
+</svg>`;
 }
 
 async function trocaImagem() {
   if (!lastGeneratedPost) return;
-  currentSvgSeed = Math.floor(Math.random() * 99999);
-  renderPostImage(lastGeneratedPost.tema, currentSvgSeed);
+  currentSvgSeed = Math.floor(Math.random()*99999);
+  renderPostImage(lastGeneratedPost.tema, currentSvgSeed, postPaleta, postFormato, postLayout);
   toast('🔄 Nova variação!');
 }
 
@@ -2010,36 +2241,25 @@ function regenerarPost() { gerarPost(); }
 
 function copiarPost() {
   if (!lastGeneratedPost) return;
-  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n' + lastGeneratedPost.hashtags : '');
-  navigator.clipboard?.writeText(txt).then(() => toast('📋 Copiado!')).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = txt; document.body.appendChild(ta); ta.select();
+  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n'+lastGeneratedPost.hashtags : '');
+  navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiado!')).catch(()=>{
+    const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
     document.execCommand('copy'); document.body.removeChild(ta); toast('📋 Copiado!');
   });
 }
 
 function compartilhar(plataforma) {
   if (!lastGeneratedPost) return;
-  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n' + lastGeneratedPost.hashtags : '');
-  if (plataforma === 'whatsapp') {
-    window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
-  } else if (plataforma === 'instagram') {
-    navigator.clipboard?.writeText(txt).then(() => {
-      toast('📋 Copiado! Abra o Instagram e cole o texto');
-    });
-  } else if (plataforma === 'native') {
-    if (navigator.share) {
-      navigator.share({ text: txt }).catch(() => {});
-    } else {
-      copiarPost();
-    }
-  }
+  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n'+lastGeneratedPost.hashtags : '');
+  if (plataforma==='whatsapp') window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+  else if (plataforma==='instagram') navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiado! Abra o Instagram e cole o texto'));
+  else if (plataforma==='native') { if (navigator.share) navigator.share({text:txt}).catch(()=>{}); else copiarPost(); }
 }
 
 function salvarPost() {
   if (!lastGeneratedPost) return;
   const d = getCriativoData();
-  d.historico.unshift({ ...lastGeneratedPost, id: uid() });
+  d.historico.unshift({...lastGeneratedPost, id:uid()});
   saveCriativoData(d);
   toast('💾 Post salvo no histórico!');
 }

@@ -211,6 +211,40 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
 ::-webkit-scrollbar{width:0}
 
+/* ── BIBLIOTECA ── */
+.bib-tab{padding:7px 14px;border-radius:10px;font-weight:700;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0;letter-spacing:.4px;text-transform:uppercase}
+.bib-tab.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-mid)}
+.bib-ex-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;transition:border-color .15s}
+.bib-ex-card:active{border-color:var(--accent)}
+.bib-video-wrap{position:relative;width:100%;padding-top:56.25%;background:var(--card2);overflow:hidden}
+.bib-video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.bib-video-thumb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--card2)}
+.bib-play-btn{width:52px;height:52px;border-radius:50%;background:rgba(59,255,160,.2);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform .15s}
+.bib-play-btn:active{transform:scale(.9)}
+.bib-ex-body{padding:12px 13px}
+.bib-ex-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:5px}
+.bib-ex-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.bib-muscle-chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-mid)}
+.bib-diff-chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.diff-init{background:rgba(59,255,160,.1);color:var(--accent);border:1px solid rgba(59,255,160,.3)}
+.diff-med{background:rgba(255,170,59,.1);color:var(--orange);border:1px solid rgba(255,170,59,.3)}
+.diff-adv{background:rgba(255,77,106,.1);color:var(--red);border:1px solid rgba(255,77,106,.3)}
+.bib-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.bib-tips{font-size:11px;color:var(--text3);line-height:1.6;font-style:italic;margin-bottom:10px}
+.bib-group-label{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin:16px 0 10px;display:flex;align-items:center;gap:7px}
+.bib-group-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.bib-search{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 13px 10px 36px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.bib-search:focus{border-color:var(--accent)}
+
+/* ── WHATSAPP REMINDER ── */
+.wpp-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.wpp-student-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.wpp-avatar{width:38px;height:38px;border-radius:11px;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.wpp-btn{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:11px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.35);color:#25d366;font-size:13px;font-weight:700;cursor:pointer;width:100%;justify-content:center;transition:all .15s;font-family:'DM Sans',sans-serif}
+.wpp-btn:active{transform:scale(.97)}
+.wpp-msg-preview{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--text2);line-height:1.65;white-space:pre-wrap;max-height:100px;overflow:hidden;margin-bottom:8px;position:relative}
+.wpp-msg-preview::after{content:'';position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(transparent,var(--card2))}
+
 /* CRIATIVO */
 .criativo-tab{padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0}
 .criativo-tab.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-mid)}
@@ -356,7 +390,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
           <div class="form-group"><label class="form-label">Vencimento (dia)</label>
             <select class="form-select" id="f-payday">
               <option value="">Sem vencimento</option>
-              <option value="1">Dia 1</option>
               <option value="5">Dia 5</option>
               <option value="10">Dia 10</option>
               <option value="15">Dia 15</option>
@@ -465,217 +498,108 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <div id="pay-list"></div>
     </div>
 
-    <!-- CRIATIVO -->
+    <!-- BIBLIOTECA -->
     <div class="screen" id="screen-install">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px">📚 Biblioteca</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Exercícios com demonstração em vídeo</div>
+
       <!-- Sub-tabs -->
-      <div style="display:flex;gap:7px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none">
-        <button class="criativo-tab active" id="ctab-gerar" onclick="setCriativoTab('gerar')">✨ Gerar Post</button>
-        <button class="criativo-tab" id="ctab-historico" onclick="setCriativoTab('historico')">📂 Histórico</button>
-        <button class="criativo-tab" id="ctab-calendario" onclick="setCriativoTab('calendario')">📅 Calendário</button>
-        <button class="criativo-tab" id="ctab-ideias" onclick="setCriativoTab('ideias')">💡 Ideias</button>
+      <div style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none">
+        <button class="bib-tab active" id="bibtab-catalogo"  onclick="setBibTab('catalogo')">💪 Catálogo</button>
+        <button class="bib-tab"        id="bibtab-cobranca"  onclick="setBibTab('cobranca')">💬 Cobranças</button>
       </div>
 
-      <!-- ── GERAR POST ── -->
-      <div id="cpanel-gerar">
-        <!-- Banner IA -->
-        <div class="card" style="margin-bottom:13px;background:var(--accent-dim);border-color:var(--accent-mid)">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span style="font-size:18px">✨</span>
-            <div class="card-title" style="margin:0;color:var(--accent)">Romanos 8:28</div>
-          </div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.6">Todas as coisas cooperam para o bem daqueles que amam a DEUS.</div>
+      <!-- ══ CATÁLOGO ══ -->
+      <div id="bibpanel-catalogo">
+        <!-- busca -->
+        <div style="position:relative;margin-bottom:12px">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px">🔍</span>
+          <input class="bib-search" id="bib-search" placeholder="Buscar exercício..." oninput="renderBiblioteca()"/>
         </div>
-
-        <!-- 1. TEMA -->
-        <div class="card" style="margin-bottom:13px">
-          <div class="card-title">🎯 1. Tema do Post</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="tema-grid">
-            <button class="tom-btn" id="tema-motivacao"     onclick="setTema('motivacao')">💥 Motivação</button>
-            <button class="tom-btn" id="tema-dica"          onclick="setTema('dica')">💡 Dica Fitness</button>
-            <button class="tom-btn" id="tema-transformacao" onclick="setTema('transformacao')">🔥 Transformação</button>
-            <button class="tom-btn" id="tema-mito"          onclick="setTema('mito')">❌ Mito vs Fato</button>
-            <button class="tom-btn" id="tema-nutricao"      onclick="setTema('nutricao')">🥗 Nutrição</button>
-            <button class="tom-btn" id="tema-desafio"       onclick="setTema('desafio')">🏆 Desafio</button>
-            <button class="tom-btn" id="tema-bastidores"    onclick="setTema('bastidores')">🎬 Bastidores</button>
-            <button class="tom-btn" id="tema-resultado"     onclick="setTema('resultado')">📈 Resultado</button>
-            <button class="tom-btn" id="tema-pergunta"      onclick="setTema('pergunta')">🤔 Pergunta</button>
-            <button class="tom-btn" id="tema-ciencia"       onclick="setTema('ciencia')">🧬 Ciência</button>
-          </div>
-          <button onclick="setTemaAleatorio()" style="margin-top:10px;width:100%;padding:8px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">🎲 Tema Aleatório</button>
+        <!-- filtro grupo muscular -->
+        <div style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none" id="bib-muscle-filters">
+          <!-- preenchido pelo JS -->
         </div>
-
-        <!-- 2. PALETA DE CORES -->
-        <div class="card" style="margin-bottom:13px">
-          <div class="card-title">🎨 2. Paleta de Cores</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center" id="palette-grid">
-            <!-- preenchido pelo JS -->
-          </div>
-          <button onclick="setPaletaAleatoria()" style="margin-top:10px;width:100%;padding:8px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">🎲 Paleta Aleatória</button>
-        </div>
-
-        <!-- 3. FORMATO + LAYOUT -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px">
-          <div class="card" style="margin-bottom:0">
-            <div class="card-title">📐 3. Formato</div>
-            <div style="display:flex;flex-direction:column;gap:6px">
-              <button class="tom-btn" id="fmt-quadrado" onclick="setFormato('quadrado')">⬛ Quadrado 1:1</button>
-              <button class="tom-btn" id="fmt-story"    onclick="setFormato('story')">📱 Stories 9:16</button>
-              <button class="tom-btn" id="fmt-retrato"  onclick="setFormato('retrato')">🖼 Retrato 4:5</button>
-            </div>
-          </div>
-          <div class="card" style="margin-bottom:0">
-            <div class="card-title">🎭 4. Estilo Visual</div>
-            <div style="display:flex;flex-direction:column;gap:6px">
-              <button class="tom-btn" id="layout-diagonal"  onclick="setLayout('diagonal')">⟋ Diagonal</button>
-              <button class="tom-btn" id="layout-dots"      onclick="setLayout('dots')">· · Grid Dots</button>
-              <button class="tom-btn" id="layout-linhas"    onclick="setLayout('linhas')">≡ Linhas</button>
-              <button class="tom-btn" id="layout-circulos"  onclick="setLayout('circulos')">◎ Círculos</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. TOM DE ESCRITA -->
-        <div class="card" style="margin-bottom:13px">
-          <div class="card-title">✍️ 5. Estilo de Escrita</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-            <button class="tom-btn" id="tom-provocativo"  onclick="setTom('provocativo')">⚡ Provocativo</button>
-            <button class="tom-btn" id="tom-poetico"      onclick="setTom('poetico')">🎭 Poético</button>
-            <button class="tom-btn" id="tom-tecnico"      onclick="setTom('tecnico')">🔬 Técnico</button>
-            <button class="tom-btn" id="tom-descontraido" onclick="setTom('descontraido')">😄 Descontraído</button>
-            <button class="tom-btn" id="tom-story"        onclick="setTom('story')">📖 Storytelling</button>
-            <button class="tom-btn" id="tom-desafio"      onclick="setTom('desafio')">🏆 Desafiador</button>
-            <button class="tom-btn" id="tom-lista"        onclick="setTom('lista')">📋 Listas</button>
-            <button class="tom-btn" id="tom-humor"        onclick="setTom('humor')">😂 Bem-humorado</button>
-          </div>
-          <button onclick="setTomAleatorio()" style="margin-top:10px;width:100%;padding:8px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">🎲 Estilo Aleatório</button>
-        </div>
-
-        <!-- 5. CONTEXTO + OPÇÕES -->
-        <div class="card" style="margin-bottom:13px">
-          <div class="card-title">⚙️ 6. Configurações</div>
-          <div class="form-group">
-            <label class="form-label">Contexto adicional (opcional)</label>
-            <textarea class="form-textarea" id="post-contexto" placeholder="Ex: foco em glúteos, para iniciantes, semana de resultados..." style="height:60px"></textarea>
-          </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">Incluir</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <label class="check-opt"><input type="checkbox" id="inc-hashtags" checked> #Hashtags</label>
-              <label class="check-opt"><input type="checkbox" id="inc-emoji" checked> Emojis</label>
-              <label class="check-opt"><input type="checkbox" id="inc-cta"> Call-to-action</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- BOTÃO GERAR -->
-        <button class="btn btn-primary btn-full" id="btn-gerar" onclick="gerarPost()" style="margin-bottom:13px;padding:15px;font-size:15px">
-          <span id="btn-gerar-txt">✨ Gerar Post com IA</span>
-        </button>
-
-        <!-- Resultado gerado -->
-        <div id="post-resultado" style="display:none">
-          <div class="card" style="margin-bottom:13px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-              <div class="card-title" style="margin-bottom:0">🖼️ Imagem do Post</div>
-              <button class="icon-btn" onclick="trocaImagem()" title="Nova variação">🔄</button>
-            </div>
-            <div id="svg-img-box" style="width:100%;border-radius:12px;overflow:hidden;line-height:0"></div>
-            <button class="btn btn-ghost btn-sm btn-full" onclick="trocaImagem()" style="margin-top:10px">🔄 Próxima variação</button>
-          </div>
-
-          <div class="card" style="margin-bottom:13px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-              <div class="card-title" style="margin-bottom:0">📝 Post Gerado</div>
-              <div style="display:flex;gap:6px">
-                <button class="icon-btn" onclick="regenerarPost()" title="Regenerar">🔄</button>
-                <button class="icon-btn" onclick="copiarPost()" title="Copiar">📋</button>
-              </div>
-            </div>
-            <div id="post-texto" style="font-size:14px;line-height:1.75;color:var(--text);white-space:pre-wrap;word-break:break-word"></div>
-            <div id="post-hashtags" style="margin-top:12px;font-size:13px;color:var(--blue);line-height:1.8;word-break:break-word"></div>
-          </div>
-
-          <div class="card" style="margin-bottom:13px">
-            <div class="card-title">🚀 Compartilhar</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <button class="btn btn-ghost btn-sm" onclick="compartilhar('whatsapp')">💬 WhatsApp</button>
-              <button class="btn btn-ghost btn-sm" onclick="compartilhar('instagram')">📸 Instagram</button>
-              <button class="btn btn-ghost btn-sm" onclick="compartilhar('native')">📤 Mais opções</button>
-              <button class="btn btn-ghost btn-sm" onclick="salvarPost()">💾 Salvar</button>
-            </div>
-          </div>
-        </div>
+        <div id="bib-list"></div>
       </div>
 
-      <!-- ── HISTÓRICO ── -->
-      <div id="cpanel-historico" style="display:none">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Histórico de Posts</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Posts salvos e gerados</div>
-        <div id="historico-lista"></div>
-      </div>
+      <!-- ══ COBRANÇAS / LEMBRETES ══ -->
+      <div id="bibpanel-cobranca" style="display:none">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:4px">💬 Lembretes de Cobrança</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Toque num aluno para preparar e enviar uma mensagem de cobrança pelo WhatsApp.</div>
 
-      <!-- ── CALENDÁRIO ── -->
-      <div id="cpanel-calendario" style="display:none">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Calendário de Posts</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Planeje suas publicações</div>
-        <div id="cal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <button class="btn btn-ghost btn-sm" onclick="calNav(-1)">‹</button>
-          <div id="cal-mes-label" style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px"></div>
-          <button class="btn btn-ghost btn-sm" onclick="calNav(1)">›</button>
+        <!-- Filtro rápido -->
+        <div style="display:flex;gap:7px;margin-bottom:12px">
+          <button class="bib-tab active" id="wppfil-todos"    onclick="setWppFiltro('todos')"   style="font-size:10px">Todos</button>
+          <button class="bib-tab"        id="wppfil-pendente" onclick="setWppFiltro('pendente')" style="font-size:10px">❌ Pendente</button>
+          <button class="bib-tab"        id="wppfil-hoje"     onclick="setWppFiltro('hoje')"     style="font-size:10px">🔴 Vence Hoje</button>
+          <button class="bib-tab"        id="wppfil-semana"   onclick="setWppFiltro('semana')"   style="font-size:10px">🟡 Esta Semana</button>
         </div>
-        <div id="cal-grid" class="card" style="padding:12px"></div>
-        <div id="cal-day-panel" style="display:none;margin-top:13px">
-          <div class="card">
-            <div class="card-title">📅 <span id="cal-day-title"></span></div>
-            <div id="cal-day-posts"></div>
-            <div class="form-group" style="margin-top:10px;margin-bottom:8px">
-              <label class="form-label">Agendar novo post</label>
-              <textarea class="form-textarea" id="cal-novo-post" placeholder="Escreva ou cole o conteúdo do post..." style="height:80px"></textarea>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Horário</label>
-              <input class="form-input" id="cal-horario" type="time" value="09:00" style="width:140px"/>
-            </div>
-            <button class="btn btn-primary btn-full" onclick="agendarPost()">📅 Agendar Post</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── IDEIAS ── -->
-      <div id="cpanel-ideias" style="display:none">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:4px">Banco de Ideias</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Guarde inspirações para posts futuros</div>
-        <div class="card" style="margin-bottom:13px">
-          <div class="card-title">💡 Nova Ideia</div>
-          <div class="form-group">
-            <input class="form-input" id="ideia-titulo" placeholder="Título da ideia..." style="margin-bottom:8px"/>
-            <textarea class="form-textarea" id="ideia-texto" placeholder="Descreva a ideia, contexto, referência..." style="height:80px;margin-top:8px"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tag</label>
-            <div style="display:flex;gap:7px;flex-wrap:wrap">
-              <button class="tag-btn active" id="tag-exercicio" onclick="setTag('exercicio')">💪 Exercício</button>
-              <button class="tag-btn" id="tag-nutricao" onclick="setTag('nutricao')">🥗 Nutrição</button>
-              <button class="tag-btn" id="tag-motivacao" onclick="setTag('motivacao')">🔥 Motivação</button>
-              <button class="tag-btn" id="tag-dica" onclick="setTag('dica')">📌 Dica</button>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-full" onclick="salvarIdeia()">💾 Salvar Ideia</button>
-        </div>
-        <div id="ideias-lista"></div>
+        <div id="wpp-list"></div>
       </div>
     </div>
   </div>
 
   <nav id="bottomnav">
-    <div class="nav-item active" id="nav-home" onclick="showNav('home')"><div class="nav-icon">🏠</div><div>Início</div><div class="nav-dot"></div></div>
-    <div class="nav-item" id="nav-add" onclick="showNav('add')"><div class="nav-icon">➕</div><div>Novo</div><div class="nav-dot"></div></div>
-    <div class="nav-item" id="nav-agenda" onclick="showNav('agenda')"><div class="nav-icon">📅</div><div>Agenda</div><div class="nav-dot"></div></div>
-    <div class="nav-item" id="nav-mensalidade" onclick="showNav('mensalidade')"><div class="nav-icon">💰</div><div>Mensalidade</div><div class="nav-dot"></div></div>
-    <div class="nav-item" id="nav-install" onclick="showNav('install')"><div class="nav-icon">✨</div><div>Criativo</div><div class="nav-dot"></div></div>
+    <div class="nav-item active" id="nav-home"        onclick="showNav('home')">       <div class="nav-icon">🏠</div><div>Início</div>     <div class="nav-dot"></div></div>
+    <div class="nav-item"        id="nav-add"          onclick="showNav('add')">        <div class="nav-icon">➕</div><div>Novo</div>       <div class="nav-dot"></div></div>
+    <div class="nav-item"        id="nav-agenda"       onclick="showNav('agenda')">     <div class="nav-icon">📅</div><div>Agenda</div>     <div class="nav-dot"></div></div>
+    <div class="nav-item"        id="nav-mensalidade"  onclick="showNav('mensalidade')"><div class="nav-icon">💰</div><div>Mensalidade</div><div class="nav-dot"></div></div>
+    <div class="nav-item"        id="nav-install"      onclick="showNav('install')">    <div class="nav-icon">📚</div><div>Biblioteca</div> <div class="nav-dot"></div></div>
   </nav>
 </div>
 
+<!-- ADD TO WORKOUT MODAL -->
+<div id="add-to-workout-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:flex-end;backdrop-filter:blur(4px)" onclick="closeAddToWorkout(event)">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;max-height:80vh;overflow-y:auto;animation:slideUp .28s ease">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;margin-bottom:4px">➕ Adicionar ao Treino</div>
+    <div id="atw-ex-name" style="font-size:13px;color:var(--accent);margin-bottom:14px;font-weight:600"></div>
+    <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Selecionar aluno</div>
+    <div id="atw-student-list" style="margin-bottom:14px"></div>
+    <div id="atw-day-row" style="display:none;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Dia do treino</div>
+      <div id="atw-day-btns" style="display:flex;gap:7px;flex-wrap:wrap"></div>
+    </div>
+    <div id="atw-config" style="display:none;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Configurar séries</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px">
+        <div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Séries</div><input class="form-input" id="atw-sets" type="number" value="3" style="text-align:center"/></div>
+        <div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Reps</div><input class="form-input" id="atw-reps" value="12" style="text-align:center"/></div>
+        <div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Descanso (s)</div><input class="form-input" id="atw-rest" type="number" value="60" style="text-align:center"/></div>
+      </div>
+    </div>
+    <button id="atw-confirm-btn" class="btn btn-primary btn-full" onclick="confirmAddToWorkout()" style="display:none;margin-bottom:8px">✅ Adicionar ao treino</button>
+    <button class="btn btn-ghost btn-full" onclick="closeAddToWorkout()">Cancelar</button>
+  </div>
+</div>
+
+<!-- WPP MESSAGE MODAL -->
+<div id="wpp-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:flex-end;backdrop-filter:blur(4px)" onclick="closeWppModal(event)">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;max-height:88vh;overflow-y:auto;animation:slideUp .28s ease">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px">&#x1F4AC; Mensagem WhatsApp</div>
+        <div id="wpp-modal-student" style="font-size:12px;color:var(--accent);margin-top:2px"></div>
+      </div>
+      <button onclick="closeWppModal()" style="width:30px;height:30px;border-radius:9px;background:var(--card2);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:15px">&#x2715;</button>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Tipo de mensagem</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px">
+      <button class="bib-tab active" id="wpptype-cobranca" onclick="setWppType('cobranca')" style="font-size:11px">&#x1F4B0; Cobran&ccedil;a</button>
+      <button class="bib-tab"        id="wpptype-lembrete" onclick="setWppType('lembrete')" style="font-size:11px">&#x23F0; Lembrete</button>
+      <button class="bib-tab"        id="wpptype-parabens" onclick="setWppType('parabens')" style="font-size:11px">&#x1F389; Parab&eacute;ns</button>
+      <button class="bib-tab"        id="wpptype-ausencia" onclick="setWppType('ausencia')" style="font-size:11px">&#x2753; Aus&ecirc;ncia</button>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Mensagem (edit&aacute;vel)</div>
+    <textarea id="wpp-msg-text" class="form-textarea" style="height:150px;font-size:13px;line-height:1.7"></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button onclick="copyWppMsg()" class="btn btn-ghost" style="flex:1">&#x1F4CB; Copiar</button>
+      <button onclick="sendWppMsg()" style="flex:1;padding:13px;border-radius:12px;background:#25d366;color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:'DM Sans',sans-serif">
+        &#x1F4AC; Abrir WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
 <!-- EXERCISE MODAL -->
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal-box">
@@ -1868,565 +1792,440 @@ function checkPaymentAlerts() {
 }
 
 // ══════════════════════════════════════════
-// CRIATIVO — STATE & STORAGE
+// BIBLIOTECA DE EXERCÍCIOS
 // ══════════════════════════════════════════
-let criativoTab = 'gerar';
-let ideiaTag = 'exercicio';
-let calDate = new Date();
-let calDaySelected = null;
-let lastGeneratedPost = null;
 
-// ── 10 TEMAS ──
-const TEMAS = {
-  motivacao:     { label:'💥 Motivação',      emoji:'💥', headline:'SEM DESCULPAS' },
-  dica:          { label:'💡 Dica Fitness',   emoji:'💡', headline:'DICA DE OURO' },
-  transformacao: { label:'🔥 Transformação',  emoji:'🔥', headline:'TRANSFORMAÇÃO' },
-  mito:          { label:'❌ Mito vs Fato',   emoji:'❌', headline:'MITO OU FATO?' },
-  nutricao:      { label:'🥗 Nutrição',       emoji:'🥗', headline:'COMA CERTO' },
-  desafio:       { label:'🏆 Desafio',        emoji:'🏆', headline:'ACEITA?' },
-  bastidores:    { label:'🎬 Bastidores',     emoji:'🎬', headline:'MEU TRABALHO' },
-  resultado:     { label:'📈 Resultado',      emoji:'📈', headline:'RESULTADO REAL' },
-  pergunta:      { label:'🤔 Pergunta',       emoji:'🤔', headline:'E VOCÊ?' },
-  ciencia:       { label:'🧬 Ciência',        emoji:'🧬', headline:'CIÊNCIA EXPLICA' },
-};
-let postTema = 'motivacao';
+const EXERCICIOS_DB = [
+  // ── PEITO ──
+  { id:'pe01', nome:'Supino Reto com Barra', grupo:'Peito', dificuldade:'Intermediário',
+    video:'https://www.youtube.com/embed/rT7DgCr-3pg?autoplay=1&mute=1',
+    desc:'Exercício básico para desenvolvimento do peitoral maior. Deite no banco, segure a barra na largura dos ombros e desça controlando até o peito.',
+    dicas:'Mantenha os pés no chão. Não deixe as costas arquearem demais. Desça de forma controlada em 2-3 segundos.',
+    series:'3-4', reps:'8-12', descanso:90 },
+  { id:'pe02', nome:'Crucifixo com Halteres', grupo:'Peito', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/eozdVDA78K0?autoplay=1&mute=1',
+    desc:'Isolamento do peitoral com amplitude total. Deitado no banco, abra os braços em arco com leve flexão nos cotovelos.',
+    dicas:'Sinta o alongamento no peitoral. Não use carga excessiva — foco na execução.',
+    series:'3', reps:'12-15', descanso:60 },
+  { id:'pe03', nome:'Flexão de Braço', grupo:'Peito', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/IODxDxX7oi4?autoplay=1&mute=1',
+    desc:'Movimento composto usando peso corporal. Trabalha peitoral, tríceps e core simultaneamente.',
+    dicas:'Mantenha o corpo reto como uma prancha. Cotovelos a 45° do corpo. Desça até o peito quase tocar o chão.',
+    series:'3', reps:'10-20', descanso:60 },
 
-// ── 10 PALETAS ──
-const PALETAS = [
-  { nome:'Neon Verde',   bg0:'#0a0c10', bg1:'#0d1f14', bg2:'#122a1c', ac:'#3bffa0', tx:'#ffffff' },
-  { nome:'Fogo',         bg0:'#1a0800', bg1:'#2d1000', bg2:'#3d1800', ac:'#ff6b1a', tx:'#ffffff' },
-  { nome:'Elétrico',     bg0:'#050a1a', bg1:'#0a1530', bg2:'#0f2040', ac:'#4d9fff', tx:'#ffffff' },
-  { nome:'Roxo',         bg0:'#0d0514', bg1:'#1a0a2e', bg2:'#240f40', ac:'#a855f7', tx:'#ffffff' },
-  { nome:'Vermelho',     bg0:'#150005', bg1:'#2a0010', bg2:'#3a0015', ac:'#ff2d55', tx:'#ffffff' },
-  { nome:'Dourado',      bg0:'#0c0a00', bg1:'#1a1400', bg2:'#281e00', ac:'#ffcc00', tx:'#ffffff' },
-  { nome:'Ciano',        bg0:'#001414', bg1:'#002020', bg2:'#002828', ac:'#00e5e5', tx:'#ffffff' },
-  { nome:'Rosa',         bg0:'#150010', bg1:'#250020', bg2:'#300030', ac:'#ff69b4', tx:'#ffffff' },
-  { nome:'Clean',        bg0:'#f0f0f0', bg1:'#e4e4e4', bg2:'#d8d8d8', ac:'#111111', tx:'#111111' },
-  { nome:'Bege Luxo',    bg0:'#1c1710', bg1:'#252018', bg2:'#2e2820', ac:'#d4a855', tx:'#ffffff' },
+  // ── COSTAS ──
+  { id:'co01', nome:'Puxada Frontal (Pulley)', grupo:'Costas', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/CAwf7n6Luuc?autoplay=1&mute=1',
+    desc:'Exercício fundamental para largura das costas. Puxe a barra em direção ao peito mantendo o tronco levemente inclinado.',
+    dicas:'Não balance o corpo. Foco em puxar pelos cotovelos, não pelas mãos. Retorne controlado.',
+    series:'4', reps:'10-12', descanso:90 },
+  { id:'co02', nome:'Remada Curvada com Barra', grupo:'Costas', dificuldade:'Intermediário',
+    video:'https://www.youtube.com/embed/G8l_8chR5BE?autoplay=1&mute=1',
+    desc:'Exercício de espessura para as costas. Incline o tronco a 45°, puxe a barra em direção ao abdômen.',
+    dicas:'Mantenha a coluna neutra. Olhe ligeiramente para frente. Contraia as escápulas no topo.',
+    series:'4', reps:'8-12', descanso:90 },
+  { id:'co03', nome:'Barra Fixa (Pull-up)', grupo:'Costas', dificuldade:'Avançado',
+    video:'https://www.youtube.com/embed/eGo4IYlbE5g?autoplay=1&mute=1',
+    desc:'Exercício de peso corporal para costas e bíceps. Pegada pronada na barra acima da cabeça, suba até o queixo ultrapassar.',
+    dicas:'Evite balançar. Desça completamente entre as reps. Use assistência se necessário.',
+    series:'3-4', reps:'5-12', descanso:120 },
+
+  // ── OMBROS ──
+  { id:'om01', nome:'Desenvolvimento com Halteres', grupo:'Ombros', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/qEwKCR5JCog?autoplay=1&mute=1',
+    desc:'Exercício básico para deltoides. Sentado ou em pé, pressione os halteres acima da cabeça.',
+    dicas:'Não trave os cotovelos no topo. Mantenha o core ativado. Controle a descida.',
+    series:'3-4', reps:'10-12', descanso:75 },
+  { id:'om02', nome:'Elevação Lateral com Halteres', grupo:'Ombros', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/3VcKaXpzqRo?autoplay=1&mute=1',
+    desc:'Isolamento do deltoide médio para ombros mais largos. Eleve os halteres lateralmente até a altura dos ombros.',
+    dicas:'Leve inclinação do cotovelo. Não balançe o corpo. Controle a descida por 2 segundos.',
+    series:'3-4', reps:'12-15', descanso:60 },
+
+  // ── BÍCEPS ──
+  { id:'bi01', nome:'Rosca Direta com Barra', grupo:'Bíceps', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/ykJmrZ5v0Oo?autoplay=1&mute=1',
+    desc:'Exercício clássico para bíceps. Em pé, curl com barra mantendo os cotovelos fixos ao lado do corpo.',
+    dicas:'Não balance o corpo. Cotovelos fixos. Aperte o bíceps no topo. Desça devagar.',
+    series:'3-4', reps:'10-12', descanso:60 },
+  { id:'bi02', nome:'Rosca Martelo com Halteres', grupo:'Bíceps', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/zC3nLlEvin4?autoplay=1&mute=1',
+    desc:'Trabalha bíceps e braquial simultaneamente. Pegada neutra (polegar para cima) no curl.',
+    dicas:'Cotovelos fixos. Movimento completo. Ótimo para espessura do braço.',
+    series:'3', reps:'12', descanso:60 },
+
+  // ── TRÍCEPS ──
+  { id:'tr01', nome:'Tríceps Testa com Barra', grupo:'Tríceps', dificuldade:'Intermediário',
+    video:'https://www.youtube.com/embed/d_KZxkY_0cM?autoplay=1&mute=1',
+    desc:'Exercício de isolamento para tríceps. Deitado, flexione os cotovelos trazendo a barra até a testa.',
+    dicas:'Mantenha os cotovelos apontando para o teto. Não mova os ombros.',
+    series:'3-4', reps:'10-12', descanso:60 },
+  { id:'tr02', nome:'Mergulho (Dip) no Banco', grupo:'Tríceps', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/0326dy_-CzM?autoplay=1&mute=1',
+    desc:'Exercício básico de peso corporal para tríceps. Apoie as mãos no banco atrás do corpo e desça flexionando os cotovelos.',
+    dicas:'Cotovelos apontando para trás. Não abra muito os ombros. Core ativado.',
+    series:'3', reps:'12-20', descanso:60 },
+
+  // ── PERNAS ──
+  { id:'pg01', nome:'Agachamento Livre', grupo:'Pernas', dificuldade:'Intermediário',
+    video:'https://www.youtube.com/embed/ultWZbUMPL8?autoplay=1&mute=1',
+    desc:'O rei dos exercícios. Trabalha quadríceps, glúteos, isquiotibiais e core. Barra nas costas, desça até coxa paralela ao chão.',
+    dicas:'Joelhos na linha dos pés. Peito erguido. Não deixe os calcanhares saírem do chão.',
+    series:'4', reps:'8-12', descanso:120 },
+  { id:'pg02', nome:'Leg Press 45°', grupo:'Pernas', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/IZxyjW7MPJQ?autoplay=1&mute=1',
+    desc:'Trabalho de pernas com maior segurança que o agachamento. Posição dos pés determina o foco muscular.',
+    dicas:'Não trave os joelhos no topo. Desça até 90°. Pés mais altos = glúteos. Pés mais baixos = quadríceps.',
+    series:'4', reps:'12-15', descanso:90 },
+  { id:'pg03', nome:'Cadeira Extensora', grupo:'Pernas', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/YyvSfVjQeL0?autoplay=1&mute=1',
+    desc:'Isolamento do quadríceps na máquina. Excelente para finalização e para quem tem limitações nos joelhos.',
+    dicas:'Controle a descida em 3 segundos. Não use impulsão. Aperte o quadríceps no topo.',
+    series:'3', reps:'15', descanso:60 },
+
+  // ── GLÚTEOS ──
+  { id:'gl01', nome:'Hip Thrust', grupo:'Glúteos', dificuldade:'Intermediário',
+    video:'https://www.youtube.com/embed/xDmFkJxPzeM?autoplay=1&mute=1',
+    desc:'Melhor exercício para ativação e desenvolvimento do glúteo máximo. Ombros apoiados no banco, barra no quadril.',
+    dicas:'Empurre com o calcanhar. Aperte os glúteos no topo. Queixo no peito. Não hiperestenda a lombar.',
+    series:'4', reps:'10-15', descanso:90 },
+  { id:'gl02', nome:'Agachamento Sumô', grupo:'Glúteos', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/H_rGMGMFQeM?autoplay=1&mute=1',
+    desc:'Agachamento com pegada larga focado em glúteos e adutores. Pés afastados e voltados para fora.',
+    dicas:'Empurre os joelhos para fora. Mantenha o tronco ereto. Desça devagar.',
+    series:'3-4', reps:'12-15', descanso:75 },
+
+  // ── ABDÔMEN ──
+  { id:'ab01', nome:'Prancha (Plank)', grupo:'Abdômen', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/ASdvN_XEl_c?autoplay=1&mute=1',
+    desc:'Exercício isométrico para core completo. Apoie antebraços e pontas dos pés, mantenha o corpo reto.',
+    dicas:'Não deixe o quadril cair ou subir. Respire normalmente. Progrida o tempo gradualmente.',
+    series:'3', reps:'30-60s', descanso:45 },
+  { id:'ab02', nome:'Abdominal Crunch', grupo:'Abdômen', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/Xyd_fa5zoEU?autoplay=1&mute=1',
+    desc:'Clássico para ativação do reto abdominal. Deitado, flexione o tronco levantando os ombros do chão.',
+    dicas:'Mãos atrás da cabeça sem puxar. Contraia o abdômen no topo. Não use impulso.',
+    series:'3', reps:'15-20', descanso:45 },
+
+  // ── CARDIO ──
+  { id:'ca01', nome:'Burpee', grupo:'Cardio', dificuldade:'Avançado',
+    video:'https://www.youtube.com/embed/auBLPXO8Fww?autoplay=1&mute=1',
+    desc:'Exercício de alta intensidade que combina agachamento, flexão e salto. Excelente para queima calórica.',
+    dicas:'Mantenha um ritmo sustentável. Pode adaptar tirando o salto para iniciantes.',
+    series:'3-4', reps:'10-15', descanso:90 },
+  { id:'ca02', nome:'Polichinelo (Jumping Jack)', grupo:'Cardio', dificuldade:'Iniciante',
+    video:'https://www.youtube.com/embed/iSSAk4XCsRA?autoplay=1&mute=1',
+    desc:'Exercício aeróbico clássico para aquecimento ou circuito. Abra braços e pernas simultaneamente.',
+    dicas:'Ótimo para aquecimento. Mantenha os pés ligeiramente flexionados para proteger os joelhos.',
+    series:'3', reps:'30-60s', descanso:30 },
 ];
-let postPaleta = 0;
 
-// ── FORMATOS ──
-const FORMATOS = { quadrado:{w:400,h:400}, story:{w:400,h:710}, retrato:{w:400,h:500} };
-let postFormato = 'quadrado';
+const BIB_GRUPOS = ['Todos','Peito','Costas','Ombros','Bíceps','Tríceps','Pernas','Glúteos','Abdômen','Cardio'];
+let bibGrupoFiltro = 'Todos';
+let bibTab = 'catalogo';
+let atwExercicio = null;
+let atwStudentId = null;
+let atwDay = null;
+let wppStudentId = null;
+let wppType = 'cobranca';
+let wppFiltro = 'todos';
 
-// ── LAYOUTS VISUAIS ──
-let postLayout = 'diagonal';
-
-// ── 8 ESTILOS DE ESCRITA ──
-const TOMS = {
-  provocativo: 'provocativo e direto, com frases curtas e impacto emocional forte',
-  poetico:     'inspiracional e poético, usando metáforas do esporte e da superação',
-  tecnico:     'técnico e educativo, com tom de especialista e dados concretos',
-  descontraido:'descontraído e próximo, como conversa informal entre amigos',
-  story:       'storytelling, contando uma mini-história com início, meio e fim',
-  desafio:     'desafiador, usando perguntas retóricas e chamadas à ação fortes',
-  lista:       'listas claras com emojis, fácil de ler e compartilhar',
-  humor:       'bem-humorado e irônico, mas sempre motivador no final',
-};
-let postTom = 'provocativo';
-
-function getCriativoData() {
-  return JSON.parse(localStorage.getItem('fp_criativo') || '{"historico":[],"ideias":[],"calendario":{}}');
+// ── SUB-TABS BIBLIOTECA ──
+function setBibTab(tab) {
+  bibTab = tab;
+  ['catalogo','cobranca'].forEach(t => {
+    document.getElementById('bibtab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('bibpanel-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  if (tab === 'cobranca') renderWppList();
+  if (tab === 'catalogo') renderBiblioteca();
 }
-function saveCriativoData(d) { localStorage.setItem('fp_criativo', JSON.stringify(d)); }
 
 function initCriativo() {
-  // Inicializa paletas visuais
-  const pg = document.getElementById('palette-grid');
-  if (pg) {
-    pg.innerHTML = PALETAS.map((p,i) => `
-      <div onclick="setPaleta(${i})" id="pal-${i}" title="${p.nome}"
-        style="width:40px;height:40px;border-radius:10px;background:${p.bg0};border:2px solid ${i===postPaleta?p.ac:'var(--border)'};cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .15s">
-        <div style="width:16px;height:16px;border-radius:50%;background:${p.ac}"></div>
-      </div>`).join('');
+  // build group filter chips
+  const fc = document.getElementById('bib-muscle-filters');
+  if (fc) {
+    fc.innerHTML = BIB_GRUPOS.map(g =>
+      `<button class="bib-tab ${g===bibGrupoFiltro?'active':''}" onclick="setBibGrupo('${g}')">${g}</button>`
+    ).join('');
   }
-  // Marca seleções iniciais aleatórias
-  setTemaAleatorio();
-  setTomAleatorio();
-  setPaletaAleatoria();
-  setFormato('quadrado');
-  setLayout('diagonal');
-  renderHistorico();
-  renderIdeias();
-  renderCalendario();
+  renderBiblioteca();
+  renderWppList();
 }
 
-function saveApiKey() { /* no longer needed */ }
-
-// ── SELETORES ──
-function setTema(t) {
-  postTema = t;
-  document.querySelectorAll('#tema-grid .tom-btn').forEach(b => b.classList.remove('active'));
-  const el = document.getElementById('tema-'+t);
-  if (el) el.classList.add('active');
-}
-function setTemaAleatorio() {
-  const temas = Object.keys(TEMAS);
-  setTema(temas[Math.floor(Math.random()*temas.length)]);
-}
-
-function setPaleta(i) {
-  postPaleta = i;
-  document.querySelectorAll('#palette-grid div[id^="pal-"]').forEach((el,j) => {
-    el.style.borderColor = j===i ? PALETAS[i].ac : 'var(--border)';
+function setBibGrupo(g) {
+  bibGrupoFiltro = g;
+  document.querySelectorAll('#bib-muscle-filters .bib-tab').forEach((b,i) => {
+    b.classList.toggle('active', BIB_GRUPOS[i] === g);
   });
-}
-function setPaletaAleatoria() {
-  setPaleta(Math.floor(Math.random()*PALETAS.length));
+  renderBiblioteca();
 }
 
-function setFormato(f) {
-  postFormato = f;
-  ['quadrado','story','retrato'].forEach(x => {
-    const el = document.getElementById('fmt-'+x);
-    if (el) el.classList.toggle('active', x===f);
+function renderBiblioteca() {
+  const q = (document.getElementById('bib-search')?.value || '').toLowerCase();
+  let list = EXERCICIOS_DB.filter(ex => {
+    const matchGrupo = bibGrupoFiltro === 'Todos' || ex.grupo === bibGrupoFiltro;
+    const matchQ = !q || ex.nome.toLowerCase().includes(q) || ex.grupo.toLowerCase().includes(q);
+    return matchGrupo && matchQ;
   });
-}
 
-function setLayout(l) {
-  postLayout = l;
-  ['diagonal','dots','linhas','circulos'].forEach(x => {
-    const el = document.getElementById('layout-'+x);
-    if (el) el.classList.toggle('active', x===l);
-  });
-}
-
-function setTom(t) {
-  postTom = t;
-  document.querySelectorAll('[id^="tom-"]').forEach(b => b.classList.remove('active'));
-  const el = document.getElementById('tom-'+t);
-  if (el) el.classList.add('active');
-}
-function setTomAleatorio() {
-  const toms = Object.keys(TOMS);
-  setTom(toms[Math.floor(Math.random()*toms.length)]);
-}
-
-function setTag(t) {
-  ideiaTag = t;
-  ['exercicio','nutricao','motivacao','dica'].forEach(x => {
-    document.getElementById('tag-'+x).classList.toggle('active', x===t);
-  });
-}
-
-// ── SUB-TABS ──
-function setCriativoTab(tab) {
-  criativoTab = tab;
-  ['gerar','historico','calendario','ideias'].forEach(t => {
-    document.getElementById('ctab-'+t).classList.toggle('active', t===tab);
-    document.getElementById('cpanel-'+t).style.display = t===tab ? 'block' : 'none';
-  });
-  if (tab==='historico') renderHistorico();
-  if (tab==='ideias') renderIdeias();
-  if (tab==='calendario') renderCalendario();
-}
-
-// ── GERAR POST ──
-const temaLabels = Object.fromEntries(Object.entries(TEMAS).map(([k,v])=>[k,v.label]));
-let currentSvgSeed = 0;
-
-async function gerarPost() {
-  const contexto  = document.getElementById('post-contexto').value.trim();
-  const incHashtags = document.getElementById('inc-hashtags').checked;
-  const incEmoji    = document.getElementById('inc-emoji').checked;
-  const incCta      = document.getElementById('inc-cta').checked;
-
-  const btn    = document.getElementById('btn-gerar');
-  const btnTxt = document.getElementById('btn-gerar-txt');
-  btn.disabled = true;
-  btnTxt.innerHTML = '<span class="spinner"></span>Gerando...';
-
-  // STEP 1: imagem local IMEDIATA
-  currentSvgSeed = Math.floor(Math.random()*99999);
-  lastGeneratedPost = { tema: postTema, temaLabel: TEMAS[postTema]?.label||postTema, post:'', hashtags:'', data: new Date().toISOString() };
-  document.getElementById('post-resultado').style.display = 'block';
-  renderPostImage(postTema, currentSvgSeed, postPaleta, postFormato, postLayout);
-
-  // STEP 2: seed de diversidade para texto
-  const seed = `horario:${new Date().getHours()}h${new Date().getMinutes()}m · rand:${Math.floor(Math.random()*99999)}`;
-  const tomDesc = TOMS[postTom] || TOMS.provocativo;
-  const temaInfo = TEMAS[postTema] || TEMAS.motivacao;
-
-  const prompt = `Você é um especialista em marketing fitness para redes sociais brasileiras.
-
-TEMA: ${temaInfo.label}
-ESTILO DE ESCRITA: ${tomDesc}
-SEED (use para criar algo ÚNICO e diferente): ${seed}
-${contexto ? 'CONTEXTO EXTRA: ' + contexto : ''}
-${incEmoji ? 'USE emojis criativos.' : 'Sem emojis.'}
-${incCta ? 'INCLUA call-to-action forte no final.' : ''}
-
-Regras: evite clichês óbvios, seja original, use o seed para variar o ângulo do conteúdo.
-Retorne APENAS JSON válido: {"post":"texto do post aqui","hashtags":"${incHashtags?'10 hashtags relevantes com #':''}"}`;
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:700, messages:[{role:'user',content:prompt}] })
-    });
-    if (!resp.ok) throw new Error('HTTP '+resp.status);
-    const data = await resp.json();
-    let raw = data.content.map(b=>b.text||'').join('').trim().replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(raw);
-    lastGeneratedPost.post = parsed.post||'';
-    lastGeneratedPost.hashtags = parsed.hashtags||'';
-    document.getElementById('post-texto').textContent = parsed.post||'';
-    document.getElementById('post-hashtags').textContent = parsed.hashtags||'';
-    toast('✅ Post gerado!');
-  } catch(e) {
-    // Fallback local com ALTA variação por tema + seed
-    const seedN = seed.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-    const pick = arr => arr[seedN % arr.length];
-    const fallbackPorTema = {
-      motivacao:  ['Ninguém chegou ao topo esperando a vontade aparecer. Você age ou você cede. 💥','Seu corpo aguenta mais do que sua mente deixa. A limitação é mental. Quebre ela. 🔥','Cada treino é um voto para a pessoa que você quer ser. Vote todos os dias. 💪'],
-      dica:       ['Descanso é parte do treino. Ignorar isso é sabotar seu resultado. 😴💡','Consistência por 3 meses supera intensidade por 3 semanas. Sempre. 📅','A técnica certa em peso menor bate a técnica errada em peso alto. Aprenda antes de carregar. 🎯'],
-      transformacao:['Não existe transformação sem desconforto. O processo dói porque está funcionando. 🔥','A pessoa que você quer ser está do outro lado do treino que você quer pular. 💥','Você não está falhando. Está aprendendo como o seu corpo funciona. Siga em frente. ✨'],
-      mito:       ['MITO: Treino em jejum queima mais gordura. FATO: O que importa é o déficit calórico total do dia. ❌✅','MITO: Mulher que levanta peso fica "grande". FATO: Fica forte, definida e saudável. ❌💪','MITO: Suplemento substitui treino ruim. FATO: Suplemento complementa treino BOM. ❌🧬'],
-      nutricao:   ['Proteína em cada refeição. Não é dieta — é estratégia. 🥗💪','Você não precisa comer perfeito 100% do tempo. Precisa ser consistente 80%. 🍽️','Hidratação é o suplemento mais barato e mais ignorado do mercado. Beba água. 💧'],
-      desafio:    ['7 dias. 1 treino por dia. Quem entra? Comenta ✅ abaixo! 🏆','Desafio: uma semana sem açúcar refinado. Simples na teoria, difícil na prática. Vai encarar? 💪','30 segundos de prancha todos os dias por 30 dias. Você consegue? Me conta no DM! ⏱️'],
-      bastidores: ['Por trás de cada treino personalizado existe horas de estudo e planejamento. Isso é o que faz a diferença. 🎬','Ser personal não é só mostrar exercício. É entender o corpo, a mente e a rotina de cada aluno. 💡','Cada ficha de treino que entrego foi pensada especificamente para aquela pessoa. Isso é cuidado de verdade. 🎯'],
-      resultado:  ['Mais um aluno chegando onde se propôs. Consistência + acompanhamento = resultado real. 📈🏆','O resultado não mente. O processo é o que a maioria não aguenta. Parabéns a quem persiste! 🔥','Transformação real acontece quando a mudança de hábito vira estilo de vida. Orgulho total! ✨'],
-      pergunta:   ['Qual é o exercício que você mais evita fazer (mas sabe que precisa)? Comenta aqui! 🤔','Treino de manhã ou à noite? Me conta o seu horário ideal e por quê! ⏰','Se você pudesse mudar UMA coisa na sua rotina de treino hoje, o que seria? 💭'],
-      ciencia:    ['Seus músculos crescem durante o DESCANSO, não durante o treino. O treino é o estímulo. 🧬','O cortisol elevado (estresse) pode sabotar seus resultados mais do que uma refeição fora. Durma bem. 😴🧬','Treino de força aumenta a densidade óssea além de massa muscular. É prevenção de osteoporose também. 💪🔬'],
-    };
-    const textos = fallbackPorTema[postTema] || fallbackPorTema.motivacao;
-    const txt = pick(textos);
-    const ht = '#personaltrainer #fitness #treino #saude #academia #workout #musculacao #resultados #vidafit #personalvs';
-    lastGeneratedPost.post = txt;
-    lastGeneratedPost.hashtags = incHashtags ? ht : '';
-    document.getElementById('post-texto').textContent = txt;
-    document.getElementById('post-hashtags').textContent = incHashtags ? ht : '';
-    toast('✅ Post criado!');
-  } finally {
-    btn.disabled = false;
-    btnTxt.textContent = '✨ Gerar Post com IA';
-    document.getElementById('main').scrollBy({top:300, behavior:'smooth'});
-  }
-}
-
-// ── RENDERIZAÇÃO DE IMAGEM — 10 PALETAS × 4 LAYOUTS × SEED INFINITO ──
-function renderPostImage(tema, seed, paletaIdx, formato, layout) {
-  const box = document.getElementById('svg-img-box');
-  const pal = PALETAS[paletaIdx] || PALETAS[0];
-  const fmt = FORMATOS[formato] || FORMATOS.quadrado;
-  const W = fmt.w, H = fmt.h;
-  const temaInfo = TEMAS[tema] || TEMAS.motivacao;
-
-  // Função de pseudo-random determinística pelo seed
-  const rn = (n) => { let s=(seed*9301+n*49297+233)%233280; return s/233280; };
-
-  // Gera gradiente de fundo único
-  const bgGrad = `<linearGradient id="bg${seed}" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0%" stop-color="${pal.bg0}"/>
-    <stop offset="50%" stop-color="${pal.bg1}"/>
-    <stop offset="100%" stop-color="${pal.bg2}"/>
-  </linearGradient>`;
-
-  // Blobs de cor de fundo (posição e tamanho variam pelo seed)
-  const blobs = Array.from({length:6},(_,i)=>{
-    const x=Math.round(rn(i*5)*W), y=Math.round(rn(i*5+1)*H);
-    const r=Math.round(50+rn(i*5+2)*Math.min(W,H)*0.35);
-    const col = i%2===0 ? pal.ac : (pal.ac==='#111111'?'#444':'#ffffff');
-    const op = 0.08 + rn(i*5+3)*0.14;
-    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${op.toFixed(2)}"/>`;
-  }).join('');
-
-  // Elemento decorativo — muda completamente conforme o layout escolhido
-  let deco = '';
-  if (layout === 'diagonal') {
-    // Linhas diagonais em espaçamento variável pelo seed
-    const spacing = 60 + Math.round(rn(200)*80);
-    deco = Array.from({length:12},(_,i)=>{
-      const off = -H + i*spacing;
-      return `<line x1="${off}" y1="0" x2="${off+H}" y2="${H}" stroke="${pal.ac}" stroke-width="1" opacity="0.15"/>`;
-    }).join('');
-  } else if (layout === 'dots') {
-    // Grid de pontos com densidade variável
-    const step = 35 + Math.round(rn(201)*35);
-    deco = '';
-    for(let x=step/2; x<W; x+=step) {
-      for(let y=step/2; y<H; y+=step) {
-        const r = 1.5 + rn(Math.round(x+y*W+seed)%300)*3;
-        deco += `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(1)}" fill="${pal.ac}" opacity="0.2"/>`;
-      }
-    }
-  } else if (layout === 'linhas') {
-    // Linhas horizontais com espessura e espaçamento variáveis
-    const gap = 28 + Math.round(rn(202)*30);
-    deco = Array.from({length:Math.ceil(H/gap)},(_,i)=>{
-      const y = i*gap + Math.round(rn(i+300)*gap*0.5);
-      const w2 = 0.3 + rn(i+350)*0.5;
-      return `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="${pal.ac}" stroke-width="${w2.toFixed(1)}" opacity="0.18"/>`;
-    }).join('');
-  } else { // circulos
-    // Círculos concêntricos centrados em posição que varia pelo seed
-    const cx = W*0.3 + rn(400)*W*0.4;
-    const cy = H*0.3 + rn(401)*H*0.4;
-    const maxR = Math.max(W,H)*0.9;
-    deco = Array.from({length:8},(_,i)=>{
-      const r = 30 + i*(maxR/8);
-      return `<circle cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" r="${r.toFixed(0)}" fill="none" stroke="${pal.ac}" stroke-width="1" opacity="${(0.25-i*0.025).toFixed(2)}"/>`;
-    }).join('');
-  }
-
-  // Texto principal — headline com font-size adaptado ao formato
-  const headFS = Math.round(W * (formato==='story' ? 0.095 : 0.085));
-  const subFS  = Math.round(headFS * 0.42);
-  const brandFS= Math.round(headFS * 0.3);
-  const centerY = H * (formato==='story' ? 0.48 : 0.5);
-
-  // Bloco semi-transparente atrás do texto
-  const boxPad = W*0.07;
-  const boxW2 = W - boxPad*2;
-  const boxH2 = H * 0.55;
-  const boxY2 = centerY - boxH2/2;
-
-  // CTA badge
-  const ctaFS = Math.round(headFS*0.34);
-
-  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;border-radius:12px">
-  <defs>
-    ${bgGrad}
-    <filter id="blur${seed}"><feGaussianBlur stdDeviation="18"/></filter>
-  </defs>
-  <!-- fundo -->
-  <rect width="${W}" height="${H}" fill="url(#bg${seed})"/>
-  <!-- blobs desfocados -->
-  <g filter="url(#blur${seed})">${blobs}</g>
-  <!-- decoração de layout -->
-  ${deco}
-  <!-- barra accent topo/baixo -->
-  <rect x="0" y="0" width="${W}" height="4" fill="${pal.ac}"/>
-  <rect x="0" y="${H-4}" width="${W}" height="4" fill="${pal.ac}"/>
-  <!-- cantos decorativos -->
-  <line x1="12" y1="12" x2="40" y2="12" stroke="${pal.ac}" stroke-width="3"/>
-  <line x1="12" y1="12" x2="12" y2="40" stroke="${pal.ac}" stroke-width="3"/>
-  <line x1="${W-12}" y1="12" x2="${W-40}" y2="12" stroke="${pal.ac}" stroke-width="3"/>
-  <line x1="${W-12}" y1="12" x2="${W-12}" y2="40" stroke="${pal.ac}" stroke-width="3"/>
-  <line x1="12" y1="${H-12}" x2="40" y2="${H-12}" stroke="${pal.ac}" stroke-width="3"/>
-  <line x1="12" y1="${H-12}" x2="12" y2="${H-40}" stroke="${pal.ac}" stroke-width="3"/>
-  <line x1="${W-12}" y1="${H-12}" x2="${W-40}" y2="${H-12}" stroke="${pal.ac}" stroke-width="3"/>
-  <line x1="${W-12}" y1="${H-12}" x2="${W-12}" y2="${H-40}" stroke="${pal.ac}" stroke-width="3"/>
-  <!-- bloco glassmorphism -->
-  <rect x="${boxPad}" y="${boxY2.toFixed(0)}" width="${boxW2.toFixed(0)}" height="${boxH2.toFixed(0)}" rx="18" fill="${pal.bg1}" opacity="0.6"/>
-  <rect x="${boxPad}" y="${boxY2.toFixed(0)}" width="${boxW2.toFixed(0)}" height="${boxH2.toFixed(0)}" rx="18" fill="none" stroke="${pal.ac}" stroke-width="1.5" opacity="0.35"/>
-  <!-- emoji grande -->
-  <text x="${W/2}" y="${(centerY-headFS*0.7).toFixed(0)}" text-anchor="middle" dominant-baseline="middle" font-size="${Math.round(headFS*1.1)}">${temaInfo.emoji}</text>
-  <!-- headline -->
-  <text x="${W/2}" y="${centerY.toFixed(0)}" text-anchor="middle" dominant-baseline="middle"
-    font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="${headFS}" fill="${pal.ac}" letter-spacing="2">${temaInfo.headline}</text>
-  <!-- separador -->
-  <line x1="${(W*0.25).toFixed(0)}" y1="${(centerY+headFS*0.75).toFixed(0)}" x2="${(W*0.75).toFixed(0)}" y2="${(centerY+headFS*0.75).toFixed(0)}" stroke="${pal.ac}" stroke-width="2" opacity="0.6"/>
-  <!-- sub-headline -->
-  <text x="${W/2}" y="${(centerY+headFS*1.1).toFixed(0)}" text-anchor="middle" dominant-baseline="middle"
-    font-family="Arial, sans-serif" font-weight="600" font-size="${subFS}" fill="${pal.tx}" opacity="0.85">PersonalVS · Fitness</text>
-  <!-- CTA badge -->
-  <rect x="${(W/2-ctaFS*2.8).toFixed(0)}" y="${(centerY+headFS*1.65).toFixed(0)}" width="${(ctaFS*5.6).toFixed(0)}" height="${(ctaFS*1.8).toFixed(0)}" rx="${(ctaFS*0.9).toFixed(0)}" fill="${pal.ac}"/>
-  <text x="${W/2}" y="${(centerY+headFS*1.65+ctaFS*0.9).toFixed(0)}" text-anchor="middle" dominant-baseline="middle"
-    font-family="Arial, sans-serif" font-weight="800" font-size="${ctaFS}" fill="${pal.bg0}">SIGA E COMPARTILHE</text>
-  <!-- marca d'água -->
-  <text x="${W/2}" y="${H-14}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${brandFS}" fill="${pal.tx}" opacity="0.3">@personalvs</text>
-</svg>`;
-}
-
-async function trocaImagem() {
-  if (!lastGeneratedPost) return;
-  currentSvgSeed = Math.floor(Math.random()*99999);
-  renderPostImage(lastGeneratedPost.tema, currentSvgSeed, postPaleta, postFormato, postLayout);
-  toast('🔄 Nova variação!');
-}
-
-function regenerarPost() { gerarPost(); }
-
-function copiarPost() {
-  if (!lastGeneratedPost) return;
-  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n'+lastGeneratedPost.hashtags : '');
-  navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiado!')).catch(()=>{
-    const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta); toast('📋 Copiado!');
-  });
-}
-
-function compartilhar(plataforma) {
-  if (!lastGeneratedPost) return;
-  const txt = lastGeneratedPost.post + (lastGeneratedPost.hashtags ? '\n\n'+lastGeneratedPost.hashtags : '');
-  if (plataforma==='whatsapp') window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
-  else if (plataforma==='instagram') navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiado! Abra o Instagram e cole o texto'));
-  else if (plataforma==='native') { if (navigator.share) navigator.share({text:txt}).catch(()=>{}); else copiarPost(); }
-}
-
-function salvarPost() {
-  if (!lastGeneratedPost) return;
-  const d = getCriativoData();
-  d.historico.unshift({...lastGeneratedPost, id:uid()});
-  saveCriativoData(d);
-  toast('💾 Post salvo no histórico!');
-}
-
-// ── HISTÓRICO ──
-function renderHistorico() {
-  const d = getCriativoData();
-  const el = document.getElementById('historico-lista');
-  if (!d.historico.length) {
-    el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">📂</div><p style="font-size:13px">Nenhum post salvo ainda.<br>Gere e salve posts na aba Gerar.</p></div>`;
+  const el = document.getElementById('bib-list');
+  if (!list.length) {
+    el.innerHTML = `<div style="text-align:center;padding:44px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">🔍</div><p style="font-size:13px">Nenhum exercício encontrado.</p></div>`;
     return;
   }
-  el.innerHTML = d.historico.map((p, i) => {
-    const dt = new Date(p.data).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    return `<div class="post-hist-item">
-      <div class="post-hist-header">
-        <span class="post-hist-tema">${p.temaLabel || p.tema}</span>
-        <span class="post-hist-date">${dt}</span>
-      </div>
-      <div class="post-hist-text">${p.post}</div>
-      <div class="post-hist-actions">
-        <button class="btn btn-ghost btn-sm" onclick="copiarHistPost(${i})">📋 Copiar</button>
-        <button class="btn btn-ghost btn-sm" onclick="compartilharHistPost(${i})">📤 Compartilhar</button>
-        <button class="btn btn-danger btn-sm" onclick="deletarHistPost(${i})">🗑</button>
-      </div>
-    </div>`;
-  }).join('');
-}
 
-function copiarHistPost(i) {
-  const d = getCriativoData();
-  const p = d.historico[i];
-  const txt = p.post + (p.hashtags ? '\n\n' + p.hashtags : '');
-  navigator.clipboard?.writeText(txt).then(() => toast('📋 Copiado!')).catch(() => toast('📋 Copiado!'));
-}
-function compartilharHistPost(i) {
-  const d = getCriativoData();
-  const p = d.historico[i];
-  const txt = p.post + (p.hashtags ? '\n\n' + p.hashtags : '');
-  if (navigator.share) navigator.share({ text: txt }).catch(() => {});
-  else { navigator.clipboard?.writeText(txt); toast('📋 Texto copiado!'); }
-}
-function deletarHistPost(i) {
-  const d = getCriativoData();
-  d.historico.splice(i, 1);
-  saveCriativoData(d); renderHistorico(); toast('🗑 Removido');
-}
-
-// ── CALENDÁRIO ──
-function calNav(dir) {
-  calDate = new Date(calDate.getFullYear(), calDate.getMonth() + dir, 1);
-  renderCalendario();
-}
-
-function renderCalendario() {
-  const d = getCriativoData();
-  const year = calDate.getFullYear(), month = calDate.getMonth();
-  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  document.getElementById('cal-mes-label').textContent = `${meses[month]} ${year}`;
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const today = new Date();
-  const dow = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-
-  let html = '<div class="cal-grid-inner">';
-  dow.forEach(d => { html += `<div class="cal-dow">${d}</div>`; });
-  for (let i = 0; i < firstDay; i++) html += '<div class="cal-day other-month"></div>';
-  for (let d2 = 1; d2 <= daysInMonth; d2++) {
-    const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d2).padStart(2,'0')}`;
-    const isToday = today.getDate()===d2 && today.getMonth()===month && today.getFullYear()===year;
-    const hasPosts = d.calendario[key]?.length > 0;
-    html += `<div class="cal-day${isToday?' today':''}${hasPosts?' has-post':''}" onclick="selectCalDay('${key}',${d2})">
-      <div class="cal-day-num">${d2}</div>
-    </div>`;
+  // Group by muscle when showing all
+  if (bibGrupoFiltro === 'Todos' && !q) {
+    const grupos = [...new Set(list.map(e => e.grupo))];
+    el.innerHTML = grupos.map(g => {
+      const exs = list.filter(e => e.grupo === g);
+      return `<div class="bib-group-label">${g}</div>` + exs.map(ex => renderExCard(ex)).join('');
+    }).join('');
+  } else {
+    el.innerHTML = list.map(ex => renderExCard(ex)).join('');
   }
-  html += '</div>';
-  document.getElementById('cal-grid').innerHTML = html;
 }
 
-function selectCalDay(key, dayNum) {
-  calDaySelected = key;
-  const d = getCriativoData();
-  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const [y,m,dd] = key.split('-');
-  document.getElementById('cal-day-title').textContent = `${parseInt(dd)} de ${meses[parseInt(m)-1]} de ${y}`;
-  const posts = d.calendario[key] || [];
-  const postsHtml = posts.length
-    ? posts.map((p,i) => `<div class="cal-post-chip"><span style="font-size:12px">${p.horario||''}</span><span class="chip-text">${p.texto.substring(0,60)}...</span><button style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;flex-shrink:0" onclick="deletarCalPost('${key}',${i})">✕</button></div>`).join('')
-    : `<div style="font-size:12px;color:var(--text3);margin-bottom:10px">Nenhum post agendado para este dia.</div>`;
-  document.getElementById('cal-day-posts').innerHTML = postsHtml;
-  document.getElementById('cal-day-panel').style.display = 'block';
-  document.getElementById('cal-novo-post').value = lastGeneratedPost?.post || '';
-}
-
-function agendarPost() {
-  if (!calDaySelected) return;
-  const texto = document.getElementById('cal-novo-post').value.trim();
-  const horario = document.getElementById('cal-horario').value;
-  if (!texto) { toast('⚠️ Escreva o conteúdo do post'); return; }
-  const d = getCriativoData();
-  if (!d.calendario[calDaySelected]) d.calendario[calDaySelected] = [];
-  d.calendario[calDaySelected].push({ texto, horario, id: uid() });
-  saveCriativoData(d);
-  document.getElementById('cal-novo-post').value = '';
-  selectCalDay(calDaySelected, null);
-  renderCalendario();
-  toast('📅 Post agendado!');
-}
-
-function deletarCalPost(key, i) {
-  const d = getCriativoData();
-  d.calendario[key].splice(i, 1);
-  if (!d.calendario[key].length) delete d.calendario[key];
-  saveCriativoData(d);
-  selectCalDay(key, null);
-  renderCalendario();
-  toast('🗑 Removido');
-}
-
-// ── IDEIAS ──
-function salvarIdeia() {
-  const titulo = document.getElementById('ideia-titulo').value.trim();
-  const texto = document.getElementById('ideia-texto').value.trim();
-  if (!titulo) { toast('⚠️ Informe o título da ideia'); return; }
-  const d = getCriativoData();
-  d.ideias.unshift({ id: uid(), titulo, texto, tag: ideiaTag, data: new Date().toISOString() });
-  saveCriativoData(d);
-  document.getElementById('ideia-titulo').value = '';
-  document.getElementById('ideia-texto').value = '';
-  renderIdeias();
-  toast('💡 Ideia salva!');
-}
-
-function renderIdeias() {
-  const d = getCriativoData();
-  const el = document.getElementById('ideias-lista');
-  if (!d.ideias.length) {
-    el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">💡</div><p style="font-size:13px">Nenhuma ideia salva ainda.</p></div>`;
-    return;
-  }
-  const tagEmoji = { exercicio:'💪', nutricao:'🥗', motivacao:'🔥', dica:'📌' };
-  el.innerHTML = d.ideias.map((id2, i) => `<div class="ideia-item">
-    <div class="ideia-tag">${tagEmoji[id2.tag]||''} ${id2.tag}</div>
-    <div class="ideia-titulo">${id2.titulo}</div>
-    ${id2.texto ? `<div class="ideia-texto">${id2.texto}</div>` : ''}
-    <div style="display:flex;gap:7px;align-items:center">
-      <span style="font-size:11px;color:var(--text3);flex:1">${new Date(id2.data).toLocaleDateString('pt-BR')}</span>
-      <button class="btn btn-ghost btn-sm" onclick="usarIdeia(${i})">✨ Usar</button>
-      <button class="btn btn-danger btn-sm" onclick="deletarIdeia(${i})">🗑</button>
+function renderExCard(ex) {
+  const diffClass = ex.dificuldade==='Iniciante' ? 'diff-init' : ex.dificuldade==='Avançado' ? 'diff-adv' : 'diff-med';
+  return `<div class="bib-ex-card" id="card-${ex.id}">
+    <div class="bib-video-wrap" id="vwrap-${ex.id}">
+      <div class="bib-video-thumb" onclick="playBibVideo('${ex.id}')">
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0d1f14,#122a1c);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+          <div style="font-size:36px">🎬</div>
+          <div style="font-size:12px;color:var(--accent);font-weight:700">${ex.nome}</div>
+        </div>
+        <div class="bib-play-btn" style="position:absolute;z-index:2">▶</div>
+      </div>
     </div>
-  </div>`).join('');
+    <div class="bib-ex-body">
+      <div class="bib-ex-name">${ex.nome}</div>
+      <div class="bib-ex-meta">
+        <span class="bib-muscle-chip">${ex.grupo}</span>
+        <span class="bib-diff-chip ${diffClass}">${ex.dificuldade}</span>
+        <span class="badge badge-blue">${ex.series} séries</span>
+        <span class="badge badge-gray">${ex.reps} reps</span>
+        <span class="badge badge-gray">⏱${ex.descanso}s</span>
+      </div>
+      <div class="bib-desc">${ex.desc}</div>
+      <div class="bib-tips">💡 ${ex.dicas}</div>
+      <button class="btn btn-primary btn-full btn-sm" onclick="openAddToWorkout('${ex.id}')">➕ Adicionar ao treino do aluno</button>
+    </div>
+  </div>`;
 }
 
-function deletarIdeia(i) {
-  const d = getCriativoData();
-  d.ideias.splice(i, 1);
-  saveCriativoData(d); renderIdeias(); toast('🗑 Ideia removida');
+function playBibVideo(exId) {
+  const ex = EXERCICIOS_DB.find(e => e.id === exId);
+  if (!ex) return;
+  const wrap = document.getElementById('vwrap-'+exId);
+  wrap.innerHTML = `<iframe src="${ex.video}" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
 }
 
-function usarIdeia(i) {
-  const d = getCriativoData();
-  const ideia = d.ideias[i];
-  document.getElementById('post-contexto').value = ideia.titulo + (ideia.texto ? ': ' + ideia.texto : '');
-  setCriativoTab('gerar');
-  toast('💡 Ideia aplicada no contexto!');
+// ── ADD TO WORKOUT ──
+function openAddToWorkout(exId) {
+  atwExercicio = EXERCICIOS_DB.find(e => e.id === exId);
+  atwStudentId = null;
+  atwDay = null;
+  document.getElementById('atw-ex-name').textContent = atwExercicio.nome + ' · ' + atwExercicio.grupo;
+  document.getElementById('atw-day-row').style.display = 'none';
+  document.getElementById('atw-config').style.display = 'none';
+  document.getElementById('atw-confirm-btn').style.display = 'none';
+  // populate student list
+  if (!students.length) {
+    document.getElementById('atw-student-list').innerHTML = `<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">Nenhum aluno cadastrado.</div>`;
+  } else {
+    document.getElementById('atw-student-list').innerHTML = students.map(s =>
+      `<div onclick="selectAtwStudent('${s.id}')" id="atw-s-${s.id}" style="display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:8px;transition:border-color .15s">
+        <div style="width:36px;height:36px;border-radius:10px;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:13px">${s.name}</div>
+          <div style="font-size:11px;color:var(--text2)">Ciclo ${cycleLetters(parseInt(s.cycle||3)).join('/')}</div>
+        </div>
+        <div style="font-size:18px;color:var(--text3)">›</div>
+      </div>`
+    ).join('');
+  }
+  document.getElementById('add-to-workout-overlay').style.display = 'flex';
+}
+
+function selectAtwStudent(sId) {
+  atwStudentId = sId;
+  // highlight selected
+  students.forEach(s => {
+    const el = document.getElementById('atw-s-'+s.id);
+    if (el) el.style.borderColor = s.id===sId ? 'var(--accent)' : 'var(--border)';
+  });
+  const s = students.find(x => x.id === sId);
+  const days = cycleLetters(parseInt(s.cycle||3));
+  // show day selector
+  document.getElementById('atw-day-btns').innerHTML = days.map(d => {
+    const count = (s.exercises?.[d]||[]).length;
+    return `<button onclick="selectAtwDay('${d}',this)" style="padding:9px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s">
+      ${d}<span style="font-size:10px;color:var(--text3);display:block;margin-top:1px">${count} ex.</span>
+    </button>`;
+  }).join('');
+  document.getElementById('atw-day-row').style.display = 'block';
+  document.getElementById('atw-config').style.display = 'none';
+  document.getElementById('atw-confirm-btn').style.display = 'none';
+  atwDay = null;
+}
+
+function selectAtwDay(d, btn) {
+  atwDay = d;
+  btn.parentElement.querySelectorAll('button').forEach(b => {
+    b.style.borderColor = b===btn ? 'var(--accent)' : 'var(--border)';
+    b.style.background  = b===btn ? 'var(--accent-dim)' : 'var(--surface)';
+    b.style.color       = b===btn ? 'var(--accent)' : 'var(--text2)';
+  });
+  document.getElementById('atw-config').style.display = 'block';
+  document.getElementById('atw-confirm-btn').style.display = 'block';
+  // pre-fill with exercise defaults
+  document.getElementById('atw-sets').value = (atwExercicio.series||'3').split('-')[0];
+  document.getElementById('atw-reps').value = (atwExercicio.reps||'12').split('-')[0];
+  document.getElementById('atw-rest').value = atwExercicio.descanso || 60;
+}
+
+function confirmAddToWorkout() {
+  if (!atwStudentId || !atwDay || !atwExercicio) return;
+  const s = students.find(x => x.id === atwStudentId);
+  if (!s.exercises) s.exercises = {};
+  if (!s.exercises[atwDay]) s.exercises[atwDay] = [];
+  const newEx = {
+    id: uid(),
+    name: atwExercicio.nome,
+    sets: document.getElementById('atw-sets').value || '3',
+    reps: document.getElementById('atw-reps').value || '12',
+    rest: document.getElementById('atw-rest').value || '60',
+    muscle: atwExercicio.grupo,
+    obs: atwExercicio.dicas,
+    media: []
+  };
+  s.exercises[atwDay].push(newEx);
+  save();
+  document.getElementById('add-to-workout-overlay').style.display = 'none';
+  toast(`✅ ${atwExercicio.nome} adicionado ao Treino ${atwDay} de ${s.name.split(' ')[0]}!`);
+}
+
+function closeAddToWorkout(e) {
+  const o = document.getElementById('add-to-workout-overlay');
+  if (e && e.target !== o) return;
+  o.style.display = 'none';
+}
+
+// ══════════════════════════════════════════
+// COBRANÇAS / LEMBRETES VIA WHATSAPP
+// ══════════════════════════════════════════
+
+function setWppFiltro(f) {
+  wppFiltro = f;
+  ['todos','pendente','hoje','semana'].forEach(x => {
+    document.getElementById('wppfil-'+x).classList.toggle('active', x===f);
+  });
+  renderWppList();
+}
+
+function renderWppList() {
+  const today = new Date();
+  const todayDay = today.getDate();
+  const endOfWeek = todayDay + 7;
+
+  let list = students.filter(s => s.payDay);
+  if (wppFiltro === 'pendente') list = list.filter(s => s.payStatus === 'late');
+  else if (wppFiltro === 'hoje') list = list.filter(s => parseInt(s.payDay) === todayDay);
+  else if (wppFiltro === 'semana') list = list.filter(s => {
+    const pd = parseInt(s.payDay);
+    return pd >= todayDay && pd <= endOfWeek;
+  });
+
+  const el = document.getElementById('wpp-list');
+  if (!list.length) {
+    el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">✅</div><p style="font-size:13px">Nenhum aluno neste filtro.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(s => {
+    const pd = parseInt(s.payDay);
+    let daysLeft = pd - todayDay;
+    if (daysLeft < 0) { const dim = new Date(today.getFullYear(), today.getMonth()+2, 0).getDate(); daysLeft = dim - todayDay + pd; }
+    const isPend = s.payStatus === 'late';
+    const statusColor = isPend ? 'var(--red)' : daysLeft <= 3 ? 'var(--orange)' : 'var(--accent)';
+    const statusTxt = isPend ? '❌ Pendente' : daysLeft === 0 ? '🔴 Vence Hoje' : daysLeft === 1 ? '🟡 Vence Amanhã' : `⏳ ${daysLeft} dias`;
+    return `<div class="wpp-card">
+      <div class="wpp-student-row">
+        <div class="wpp-avatar">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+          <div style="font-size:11px;color:var(--text2)">Vence dia ${s.payDay}</div>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:${statusColor}">${statusTxt}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <button onclick="openWppModal('${s.id}','cobranca')" class="wpp-btn" style="font-size:12px;padding:8px 10px">💰 Cobrar</button>
+        <button onclick="openWppModal('${s.id}','lembrete')" class="wpp-btn" style="font-size:12px;padding:8px 10px;color:var(--blue);border-color:rgba(77,159,255,.35);background:rgba(77,159,255,.1)">⏰ Lembrete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openWppModal(sId, tipo) {
+  wppStudentId = sId;
+  wppType = tipo;
+  const s = students.find(x => x.id === sId);
+  document.getElementById('wpp-modal-student').textContent = s.name;
+  ['cobranca','lembrete','parabens','ausencia'].forEach(t => {
+    document.getElementById('wpptype-'+t).classList.toggle('active', t===tipo);
+  });
+  buildWppMsg(s, tipo);
+  document.getElementById('wpp-modal-overlay').style.display = 'flex';
+}
+
+function setWppType(t) {
+  wppType = t;
+  ['cobranca','lembrete','parabens','ausencia'].forEach(x => {
+    document.getElementById('wpptype-'+x).classList.toggle('active', x===t);
+  });
+  const s = students.find(x => x.id === wppStudentId);
+  if (s) buildWppMsg(s, t);
+}
+
+function buildWppMsg(s, tipo) {
+  const nome = s.name.split(' ')[0];
+  const dia = s.payDay || '—';
+  const hoje = new Date();
+  const dataHoje = `${hoje.getDate().toString().padStart(2,'0')}/${(hoje.getMonth()+1).toString().padStart(2,'0')}`;
+
+  const msgs = {
+    cobranca: `Olá, ${nome}! 👋\n\nPassando para lembrar que sua mensalidade vence no dia *${dia}*. 💰\n\nCaso já tenha realizado o pagamento, desconsidere esta mensagem. 😊\n\nQualquer dúvida, é só me chamar!\n\nAbraço! 💪`,
+    lembrete: `Oi, ${nome}! 😊\n\nLembrando que seu treino está te esperando! 💪🔥\n\nVamos manter a consistência? Cada treino conta para alcançar seus objetivos! 🎯\n\nTe vejo em breve! 💪`,
+    parabens: `${nome}! 🎉🎊\n\nQuero te dar os parabéns pela sua dedicação e evolução! Você tem se superado a cada treino! 🏆💪\n\nContinue assim — os resultados são reflexo do seu esforço! 🔥\n\nOrgulho de te acompanhar nessa jornada! ⭐`,
+    ausencia: `Oi, ${nome}! 👋\n\nNotei sua ausência nos últimos treinos e fiquei preocupado(a). 😟\n\nTudo bem com você? Precisa de algum ajuste no horário ou no treino?\n\nEstou aqui para ajudar! Me conta como posso te apoiar. 💪❤️`,
+  };
+
+  document.getElementById('wpp-msg-text').value = msgs[tipo] || msgs.cobranca;
+}
+
+function sendWppMsg() {
+  const msg = document.getElementById('wpp-msg-text').value.trim();
+  if (!msg) return;
+  const encoded = encodeURIComponent(msg);
+  window.open(`https://wa.me/?text=${encoded}`, '_blank');
+  toast('💬 WhatsApp aberto!');
+}
+
+function copyWppMsg() {
+  const msg = document.getElementById('wpp-msg-text').value;
+  navigator.clipboard?.writeText(msg).then(() => toast('📋 Mensagem copiada!')).catch(() => {
+    const ta = document.createElement('textarea'); ta.value = msg;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); toast('📋 Mensagem copiada!');
+  });
+}
+
+function closeWppModal(e) {
+  const o = document.getElementById('wpp-modal-overlay');
+  if (e && e.target !== o) return;
+  o.style.display = 'none';
 }
 
 // ══════════════════════════════════════════

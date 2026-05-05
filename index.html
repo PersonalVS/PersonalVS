@@ -524,21 +524,8 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
       <div class="card" style="margin-bottom:13px">
         <div class="card-title">📦 Ações</div>
         <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
-
-          <div style="background:var(--accent);border-radius:14px;padding:18px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0.1)"
-               onclick="(async()=>{ if(!sbClient){toast('⚠️ Conecte primeiro');return;} toast('⬆️ Enviando...'); try{ for(const s of students){ await sbClient.from('estudantes').upsert({id:s.id,dados:s,atualizado_em:new Date().toISOString()}); } await sbClient.from('dados_do_aplicativo').upsert([{key:'attendance',value:attendanceData,atualizado_em:new Date().toISOString()},{key:'schedule',value:scheduleData,atualizado_em:new Date().toISOString()}]); toast('✅ '+students.length+' aluno(s) salvos na nuvem!'); }catch(e){toast('❌ '+e.message);} })()">
-            <div style="font-size:22px;margin-bottom:4px">☁️⬆️</div>
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#000">SALVAR NA NUVEM</div>
-            <div style="font-size:11px;color:rgba(0,0,0,0.6);margin-top:2px">Envia todos os alunos agora</div>
-          </div>
-
-          <div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0.1)"
-               onclick="(async()=>{ if(!sbClient){toast('⚠️ Conecte primeiro');return;} toast('⬇️ Carregando...'); try{ const {data,error}=await sbClient.from('estudantes').select('dados').order('updated_at',{ascending:false}); if(error)throw new Error(error.message); if(data&&data.length>0){students=data.map(r=>r.dados);localStorage.setItem('fp_v6',JSON.stringify(students));} const {data:extras}=await sbClient.from('dados_do_aplicativo').select('key,value'); if(extras){extras.forEach(r=>{if(r.key==='attendance'){attendanceData=r.value;localStorage.setItem('fp_attendance',JSON.stringify(r.value));}if(r.key==='schedule'){scheduleData=r.value;localStorage.setItem('fp_schedule',JSON.stringify(r.value));}})} renderHome(); toast('✅ '+students.length+' aluno(s) carregado(s)!'); }catch(e){toast('❌ '+e.message);} })()">
-            <div style="font-size:22px;margin-bottom:4px">☁️⬇️</div>
-            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text)">CARREGAR DA NUVEM</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px">Restaura dados salvos</div>
-          </div>
-
+          <button class="btn btn-primary btn-full" style="padding:16px;font-size:15px;font-weight:700" onclick="sbPush()">☁️ ⬆️ SALVAR NA NUVEM</button>
+          <button class="btn btn-outline btn-full" style="padding:16px;font-size:15px" onclick="sbPull()">☁️ ⬇️ CARREGAR DA NUVEM</button>
         </div>
       </div>
 
@@ -755,7 +742,7 @@ function save() {
   localStorage.setItem('fp_v6', JSON.stringify(students));
   if (sbClient && selectedStudentId) {
     const s = students.find(x => x.id === selectedStudentId);
-    if (s) sbClient.from('estudantes').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {});
+    if (s) sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {});
   }
 }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
@@ -2330,7 +2317,7 @@ async function sbConnect() {
   if (!url || !key) { toast('⚠️ Preencha URL e Key'); return; }
   try {
     sbClient = window.supabase.createClient(url, key, { auth: { persistSession: false } });
-    const { error } = await sbClient.from('estudantes').select('id').limit(1);
+    const { error } = await sbClient.from('students').select('id').limit(1);
     if (error) throw new Error(error.message);
     localStorage.setItem('sb_url', url);
     localStorage.setItem('sb_key', key);
@@ -2347,14 +2334,15 @@ async function sbPush() {
   toast('⬆️ Enviando...');
   try {
     for (const s of students) {
-      const { error } = await sbClient.from('estudantes').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() });
+      const { error } = await sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() });
       if (error) throw new Error(error.message);
     }
-    await sbClient.from('dados_do_aplicativo').upsert([
+    const { error: e2 } = await sbClient.from('app_data').upsert([
       { key: 'attendance', value: attendanceData, updated_at: new Date().toISOString() },
-      { key: 'schedule',   value: scheduleData,   updated_at: new Date().toISOString() },
+      { key: 'schedule',   value: scheduleData,   updated_at: new Date().toISOString() }
     ]);
-    toast(`✅ ${students.length} aluno(s) enviado(s)!`);
+    if (e2) throw new Error(e2.message);
+    toast('✅ ' + students.length + ' aluno(s) salvos na nuvem!');
   } catch(e) { toast('❌ ' + e.message); }
 }
 
@@ -2362,18 +2350,21 @@ async function sbPull() {
   if (!sbClient) { toast('⚠️ Conecte o Supabase primeiro'); return; }
   toast('⬇️ Carregando...');
   try {
-    const { data, error } = await sbClient.from('estudantes').select('dados').order('updated_at', { ascending: false });
+    const { data, error } = await sbClient.from('students').select('data').order('updated_at', { ascending: false });
     if (error) throw new Error(error.message);
-    if (data && data.length > 0) { students = data.map(r => r.dados); save(); }
-    const { data: extras } = await sbClient.from('dados_do_aplicativo').select('key,value');
+    if (data && data.length > 0) {
+      students = data.map(r => r.data);
+      localStorage.setItem('fp_v6', JSON.stringify(students));
+    }
+    const { data: extras } = await sbClient.from('app_data').select('key,value');
     if (extras) {
       extras.forEach(r => {
-        if (r.key === 'attendance') { attendanceData = r.value; saveAttendance(); }
-        if (r.key === 'schedule')   { scheduleData   = r.value; saveSchedule(); }
+        if (r.key === 'attendance') { attendanceData = r.value; localStorage.setItem('fp_attendance', JSON.stringify(r.value)); }
+        if (r.key === 'schedule')   { scheduleData   = r.value; localStorage.setItem('fp_schedule',   JSON.stringify(r.value)); }
       });
     }
     renderHome();
-    toast(`✅ ${students.length} aluno(s) carregado(s)!`);
+    toast('✅ ' + students.length + ' aluno(s) carregado(s)!');
   } catch(e) { toast('❌ ' + e.message); }
 }
 
@@ -2391,7 +2382,7 @@ async function sbMigrate() {
   toast(`📤 Migrando ${local.length} aluno(s)...`);
   try {
     for (const s of local) {
-      const { error } = await sbClient.from('estudantes').upsert({
+      const { error } = await sbClient.from('students').upsert({
         id: s.id,
         data: s,
         updated_at: new Date().toISOString()
@@ -2402,7 +2393,7 @@ async function sbMigrate() {
     const att = Object.keys(attendanceData).length > 0 ? attendanceData : JSON.parse(localStorage.getItem('fp_attendance') || '{}');
     const sch = Object.keys(scheduleData).length > 0 ? scheduleData : JSON.parse(localStorage.getItem('fp_schedule') || '{}');
 
-    await sbClient.from('dados_do_aplicativo').upsert([
+    await sbClient.from('app_data').upsert([
       { key: 'attendance', value: att, updated_at: new Date().toISOString() },
       { key: 'schedule',   value: sch, updated_at: new Date().toISOString() },
     ]);

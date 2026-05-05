@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <meta name="theme-color" content="#0a0c10"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="PersonalVS"/>
@@ -499,6 +500,47 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
     </div>
 
     <!-- BIBLIOTECA -->
+    <!-- NUVEM / SUPABASE -->
+    <div class="screen" id="screen-supabase">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px">☁️ Nuvem</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Sincronize seus dados com o Supabase</div>
+
+      <div id="sb-status-card" class="card" style="margin-bottom:13px"></div>
+
+      <div class="card" style="margin-bottom:13px">
+        <div class="card-title">🔑 Credenciais Supabase</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Cole a <b style="color:var(--accent)">Project URL</b> e a <b style="color:var(--accent)">Publishable key</b> do seu projeto:</div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label">Project URL</label>
+          <input class="form-input" id="sb-url" placeholder="https://xxxx.supabase.co" style="font-size:12px"/>
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">Publishable Key</label>
+          <input class="form-input" id="sb-key" type="password" placeholder="sb_publishable_..." style="font-size:12px"/>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="sbConnect()">🔌 Conectar</button>
+      </div>
+
+      <div class="card" style="margin-bottom:13px">
+        <div class="card-title">📦 Ações</div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:4px">
+          <button class="btn btn-outline btn-full" onclick="sbPush()">⬆️ Enviar dados → Nuvem</button>
+          <button class="btn btn-outline btn-full" onclick="sbPull()">⬇️ Carregar dados da Nuvem</button>
+          <button class="btn btn-ghost btn-full" style="font-size:12px;color:var(--text3)" onclick="sbMigrate()">🔄 Migrar dados locais → Nuvem (1ª vez)</button>
+        </div>
+      </div>
+
+      <div class="card" style="background:rgba(255,170,0,0.06);border-color:rgba(255,170,0,0.2)">
+        <div class="card-title" style="color:var(--orange)">📋 Suas credenciais</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8">
+          <b style="color:var(--text)">Project URL:</b><br>
+          <div style="background:var(--card2);border-radius:8px;padding:8px 10px;margin:4px 0 10px;font-family:monospace;font-size:11px;color:var(--accent);word-break:break-all">https://qyohhadxftjgwveptifr.supabase.co</div>
+          <b style="color:var(--text)">Publishable Key:</b> a que começa com <span style="color:var(--accent);font-family:monospace">sb_publishable_...</span><br>
+          <div style="margin-top:8px">Encontre em <b>supabase.com</b> → seu projeto → <b>Settings → API Keys</b></div>
+        </div>
+      </div>
+    </div>
+
     <div class="screen" id="screen-install">
       <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px">📚 Biblioteca</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Exercícios com demonstração em vídeo</div>
@@ -546,6 +588,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
     <div class="nav-item"        id="nav-agenda"       onclick="showNav('agenda')">     <div class="nav-icon">📅</div><div>Agenda</div>     <div class="nav-dot"></div></div>
     <div class="nav-item"        id="nav-mensalidade"  onclick="showNav('mensalidade')"><div class="nav-icon">💰</div><div>Mensalidade</div><div class="nav-dot"></div></div>
     <div class="nav-item"        id="nav-install"      onclick="showNav('install')">    <div class="nav-icon">📚</div><div>Biblioteca</div> <div class="nav-dot"></div></div>
+    <div class="nav-item"        id="nav-supabase"     onclick="showNav('supabase')">   <div class="nav-icon">☁️</div><div>Nuvem</div>      <div class="nav-dot"></div></div>
   </nav>
 </div>
 
@@ -696,7 +739,13 @@ let currentPayStatus = 'ok';
 // ══════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════
-function save() { localStorage.setItem('fp_v6', JSON.stringify(students)); }
+function save() {
+  localStorage.setItem('fp_v6', JSON.stringify(students));
+  if (sbClient && selectedStudentId) {
+    const s = students.find(x => x.id === selectedStudentId);
+    if (s) sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {});
+  }
+}
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 function toast(msg, d = 2200) {
   const e = document.getElementById('toast');
@@ -864,12 +913,13 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   currentScreen = name;
-  const isHome = name === 'home' || name === 'install' || name === 'agenda' || name === 'mensalidade';
+  const isHome = name === 'home' || name === 'install' || name === 'agenda' || name === 'mensalidade' || name === 'supabase';
   document.getElementById('back-btn').style.display = isHome ? 'none' : 'flex';
   document.querySelector('.logo').style.display = isHome ? 'flex' : 'none';
   document.getElementById('top-title').style.display = isHome ? 'none' : 'block';
   document.getElementById('main').scrollTop = 0;
   if (name === 'install') initCriativo();
+  if (name === 'supabase') sbStatusCard();
 }
 function showNav(tab) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -878,6 +928,7 @@ function showNav(tab) {
   else if (tab === 'agenda') { document.getElementById('nav-agenda').classList.add('active'); showScreen('agenda'); renderAgenda(); }
   else if (tab === 'mensalidade') { document.getElementById('nav-mensalidade').classList.add('active'); showScreen('mensalidade'); renderMensalidade(); }
   else if (tab === 'install') { document.getElementById('nav-install').classList.add('active'); showScreen('install'); }
+  else if (tab === 'supabase') { document.getElementById('nav-supabase').classList.add('active'); showScreen('supabase'); }
 }
 function goBack() {
   if (currentScreen === 'progress') showStudentDetail(selectedStudentId);
@@ -2229,8 +2280,115 @@ function closeWppModal(e) {
 }
 
 // ══════════════════════════════════════════
+// SUPABASE
+// ══════════════════════════════════════════
+let sbClient = null;
+
+function sbInit() {
+  const url = localStorage.getItem('sb_url');
+  const key = localStorage.getItem('sb_key');
+  if (url && key) {
+    try { sbClient = window.supabase.createClient(url, key); } catch(e) { sbClient = null; }
+  }
+}
+
+function sbStatusCard() {
+  const el = document.getElementById('sb-status-card');
+  if (!el) return;
+  const url = localStorage.getItem('sb_url') || '';
+  if (sbClient && url) {
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
+      <div style="width:10px;height:10px;border-radius:50%;background:#4caf50;flex-shrink:0"></div>
+      <div><div style="font-size:13px;font-weight:700;color:#4caf50">✅ Conectado</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${url.replace('https://','')}</div></div>
+    </div>`;
+  } else {
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--text3);flex-shrink:0"></div>
+      <div style="font-size:13px;color:var(--text3)">Não conectado — cole as credenciais abaixo</div>
+    </div>`;
+  }
+  const savedUrl = localStorage.getItem('sb_url');
+  if (savedUrl) document.getElementById('sb-url').value = savedUrl;
+}
+
+async function sbConnect() {
+  const url = document.getElementById('sb-url').value.trim().replace(/\/$/, '');
+  const key = document.getElementById('sb-key').value.trim();
+  if (!url || !key) { toast('⚠️ Preencha URL e Key'); return; }
+  try {
+    sbClient = window.supabase.createClient(url, key);
+    const { error } = await sbClient.from('students').select('id').limit(1);
+    if (error) throw new Error(error.message);
+    localStorage.setItem('sb_url', url);
+    localStorage.setItem('sb_key', key);
+    sbStatusCard();
+    toast('✅ Conectado ao Supabase!');
+  } catch(e) {
+    sbClient = null;
+    toast('❌ ' + (e.message || 'Verifique URL e Key'));
+  }
+}
+
+async function sbPush() {
+  if (!sbClient) { toast('⚠️ Conecte o Supabase primeiro'); return; }
+  toast('⬆️ Enviando...');
+  try {
+    for (const s of students) {
+      const { error } = await sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() });
+      if (error) throw new Error(error.message);
+    }
+    await sbClient.from('app_data').upsert([
+      { key: 'attendance', value: attendanceData, updated_at: new Date().toISOString() },
+      { key: 'schedule',   value: scheduleData,   updated_at: new Date().toISOString() },
+    ]);
+    toast(`✅ ${students.length} aluno(s) enviado(s)!`);
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+async function sbPull() {
+  if (!sbClient) { toast('⚠️ Conecte o Supabase primeiro'); return; }
+  toast('⬇️ Carregando...');
+  try {
+    const { data, error } = await sbClient.from('students').select('data').order('updated_at', { ascending: false });
+    if (error) throw new Error(error.message);
+    if (data && data.length > 0) { students = data.map(r => r.data); save(); }
+    const { data: extras } = await sbClient.from('app_data').select('key,value');
+    if (extras) {
+      extras.forEach(r => {
+        if (r.key === 'attendance') { attendanceData = r.value; saveAttendance(); }
+        if (r.key === 'schedule')   { scheduleData   = r.value; saveSchedule(); }
+      });
+    }
+    renderHome();
+    toast(`✅ ${students.length} aluno(s) carregado(s)!`);
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+async function sbMigrate() {
+  if (!sbClient) { toast('⚠️ Conecte o Supabase primeiro'); return; }
+  const local = JSON.parse(localStorage.getItem('fp_v6') || '[]');
+  if (!local.length) { toast('ℹ️ Nenhum dado local encontrado'); return; }
+  toast(`📤 Migrando ${local.length} aluno(s)...`);
+  try {
+    for (const s of local) {
+      const { error } = await sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() });
+      if (error) throw new Error(error.message);
+    }
+    const att = JSON.parse(localStorage.getItem('fp_attendance') || '{}');
+    const sch = JSON.parse(localStorage.getItem('fp_schedule')   || '{}');
+    await sbClient.from('app_data').upsert([
+      { key: 'attendance', value: att, updated_at: new Date().toISOString() },
+      { key: 'schedule',   value: sch, updated_at: new Date().toISOString() },
+    ]);
+    toast(`✅ ${local.length} aluno(s) migrado(s) para a nuvem!`);
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+// ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
+sbInit();
 renderHome();
 checkPaymentAlerts();
 </script>

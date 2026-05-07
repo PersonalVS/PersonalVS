@@ -296,6 +296,22 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
 .week-cell .wc-icon{font-size:14px;line-height:1}
 .week-cell .wc-status{font-size:9px;font-weight:700;letter-spacing:.4px}
 
+/* STUDENT TAGS */
+.s-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.4px;margin:2px 2px 0 0}
+.tag-vip{background:rgba(255,170,59,.18);color:var(--orange);border:1px solid rgba(255,170,59,.45)}
+.tag-online{background:rgba(77,159,255,.15);color:var(--blue);border:1px solid rgba(77,159,255,.4)}
+.tag-iniciante{background:rgba(59,255,160,.13);color:var(--accent);border:1px solid rgba(59,255,160,.35)}
+.tag-pilates{background:rgba(180,100,255,.15);color:#c87aff;border:1px solid rgba(180,100,255,.4)}
+.tag-custom{background:rgba(154,163,184,.12);color:var(--text2);border:1px solid var(--border)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px;margin-bottom:12px;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-chip{flex-shrink:0;padding:6px 13px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.filter-chip.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-mid)}
+.sort-btn{flex-shrink:0;padding:6px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px}
+.sort-btn.active{background:var(--card2);border-color:var(--border2);color:var(--text)}
+
 /* ATTENDANCE ROW */
 .attend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .attend-row:last-child{border-bottom:none}
@@ -392,6 +408,15 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
         <span class="sicon">🔍</span>
         <input class="search-input" placeholder="Buscar aluno..." id="search-input" oninput="renderStudentList()"/>
       </div>
+      <!-- FILTER & SORT BAR -->
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-chip active" id="fchip-all"      onclick="setFilter('all')">Todos</button>
+        <button class="filter-chip"        id="fchip-late"     onclick="setFilter('late')">❌ Inadimplentes</button>
+        <button class="filter-chip"        id="fchip-ok"       onclick="setFilter('ok')">✅ Em dia</button>
+        <button class="filter-chip"        id="fchip-active"   onclick="setFilter('active')">💪 Com treino</button>
+        <button class="filter-chip"        id="fchip-pending"  onclick="setFilter('pending')">⏳ Sem treino</button>
+        <button class="sort-btn"           id="sort-btn"       onclick="cycleSort()"><span id="sort-icon">↕</span><span id="sort-label">Ordem</span></button>
+      </div>
       <div id="student-list"></div>
     </div>
 
@@ -464,13 +489,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
             <input class="form-input" id="f-valor" type="number" step="0.01" placeholder="Ex: 250,00"/>
           </div>
           <div class="form-group"><label class="form-label">Vencimento (dia)</label>
-            <select class="form-select" id="f-payday">
-              <option value="">Sem vencimento</option>
-              <option value="5">Dia 5</option>
-              <option value="10">Dia 10</option>
-              <option value="15">Dia 15</option>
-              <option value="20">Dia 20</option>
-            </select>
+            <input class="form-input" id="f-payday" type="number" min="1" max="31" placeholder="Ex: 10"/>
           </div>
         </div>
         <div class="form-group"><label class="form-label">Status</label>
@@ -523,13 +542,32 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
         </div>
       </div>
 
+      <!-- ETIQUETAS / TAGS -->
+      <div class="card">
+        <div class="card-title">🏷️ Etiquetas</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Marque uma ou mais etiquetas para organizar e filtrar seus alunos.</div>
+        <div class="anamnese-chips-row" id="tag-chips">
+          <div class="anamnese-chip" onclick="toggleTagChip(this,'VIP')">⭐ VIP</div>
+          <div class="anamnese-chip" onclick="toggleTagChip(this,'Online')">💻 Online</div>
+          <div class="anamnese-chip" onclick="toggleTagChip(this,'Iniciante')">🌱 Iniciante</div>
+          <div class="anamnese-chip" onclick="toggleTagChip(this,'Pilates')">🧘 Pilates</div>
+          <div class="anamnese-chip" onclick="toggleTagChip(this,'Funcional')">⚡ Funcional</div>
+          <div class="anamnese-chip" onclick="toggleTagChip(this,'Musculação')">🏋️ Musculação</div>
+          <div class="anamnese-chip" onclick="toggleTagChip(this,'Reabilitação')">🩹 Reabilitação</div>
+          <div class="anamnese-chip" onclick="toggleTagChip(this,'Idoso')">👴 Idoso</div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+          <input class="form-input" id="f-tag-custom" placeholder="Tag personalizada..." style="flex:1;font-size:13px" onkeydown="if(event.key==='Enter'){addCustomTag();event.preventDefault()}"/>
+          <button class="btn btn-ghost btn-sm" onclick="addCustomTag()">+ Add</button>
+        </div>
+        <div id="custom-tags-preview" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px"></div>
+      </div>
+
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="goBack()">Cancelar</button>
         <button class="btn btn-primary" onclick="saveStudent()" style="flex:1">Salvar Aluno</button>
       </div>
     </div>
-
-    <!-- PROGRESSO -->
     <div class="screen" id="screen-progress">
       <div id="progress-header" style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
         <div id="progress-avatar" style="width:46px;height:46px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0"></div>
@@ -1126,12 +1164,59 @@ function renderStats() {
     <div class="stat-card"><div class="stat-val" style="color:var(--red)">${late}</div><div class="stat-lbl">Inadimplentes</div></div>`;
 }
 
+// ══════════════════════════════════════════
+// FILTER / SORT STATE
+// ══════════════════════════════════════════
+let activeFilter = 'all';
+let sortMode = 'default'; // 'default' | 'az' | 'late' | 'active'
+const SORT_MODES = [
+  { key:'default', icon:'↕', label:'Ordem' },
+  { key:'az',      icon:'A↓', label:'A–Z' },
+  { key:'late',    icon:'❌', label:'Inadimp.' },
+  { key:'active',  icon:'💪', label:'Com treino' },
+];
+let sortModeIdx = 0;
+
+function setFilter(f) {
+  activeFilter = f;
+  ['all','late','ok','active','pending'].forEach(x => {
+    document.getElementById('fchip-'+x)?.classList.toggle('active', x === f);
+  });
+  renderStudentList();
+}
+
+function cycleSort() {
+  sortModeIdx = (sortModeIdx + 1) % SORT_MODES.length;
+  sortMode = SORT_MODES[sortModeIdx].key;
+  const btn = document.getElementById('sort-btn');
+  document.getElementById('sort-icon').textContent = SORT_MODES[sortModeIdx].icon;
+  document.getElementById('sort-label').textContent = SORT_MODES[sortModeIdx].label;
+  btn.classList.toggle('active', sortModeIdx !== 0);
+  renderStudentList();
+}
+
 function renderStudentList() {
   const q = (document.getElementById('search-input')?.value || '').toLowerCase();
-  const list = students.filter(s => s.name.toLowerCase().includes(q));
+  let list = students.filter(s => s.name.toLowerCase().includes(q));
+
+  // Filter
+  if (activeFilter === 'late')    list = list.filter(s => s.payStatus === 'late');
+  else if (activeFilter === 'ok') list = list.filter(s => s.payDay && s.payStatus !== 'late');
+  else if (activeFilter === 'active')  list = list.filter(s => Object.values(s.exercises||{}).some(e=>e.length>0));
+  else if (activeFilter === 'pending') list = list.filter(s => !Object.values(s.exercises||{}).some(e=>e.length>0));
+
+  // Sort
+  if (sortMode === 'az') list = [...list].sort((a,b) => a.name.localeCompare(b.name,'pt'));
+  else if (sortMode === 'late') list = [...list].sort((a,b) => (b.payStatus==='late'?1:0) - (a.payStatus==='late'?1:0));
+  else if (sortMode === 'active') list = [...list].sort((a,b) => {
+    const ha = Object.values(a.exercises||{}).some(e=>e.length>0);
+    const hb = Object.values(b.exercises||{}).some(e=>e.length>0);
+    return (hb?1:0) - (ha?1:0);
+  });
+
   const el = document.getElementById('student-list');
   if (!list.length) {
-    el.innerHTML = `<div style="text-align:center;padding:50px 0;color:var(--text3)"><div style="font-size:44px;margin-bottom:10px">🏋️</div><p style="font-size:14px">${q ? 'Nenhum resultado.' : 'Nenhum aluno ainda.<br>Toque em <strong>➕</strong> para começar.'}</p></div>`;
+    el.innerHTML = `<div style="text-align:center;padding:50px 0;color:var(--text3)"><div style="font-size:44px;margin-bottom:10px">🏋️</div><p style="font-size:14px">${q||activeFilter!=='all' ? 'Nenhum resultado.' : 'Nenhum aluno ainda.<br>Toque em <strong>➕</strong> para começar.'}</p></div>`;
     return;
   }
   el.innerHTML = list.map(s => {
@@ -1140,12 +1225,14 @@ function renderStudentList() {
     const avatarHtml = s.photo
       ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`
       : '🧍';
+    const tagsHtml = renderTagChips(s.tags||[]);
     return `<div class="student-card" onclick="showStudentDetail('${s.id}')">
       <div class="s-avatar">${avatarHtml}</div>
       <div style="flex:1;min-width:0">
         <div class="s-name">${s.name}</div>
         <div class="s-meta">${s.weight}kg · ${s.height}cm · ${s.daysPerWeek}x/sem · ${cycleLetters(parseInt(s.cycle||3)).join('/')}</div>
         ${s.goal ? `<div style="font-size:11px;color:var(--accent);margin-top:2px">🎯 ${s.goal}</div>` : ''}
+        ${tagsHtml ? `<div style="margin-top:5px">${tagsHtml}</div>` : ''}
         ${pi ? `<div style="margin-top:5px"><span class="pay-badge ${pi.cls}">${pi.label}</span></div>` : ''}
       </div>
       <div class="s-right">
@@ -1198,6 +1285,8 @@ function openStudentForm(id) {
     const val = chip.textContent.trim().replace(/^[^\w]+/,'').trim();
     chip.classList.toggle('on', (s?.objetivosAnamnese||[]).some(o => val.includes(o)||o.includes(val)));
   });
+  // Tags
+  loadTagChips(s?.tags || []);
 
   // Show duplicate section only when creating new
   document.getElementById('dup-section').style.display = id ? 'none' : (students.length > 0 ? 'block' : 'none');
@@ -1238,6 +1327,7 @@ function saveStudent() {
     objetivosAnamnese: Array.from(document.querySelectorAll('#obj-chips .anamnese-chip.on')).map(c=>c.dataset.val||c.textContent.trim().replace(/^[^\w]+/,'')),
     nivelAtividade: document.getElementById('f-nivel').value,
     obsLegal: document.getElementById('f-obs-legal').value.trim(),
+    tags: getSelectedTags(),
   };
 
   if (selectedStudentId) {
@@ -1684,13 +1774,7 @@ function renderAgenda() {
     document.getElementById('agenda-week-table').innerHTML =
       `<div style="text-align:center;padding:30px;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📅</div><p style="font-size:13px">Nenhum aluno cadastrado.</p></div>`;
   } else {
-    const studentsWithSchedule = students
-      .filter(s => scheduleData[s.id]?.scheduledDays?.length)
-      .sort((a, b) => {
-        const ta = scheduleData[a.id]?.time || '99:99';
-        const tb = scheduleData[b.id]?.time || '99:99';
-        return ta.localeCompare(tb);
-      });
+    const studentsWithSchedule = students.filter(s => scheduleData[s.id]?.scheduledDays?.length);
     const studentsNoSchedule = students.filter(s => !scheduleData[s.id]?.scheduledDays?.length);
 
     let tableHtml = `<table class="week-table"><thead><tr>
@@ -2600,6 +2684,7 @@ async function sbConnect() {
     localStorage.setItem('sb_key', key);
     dbg('CONECTADO!');
     sbStatusCard();
+    startAutoSync();
     toast('✅ Conectado ao Supabase!');
   } catch(e) {
     sbClient = null;
@@ -3144,10 +3229,104 @@ function formatGCalDate(date, timeStr) {
 }
 
 // ══════════════════════════════════════════
+// TAGS
+// ══════════════════════════════════════════
+const TAG_STYLES = {
+  'VIP':         'tag-vip',
+  'Online':      'tag-online',
+  'Iniciante':   'tag-iniciante',
+  'Pilates':     'tag-pilates',
+  'Funcional':   'tag-custom',
+  'Musculação':  'tag-custom',
+  'Reabilitação':'tag-custom',
+  'Idoso':       'tag-custom',
+};
+
+function tagClass(tag) {
+  return TAG_STYLES[tag] || 'tag-custom';
+}
+
+function renderTagChips(tags) {
+  if (!tags || !tags.length) return '';
+  return tags.map(t => `<span class="s-tag ${tagClass(t)}">${t}</span>`).join('');
+}
+
+function toggleTagChip(el, val) {
+  el.classList.toggle('on');
+  el.dataset.val = val;
+}
+
+function addCustomTag() {
+  const inp = document.getElementById('f-tag-custom');
+  const val = inp.value.trim();
+  if (!val) return;
+  inp.value = '';
+  if (!window._customTags) window._customTags = [];
+  if (window._customTags.includes(val)) return;
+  window._customTags.push(val);
+  renderCustomTagsPreview();
+}
+
+function renderCustomTagsPreview() {
+  const el = document.getElementById('custom-tags-preview');
+  if (!el) return;
+  el.innerHTML = (window._customTags||[]).map((t,i) =>
+    `<span class="s-tag tag-custom" style="cursor:pointer" onclick="removeCustomTag(${i})">${t} ✕</span>`
+  ).join('');
+}
+
+function removeCustomTag(i) {
+  window._customTags.splice(i, 1);
+  renderCustomTagsPreview();
+}
+
+function getSelectedTags() {
+  const preset = Array.from(document.querySelectorAll('#tag-chips .anamnese-chip.on'))
+    .map(c => c.dataset.val || c.textContent.trim().replace(/^[^\w\u00C0-\u017F]+/,'').trim());
+  const custom = window._customTags || [];
+  return [...preset, ...custom];
+}
+
+function loadTagChips(tags) {
+  window._customTags = [];
+  const presetTags = Object.keys(TAG_STYLES);
+  document.querySelectorAll('#tag-chips .anamnese-chip').forEach(chip => {
+    const val = chip.dataset.val || chip.textContent.trim().replace(/^[^\w\u00C0-\u017F]+/,'').trim();
+    chip.dataset.val = val;
+    chip.classList.toggle('on', tags.includes(val));
+  });
+  // Custom tags = tags not in the preset list
+  window._customTags = tags.filter(t => !presetTags.includes(t));
+  renderCustomTagsPreview();
+}
+
+// ══════════════════════════════════════════
+// AUTO-SYNC SUPABASE (a cada 5 min)
+// ══════════════════════════════════════════
+let _autoSyncInterval = null;
+
+function startAutoSync() {
+  if (_autoSyncInterval) clearInterval(_autoSyncInterval);
+  _autoSyncInterval = setInterval(async () => {
+    if (!sbClient || !students.length) return;
+    try {
+      for (const s of students) {
+        await sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() });
+      }
+      await sbClient.from('app_data').upsert([
+        { key: 'attendance', value: attendanceData, updated_at: new Date().toISOString() },
+        { key: 'schedule',   value: scheduleData,   updated_at: new Date().toISOString() }
+      ]);
+    } catch(e) { /* silencioso */ }
+  }, 5 * 60 * 1000);
+}
+
+// ══════════════════════════════════════════
 sbInit();
 renderHome();
 checkPaymentAlerts();
 pinInit();
+startAutoSync();
 if ('Notification' in window && Notification.permission === 'granted') {
   schedulePaymentNotifications();
 }

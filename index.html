@@ -670,19 +670,10 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
 
       <div id="sb-status-card" class="card" style="margin-bottom:13px"></div>
 
-      <div class="card" style="margin-bottom:13px;background:var(--accent-dim);border-color:var(--accent-mid)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-          <span style="font-size:20px">☁️</span>
-          <div class="card-title" style="margin:0;color:var(--accent)">Nuvem Configurada</div>
-        </div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.7">
-          Seus dados são salvos automaticamente no <b style="color:var(--text)">Supabase</b> a cada alteração. Acesse de qualquer dispositivo com o mesmo app.
-        </div>
-        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <button onclick="forceSyncNow()" class="btn btn-primary btn-sm">☁️ Enviar para nuvem</button>
-          <button onclick="forcePullNow()" class="btn btn-ghost btn-sm">⬇️ Baixar da nuvem</button>
-        </div>
-      </div>lass="form-group" style="margin-bottom:10px">
+      <div class="card" style="margin-bottom:13px">
+        <div class="card-title">🔑 Credenciais Supabase</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Cole a <b style="color:var(--accent)">Project URL</b> e a <b style="color:var(--accent)">Publishable key</b> do seu projeto:</div>
+        <div class="form-group" style="margin-bottom:10px">
           <label class="form-label">Project URL</label>
           <input class="form-input" id="sb-url" placeholder="https://xxxx.supabase.co" style="font-size:12px"/>
         </div>
@@ -921,55 +912,12 @@ let currentPayStatus = 'ok';
 // UTILS
 // ══════════════════════════════════════════
 function save() {
-  // 1. Always save locally first (instant)
   localStorage.setItem('fp_v6', JSON.stringify(students));
-  // 2. Sync entire students array to cloud
-  syncToCloud();
-}
-
-async function syncToCloud() {
-  if (!sbClient) return;
-  try {
-    const payload = {
-      id: OWNER_ID,
-      user_id: OWNER_ID,
-      data: students,
-      updated_at: new Date().toISOString()
-    };
-    const { error } = await sbClient.from('students').upsert(payload);
-    if (error) console.warn('Cloud sync error:', error.message);
-  } catch(e) {
-    console.warn('syncToCloud failed:', e);
+  if (sbClient && selectedStudentId) {
+    const s = students.find(x => x.id === selectedStudentId);
+    if (s) sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {});
   }
 }
-
-async function syncFromCloud() {
-  if (!sbClient) return false;
-  try {
-    const { data, error } = await sbClient
-      .from('students')
-      .select('data, updated_at')
-      .eq('id', OWNER_ID)
-      .single();
-    if (error || !data) return false;
-    // Compare timestamps — use whichever is newer
-    const cloudTime  = new Date(data.updated_at).getTime();
-    const localTime  = parseInt(localStorage.getItem('fp_v6_ts') || '0');
-    if (cloudTime > localTime) {
-      students = Array.isArray(data.data) ? data.data : [];
-      localStorage.setItem('fp_v6', JSON.stringify(students));
-      localStorage.setItem('fp_v6_ts', cloudTime.toString());
-      return true; // cloud was newer
-    }
-    return false;
-  } catch(e) {
-    console.warn('syncFromCloud failed:', e);
-    return false;
-  }
-}
-
-// ────────────────────────────────────────────
-
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 function toast(msg, d = 2200) {
   const e = document.getElementById('toast');
@@ -2594,55 +2542,34 @@ function dbg(msg) {
 // SUPABASE
 // ══════════════════════════════════════════
 let sbClient = null;
-const SB_URL = 'https://qyohhadxftjgwveptifr.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5b2hoYWR4ZnRqZ3d2ZXB0aWZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MzQzMTksImV4cCI6MjA5MzUxMDMxOX0.KWFiUShRqHyrbA0GATltD2y3-xZmUY958MxvraMmils';
-// Device fingerprint — identifies this device so data syncs correctly
-const DEVICE_ID = (() => {
-  let id = localStorage.getItem('pv_device_id');
-  if (!id) { id = 'pv_' + Date.now().toString(36) + Math.random().toString(36).slice(2); localStorage.setItem('pv_device_id', id); }
-  return id;
-})();
-// Use a fixed owner key so all data belongs to one personal trainer
-const OWNER_ID = 'personalvs_owner';
 
 function sbInit() {
-  try {
-    sbClient = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: false } });
-    // Pre-fill settings fields if they exist
-    const urlEl = document.getElementById('sb-url');
-    const keyEl = document.getElementById('sb-key');
-    if (urlEl) urlEl.value = SB_URL;
-    if (keyEl) keyEl.value = SB_KEY.slice(0, 20) + '...';
-  } catch(e) {
-    sbClient = null;
-    console.warn('Supabase init failed:', e);
+  const url = localStorage.getItem('sb_url');
+  const key = localStorage.getItem('sb_key');
+  if (url && key && !sbClient) {
+    try { sbClient = window.supabase.createClient(url, key, { auth: { persistSession: false } }); } catch(e) { sbClient = null; }
   }
 }
 
 function sbStatusCard() {
   const el = document.getElementById('sb-status-card');
   if (!el) return;
-  if (sbClient) {
-    el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;padding:4px 0">
-      <div style="width:10px;height:10px;border-radius:50%;background:#4caf50;flex-shrink:0;box-shadow:0 0 8px #4caf50"></div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#4caf50">✅ Nuvem Conectada</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Dados salvos automaticamente no Supabase</div>
-      </div>
-    </div>
-    <div style="margin-top:10px;display:flex;gap:8px">
-      <button onclick="forceSyncNow()" class="btn btn-ghost btn-sm" style="flex:1">☁️ Sincronizar agora</button>
-      <button onclick="forcePullNow()" class="btn btn-ghost btn-sm" style="flex:1">⬇️ Baixar da nuvem</button>
+  const url = localStorage.getItem('sb_url') || '';
+  if (sbClient && url) {
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
+      <div style="width:10px;height:10px;border-radius:50%;background:#4caf50;flex-shrink:0"></div>
+      <div><div style="font-size:13px;font-weight:700;color:#4caf50">✅ Conectado</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${url.replace('https://','')}</div></div>
     </div>`;
   } else {
-    el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;padding:4px 0">
-      <div style="width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--red)">❌ Sem conexão</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Dados salvos apenas localmente</div>
-      </div>
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--text3);flex-shrink:0"></div>
+      <div style="font-size:13px;color:var(--text3)">Não conectado — cole as credenciais abaixo</div>
     </div>`;
   }
+  const savedUrl = localStorage.getItem('sb_url');
+  if (savedUrl) document.getElementById('sb-url').value = savedUrl;
+
   // Update PIN status
   const pinCard = document.getElementById('pin-status-card');
   if (pinCard) {
@@ -2651,19 +2578,6 @@ function sbStatusCard() {
       ? `<span style="color:var(--accent);font-weight:700">🔒 PIN ativado</span> — seu app está protegido`
       : `<span style="color:var(--orange);font-weight:700">🔓 Sem PIN</span> — seu app não está protegido`;
   }
-}
-
-async function forceSyncNow() {
-  toast('☁️ Sincronizando...', 1500);
-  await syncToCloud();
-  toast('✅ Dados enviados para a nuvem!');
-}
-
-async function forcePullNow() {
-  toast('⬇️ Baixando da nuvem...', 1500);
-  const synced = await syncFromCloud();
-  if (synced) { renderHome(); toast('✅ Dados atualizados da nuvem!'); }
-  else toast('✅ Dados já estão atualizados!');
 }
 
 async function sbConnect() {
@@ -3224,45 +3138,13 @@ function formatGCalDate(date, timeStr) {
 }
 
 // ══════════════════════════════════════════
-// STARTUP — cloud first, local fallback
-// ══════════════════════════════════════════
-async function appStart() {
-  sbInit();
-  pinInit();
-
-  // Show loading indicator
-  const main = document.getElementById('main');
-  if (main) {
-    main.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;color:var(--text3)">
-      <div style="font-size:36px">☁️</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text)">Sincronizando dados...</div>
-      <div style="font-size:12px">Conectando ao banco de dados</div>
-    </div>`;
-  }
-
-  // Try to pull from cloud (3s timeout)
-  let synced = false;
-  try {
-    const timeout = new Promise(res => setTimeout(() => res(false), 3000));
-    synced = await Promise.race([syncFromCloud(), timeout]);
-  } catch(e) { synced = false; }
-
-  // Restore main content
-  if (main) main.innerHTML = '';
-
-  renderHome();
-  checkPaymentAlerts();
-
-  if (synced) {
-    toast('☁️ Dados sincronizados da nuvem!', 2500);
-  }
-
-  if ('Notification' in window && Notification.permission === 'granted') {
-    schedulePaymentNotifications();
-  }
+sbInit();
+renderHome();
+checkPaymentAlerts();
+pinInit();
+if ('Notification' in window && Notification.permission === 'granted') {
+  schedulePaymentNotifications();
 }
-
-appStart();
 
 
 // ══════════════════════════════════════════
@@ -3384,112 +3266,6 @@ Retorne SOMENTE JSON válido sem markdown, sem texto extra:
     document.getElementById('ia-gerar-txt').textContent = '✨ Gerar Proposta de Treino';
   }
 }
-
-// ── GERADOR LOCAL DE TREINO (funciona 100% offline) ─────────────────────
-function gerarTreinoLocal(letras, foco, nome, objetivo, nivel, lesoes, diasSemana) {
-  const isIniciante = !nivel || nivel === 'Sedentário' || nivel === 'Levemente ativo' || foco === 'iniciante';
-  const lesaoJoelho = lesoes && /joelho|patelar|menisco/i.test(lesoes);
-  const lesaoLombar = lesoes && /lombar|coluna|hérnia/i.test(lesoes);
-  const lesaoOmbro  = lesoes && /ombro|manguito|rotat/i.test(lesoes);
-
-  const banco = {
-    Peito:[
-      {nome:'Supino Reto com Barra',      series:'4',reps:'8-12', descanso:90, dica:'Desça controlado, cotovelos a 45° do tronco.'},
-      {nome:'Supino Inclinado com Halter', series:'3',reps:'10-12',descanso:75, dica:'Mantenha os ombros retraídos durante todo o movimento.'},
-      {nome:'Flexão de Braço',            series:'3',reps:'12-15',descanso:60, dica:'Corpo reto como prancha, desça até quase tocar o chão.'},
-      {nome:'Crucifixo com Halter',       series:'3',reps:'12-15',descanso:60, dica:'Leve flexão no cotovelo, sinta o alongamento no peitoral.'},
-      {nome:'Crossover no Cabo',          series:'3',reps:'15',   descanso:60, dica:'Junte as mãos na frente, contraindo o peitoral ao final.'},
-    ],
-    Costas:[
-      {nome:'Puxada Frontal no Pulley',   series:'4',reps:'10-12',descanso:90, dica:'Puxe pelos cotovelos, retorne devagar em 3 segundos.'},
-      {nome:'Remada Unilateral com Halter',series:'3',reps:'10-12',descanso:75, dica:'Apoie joelho no banco, puxe o halter até o quadril.'},
-      {nome:'Pulldown com Corda',         series:'3',reps:'12-15',descanso:60, dica:'Separe a corda ao final, cotovelos apontam para baixo.'},
-      {nome:'Remada Curvada com Barra',   series:'4',reps:'8-12', descanso:90, dica:'Coluna neutra, puxe até o abdômen, contraia escápulas.'},
-    ],
-    Ombros:[
-      {nome:'Desenvolvimento com Halter', series:'4',reps:'10-12',descanso:75, dica:'Não trave cotovelos no topo, controle a descida.'},
-      {nome:'Elevação Lateral',           series:'3',reps:'12-15',descanso:60, dica:'Cotovelo levemente flexionado, eleve até altura do ombro.'},
-      {nome:'Elevação Frontal',           series:'3',reps:'12',   descanso:60, dica:'Braços levemente flexionados, não balance o corpo.'},
-      {nome:'Encolhimento de Ombros',     series:'3',reps:'15',   descanso:45, dica:'Eleve verticalmente sem rotacionar os ombros.'},
-    ],
-    Biceps:[
-      {nome:'Rosca Direta com Barra',     series:'3',reps:'10-12',descanso:60, dica:'Cotovelos fixos ao lado do corpo, não balance.'},
-      {nome:'Rosca Martelo com Halter',   series:'3',reps:'12',   descanso:60, dica:'Pegada neutra, movimento completo, desça devagar.'},
-      {nome:'Rosca Concentrada',          series:'3',reps:'12-15',descanso:60, dica:'Apoie cotovelo na coxa, contraia no topo por 1 segundo.'},
-    ],
-    Triceps:[
-      {nome:'Tríceps Testa com Barra',    series:'3',reps:'10-12',descanso:60, dica:'Cotovelos apontados para cima, não mova os ombros.'},
-      {nome:'Tríceps Pulley com Corda',   series:'3',reps:'12-15',descanso:60, dica:'Separe a corda ao final, cotovelos fixos ao corpo.'},
-      {nome:'Mergulho no Banco',          series:'3',reps:'12-15',descanso:60, dica:'Cotovelos atrás, desça até 90° de flexão.'},
-    ],
-    Quadriceps:[
-      {nome:'Leg Press 45°',             series:'4',reps:'12-15',descanso:90, dica:'Não trave os joelhos no topo, pés na largura do quadril.'},
-      {nome:'Cadeira Extensora',          series:'3',reps:'15',   descanso:60, dica:'Controle a descida em 3s, aperte o quadríceps no topo.'},
-      {nome:'Avanço com Halter',          series:'3',reps:'12',   descanso:75, dica:'Joelho da frente não ultrapassa a ponta do pé.'},
-      {nome:'Agachamento Livre',          series:'4',reps:'8-12', descanso:120,dica:'Joelhos na linha dos pés, desça até coxa paralela.'},
-    ],
-    Gluteos:[
-      {nome:'Hip Thrust com Barra',       series:'4',reps:'10-15',descanso:90, dica:'Empurre com o calcanhar, aperte o glúteo no topo.'},
-      {nome:'Agachamento Sumô',           series:'3',reps:'12-15',descanso:75, dica:'Pés afastados e virados para fora, empurre joelhos.'},
-      {nome:'Cadeira Abdutora',           series:'3',reps:'15-20',descanso:60, dica:'Controle o retorno, não deixe os joelhos caírem.'},
-      {nome:'Elevação Pélvica no Chão',   series:'3',reps:'20',   descanso:45, dica:'Contraia o glúteo no topo por 2 segundos.'},
-    ],
-    Isquiotibiais:[
-      {nome:'Mesa Flexora',               series:'3',reps:'12-15',descanso:75, dica:'Controle a volta em 3 segundos, amplitude completa.'},
-      {nome:'Cadeira Flexora',            series:'3',reps:'12-15',descanso:60, dica:'Contraia atrás do joelho no topo do movimento.'},
-      {nome:'Stiff com Halter',           series:'3',reps:'10-12',descanso:90, dica:'Coluna neutra, sinta o alongamento dos isquiotibiais.'},
-    ],
-    Abdomen:[
-      {nome:'Prancha Isométrica',         series:'3',reps:'40s',  descanso:45, dica:'Corpo reto, core ativado, respire normalmente.'},
-      {nome:'Abdominal Crunch',           series:'3',reps:'20',   descanso:45, dica:'Não puxe a cabeça, contraia o abdômen ao subir.'},
-      {nome:'Elevação de Pernas',         series:'3',reps:'15',   descanso:45, dica:'Controle a descida, lombar colada no chão.'},
-      {nome:'Russian Twist',              series:'3',reps:'20',   descanso:45, dica:'Gire o tronco, mantenha as costas levemente inclinadas.'},
-    ],
-    Cardio:[
-      {nome:'Esteira — Caminhada Inclinada',series:'1',reps:'15min',descanso:0, dica:'Inclinação 8-10%, velocidade para manter conversa.'},
-      {nome:'Bicicleta Ergométrica',      series:'1',reps:'15min',descanso:0,  dica:'Cadência moderada, resistência média.'},
-      {nome:'Polichinelo',                series:'3',reps:'40s',  descanso:30, dica:'Aterrisse suavemente, ritmo constante.'},
-    ],
-  };
-
-  const esquemas = {
-    completo:      {A:['Peito','Triceps','Ombros'],    B:['Costas','Biceps'],             C:['Quadriceps','Gluteos','Isquiotibiais'], D:['Peito','Costas'],          E:['Ombros','Biceps','Triceps'], F:['Gluteos','Abdomen']},
-    hipertrofia:   {A:['Peito','Triceps'],             B:['Costas','Biceps'],             C:['Quadriceps','Gluteos'],                D:['Ombros','Abdomen'],        E:['Isquiotibiais','Triceps'],   F:['Peito','Biceps']},
-    emagrecimento: {A:['Quadriceps','Gluteos','Cardio'],B:['Peito','Costas','Abdomen'],   C:['Isquiotibiais','Ombros','Cardio'],     D:['Biceps','Triceps','Abdomen'],E:['Gluteos','Cardio'],         F:['Peito','Costas']},
-    reabilitacao:  {A:['Gluteos','Abdomen'],           B:['Costas','Ombros'],             C:['Quadriceps','Isquiotibiais'],          D:['Peito','Biceps'],          E:['Gluteos','Abdomen'],        F:['Cardio','Abdomen']},
-    funcional:     {A:['Quadriceps','Gluteos','Abdomen'],B:['Peito','Costas','Ombros'],  C:['Isquiotibiais','Biceps','Triceps'],    D:['Gluteos','Abdomen'],       E:['Peito','Costas'],           F:['Ombros','Cardio']},
-    iniciante:     {A:['Peito','Costas','Ombros'],     B:['Quadriceps','Gluteos'],        C:['Biceps','Triceps','Abdomen'],          D:['Peito','Costas'],          E:['Gluteos','Quadriceps'],     F:['Ombros','Abdomen']},
-  };
-
-  const pick = (arr, n) => arr.slice(0, n);
-  const exPorGrupo = isIniciante ? 2 : 3;
-  const esquema = esquemas[foco] || esquemas.completo;
-
-  const dias = {};
-  letras.forEach(letra => {
-    const grupos = esquema[letra] || esquema['A'];
-    dias[letra] = [];
-    grupos.forEach(grupo => {
-      const pool = banco[grupo] || [];
-      pool.slice(0, exPorGrupo).forEach(ex => {
-        if (lesaoJoelho && /agachamento livre|avanço/i.test(ex.nome)) return;
-        if (lesaoLombar && /stiff|remada curvada/i.test(ex.nome)) return;
-        if (lesaoOmbro  && /desenvolvimento|elevação frontal/i.test(ex.nome)) return;
-        dias[letra].push({ ...ex, grupo });
-      });
-    });
-    if (!dias[letra].length) {
-      dias[letra] = banco['Abdomen'].slice(0, 3).map(e => ({ ...e, grupo: 'Abdômen' }));
-    }
-  });
-
-  const focoLabel = {completo:'completo',hipertrofia:'hipertrofia',emagrecimento:'emagrecimento',reabilitacao:'reabilitação',funcional:'funcional',iniciante:'adaptação para iniciantes'}[foco] || foco;
-  return {
-    resumo: `Treino ${diasSemana}x/semana — ciclo ${letras.join('/')} — foco em ${focoLabel}. ${isIniciante ? 'Volume reduzido para fase de adaptação.' : 'Volume adequado ao nível do aluno.'} ${(lesaoJoelho || lesaoLombar || lesaoOmbro) ? 'Exercícios contraindicados pelas restrições foram removidos.' : ''}`.trim(),
-    dias
-  };
-}
-
 
 function renderResultadoIA(sug, letras) {
   let html = '';

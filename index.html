@@ -1774,7 +1774,13 @@ function renderAgenda() {
     document.getElementById('agenda-week-table').innerHTML =
       `<div style="text-align:center;padding:30px;color:var(--text3)"><div style="font-size:34px;margin-bottom:8px">📅</div><p style="font-size:13px">Nenhum aluno cadastrado.</p></div>`;
   } else {
-    const studentsWithSchedule = students.filter(s => scheduleData[s.id]?.scheduledDays?.length);
+    const studentsWithSchedule = students
+      .filter(s => scheduleData[s.id]?.scheduledDays?.length)
+      .sort((a, b) => {
+        const ta = scheduleData[a.id]?.time || '99:99';
+        const tb = scheduleData[b.id]?.time || '99:99';
+        return ta.localeCompare(tb);
+      });
     const studentsNoSchedule = students.filter(s => !scheduleData[s.id]?.scheduledDays?.length);
 
     let tableHtml = `<table class="week-table"><thead><tr>

@@ -301,9 +301,73 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
 .attend-row:last-child{border-bottom:none}
 .attend-bar-wrap{flex:1;height:6px;background:var(--card2);border-radius:4px;overflow:hidden}
 .attend-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .4s ease}
+
+/* PIN LOCK */
+#pin-lock{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px calc(var(--safe-bottom)+32px)}
+#pin-lock.hidden{display:none}
+.pin-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;margin-bottom:6px}.pin-logo span{color:var(--accent)}
+.pin-sub{font-size:14px;color:var(--text2);margin-bottom:40px}
+.pin-dots{display:flex;gap:14px;margin-bottom:40px}
+.pin-dot{width:16px;height:16px;border-radius:50%;background:var(--card2);border:2px solid var(--border);transition:all .2s}
+.pin-dot.filled{background:var(--accent);border-color:var(--accent)}
+.pin-dot.error{background:var(--red);border-color:var(--red)}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px}
+.pin-key{padding:18px;border-radius:16px;font-size:22px;font-weight:700;font-family:'Syne',sans-serif;background:var(--card);border:1px solid var(--border);color:var(--text);cursor:pointer;text-align:center;transition:all .12s;user-select:none}
+.pin-key:active{transform:scale(.91);background:var(--accent-dim);border-color:var(--accent)}
+.pin-key.del{font-size:18px;color:var(--text2)}
+.pin-key.empty{background:transparent;border-color:transparent;cursor:default}
+.pin-setup-msg{font-size:12px;color:var(--text3);text-align:center;margin-top:16px;line-height:1.6}
+.pin-action-row{display:flex;gap:12px;margin-top:18px;width:100%;max-width:280px}
+
+/* ANAMNESE */
+.anamnese-chip{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);transition:all .15s;user-select:none}
+.anamnese-chip.on{background:var(--accent-dim);border-color:var(--accent-mid);color:var(--accent)}
+.anamnese-chips-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+
+/* PROGRESS PHOTOS */
+.photo-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.photo-compare-item{background:var(--card2);border:1px dashed var(--border2);border-radius:13px;overflow:hidden;aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .2s}
+.photo-compare-item:active{border-color:var(--accent)}
+.photo-compare-item img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:13px}
+.photo-compare-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);padding:6px 8px;font-size:11px;font-weight:700;text-align:center;letter-spacing:.5px}
+
+/* NOTIFICATION BANNER */
+.notif-banner{background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.3);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:13px;cursor:pointer}
+
+/* CALENDAR EXPORT BTN */
+.gcal-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.3);border-radius:12px;cursor:pointer;transition:all .15s;width:100%}
+.gcal-btn:active{transform:scale(.98)}
 </style>
 </head>
 <body>
+<!-- PIN LOCK SCREEN -->
+<div id="pin-lock">
+  <div class="pin-logo">Personal<span>VS</span></div>
+  <div class="pin-sub" id="pin-sub-msg">Digite seu PIN para entrar</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-keypad">
+    <button class="pin-key" onclick="pinKey(1)">1</button>
+    <button class="pin-key" onclick="pinKey(2)">2</button>
+    <button class="pin-key" onclick="pinKey(3)">3</button>
+    <button class="pin-key" onclick="pinKey(4)">4</button>
+    <button class="pin-key" onclick="pinKey(5)">5</button>
+    <button class="pin-key" onclick="pinKey(6)">6</button>
+    <button class="pin-key" onclick="pinKey(7)">7</button>
+    <button class="pin-key" onclick="pinKey(8)">8</button>
+    <button class="pin-key" onclick="pinKey(9)">9</button>
+    <button class="pin-key empty"></button>
+    <button class="pin-key" onclick="pinKey(0)">0</button>
+    <button class="pin-key del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-setup-msg" id="pin-setup-msg"></div>
+  <div class="pin-action-row" id="pin-action-row" style="display:none">
+    <button class="btn btn-ghost btn-full btn-sm" onclick="pinSkip()">Pular (sem PIN)</button>
+  </div>
+</div>
+
 <div id="app">
   <div id="topbar">
     <button class="back-btn" id="back-btn" onclick="goBack()">‹</button>
@@ -315,6 +379,14 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
   <div id="main">
     <!-- HOME -->
     <div class="screen active" id="screen-home">
+      <div id="notif-banner-home" style="display:none" class="notif-banner" onclick="requestNotifPermission()">
+        <div style="font-size:22px">🔔</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:var(--blue)">Ativar lembretes de mensalidade</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">Receba alertas automáticos quando uma mensalidade vencer</div>
+        </div>
+        <div style="color:var(--blue);font-size:18px">›</div>
+      </div>
       <div class="stats-row" id="stats-row"></div>
       <div class="search-wrap">
         <span class="sicon">🔍</span>
@@ -388,6 +460,9 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
       <div class="card">
         <div class="card-title">💰 Mensalidade</div>
         <div class="form-row">
+          <div class="form-group"><label class="form-label">Valor (R$)</label>
+            <input class="form-input" id="f-valor" type="number" step="0.01" placeholder="Ex: 250,00"/>
+          </div>
           <div class="form-group"><label class="form-label">Vencimento (dia)</label>
             <select class="form-select" id="f-payday">
               <option value="">Sem vencimento</option>
@@ -397,12 +472,54 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
               <option value="20">Dia 20</option>
             </select>
           </div>
-          <div class="form-group"><label class="form-label">Status</label>
-            <div class="pay-toggle" style="margin-top:6px">
-              <button class="pay-opt active-ok" id="pay-btn-ok" onclick="setPayStatus('ok')">✅ Pago</button>
-              <button class="pay-opt" id="pay-btn-late" onclick="setPayStatus('late')">❌ Pendente</button>
-            </div>
+        </div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <div class="pay-toggle" style="margin-top:6px">
+            <button class="pay-opt active-ok" id="pay-btn-ok" onclick="setPayStatus('ok')">✅ Pago</button>
+            <button class="pay-opt" id="pay-btn-late" onclick="setPayStatus('late')">❌ Pendente</button>
           </div>
+        </div>
+      </div>
+
+      <!-- ANAMNESE -->
+      <div class="card">
+        <div class="card-title">🩺 Anamnese</div>
+        <div class="form-group"><label class="form-label">Histórico de lesões</label><textarea class="form-textarea" id="f-lesoes" placeholder="Ex: Lesão no joelho direito em 2022, hérnia lombar..."></textarea></div>
+        <div class="form-group"><label class="form-label">Doenças / Condições de saúde</label><textarea class="form-textarea" id="f-doencas" placeholder="Ex: Hipertensão controlada, diabetes tipo 2..."></textarea></div>
+        <div class="form-group"><label class="form-label">Medicamentos em uso</label><input class="form-input" id="f-medicamentos" placeholder="Ex: Losartana 50mg, Metformina..."/></div>
+        <div class="form-group">
+          <label class="form-label">Objetivos detalhados</label>
+          <div class="anamnese-chips-row" id="obj-chips">
+            <div class="anamnese-chip" onclick="toggleChip(this,'Hipertrofia')">💪 Hipertrofia</div>
+            <div class="anamnese-chip" onclick="toggleChip(this,'Emagrecimento')">🔥 Emagrecimento</div>
+            <div class="anamnese-chip" onclick="toggleChip(this,'Resistência')">🏃 Resistência</div>
+            <div class="anamnese-chip" onclick="toggleChip(this,'Reabilitação')">🩹 Reabilitação</div>
+            <div class="anamnese-chip" onclick="toggleChip(this,'Flexibilidade')">🧘 Flexibilidade</div>
+            <div class="anamnese-chip" onclick="toggleChip(this,'Qualidade de vida')">❤️ Qualidade de vida</div>
+            <div class="anamnese-chip" onclick="toggleChip(this,'Estética')">✨ Estética</div>
+            <div class="anamnese-chip" onclick="toggleChip(this,'Performance')">🏆 Performance</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nível de atividade física prévia</label>
+          <select class="form-select" id="f-nivel">
+            <option value="">Selecionar...</option>
+            <option value="Sedentário">Sedentário</option>
+            <option value="Levemente ativo">Levemente ativo</option>
+            <option value="Moderadamente ativo">Moderadamente ativo</option>
+            <option value="Muito ativo">Muito ativo</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Observações do personal (jurídicas)</label><textarea class="form-textarea" id="f-obs-legal" placeholder="Declarações, limitações aceitas pelo aluno, responsabilidades..."></textarea></div>
+
+        <!-- SUGESTÃO DE TREINO POR IA -->
+        <div style="background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:12px;padding:13px;margin-top:4px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:18px">🤖</span>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--accent)">Sugestão de Treino por IA</div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">A IA analisa o objetivo, nível e restrições do aluno e gera uma proposta de treino completa para revisão.</div>
+          <button class="btn btn-primary btn-full btn-sm" onclick="abrirModalSugestaoIA()">✨ Gerar Sugestão de Treino com IA</button>
         </div>
       </div>
 
@@ -437,6 +554,35 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
       <div id="progress-history"></div>
     </div>
 
+    <!-- PROGRESS PHOTOS -->
+    <div class="screen" id="screen-photos">
+      <div id="photos-header" style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div id="photos-avatar" style="width:46px;height:46px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0"></div>
+        <div>
+          <div id="photos-name" style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px"></div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Comparação Antes / Depois</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📸 Registrar fotos</div>
+        <div class="photo-compare">
+          <div class="photo-compare-item" id="photo-before-preview" onclick="pickProgressPhoto('before')">
+            <div style="font-size:32px;margin-bottom:6px">📷</div>
+            <div style="font-size:12px;color:var(--text2)">Toque para adicionar</div>
+            <div class="photo-compare-label" style="background:rgba(255,170,59,.7);color:#fff">ANTES</div>
+          </div>
+          <div class="photo-compare-item" id="photo-after-preview" onclick="pickProgressPhoto('after')">
+            <div style="font-size:32px;margin-bottom:6px">📷</div>
+            <div style="font-size:12px;color:var(--text2)">Toque para adicionar</div>
+            <div class="photo-compare-label" style="background:rgba(59,255,160,.5);color:#0a0c10">DEPOIS</div>
+          </div>
+        </div>
+        <input type="file" id="prog-photo-input" accept="image/*" style="display:none" onchange="handleProgressPhoto(event)"/>
+        <button class="btn btn-primary btn-full" onclick="saveProgressPhoto()" style="margin-top:4px">💾 Salvar fotos</button>
+      </div>
+      <div id="photos-history"></div>
+    </div>
+
     <!-- DETALHE -->
     <div class="screen" id="screen-detail">
       <div id="detail-header" style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
@@ -449,6 +595,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
       </div>
       <div id="detail-info-grid" class="info-grid"></div>
       <div id="detail-obs-box" style="display:none" class="hint"><span>📝</span><span id="detail-obs-text"></span></div>
+      <div id="detail-anamnese-box" style="display:none;margin-bottom:13px"></div>
       <div class="mode-toggle">
         <button class="mode-btn active" id="mode-edit-btn" onclick="setMode('edit')">✏️ Editar</button>
         <button class="mode-btn" id="mode-view-btn" onclick="setMode('view')">👁 Visualizar</button>
@@ -457,6 +604,11 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
       <div class="day-tabs" id="day-tabs"></div>
       <div class="card" id="exercise-area"></div>
       <button class="btn btn-outline btn-full" onclick="exportPDF()" style="margin-top:2px">📄 Exportar / Compartilhar</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px">
+        <button class="btn btn-ghost btn-full" onclick="showProgressPhotos()" style="font-size:13px">📸 Fotos Antes/Depois</button>
+        <button class="btn btn-ghost btn-full" onclick="exportGoogleCalendar()" style="font-size:13px">📅 Google Agenda</button>
+      </div>
+      <button class="btn btn-ghost btn-full" onclick="exportRelatorioMensal()" style="margin-top:9px;font-size:13px">📊 Relatório Mensal PDF</button>
     </div>
 
     <!-- AGENDA -->
@@ -505,12 +657,32 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
       <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px">☁️ Nuvem</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Sincronize seus dados com o Supabase</div>
 
+      <!-- PIN Security -->
+      <div class="card" style="margin-bottom:13px">
+        <div class="card-title">🔐 Segurança — PIN</div>
+        <div id="pin-status-card" style="font-size:13px;color:var(--text2);margin-bottom:12px"></div>
+        <div style="display:flex;gap:9px">
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="setupNewPin()">🔑 Alterar PIN</button>
+          <button class="btn btn-ghost btn-sm" style="flex:1" onclick="removePIN()">🔓 Remover PIN</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6">O PIN de 4 dígitos protege os dados dos seus alunos ao abrir o app.</div>
+      </div>
+
       <div id="sb-status-card" class="card" style="margin-bottom:13px"></div>
 
-      <div class="card" style="margin-bottom:13px">
-        <div class="card-title">🔑 Credenciais Supabase</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Cole a <b style="color:var(--accent)">Project URL</b> e a <b style="color:var(--accent)">Publishable key</b> do seu projeto:</div>
-        <div class="form-group" style="margin-bottom:10px">
+      <div class="card" style="margin-bottom:13px;background:var(--accent-dim);border-color:var(--accent-mid)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-size:20px">☁️</span>
+          <div class="card-title" style="margin:0;color:var(--accent)">Nuvem Configurada</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">
+          Seus dados são salvos automaticamente no <b style="color:var(--text)">Supabase</b> a cada alteração. Acesse de qualquer dispositivo com o mesmo app.
+        </div>
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onclick="forceSyncNow()" class="btn btn-primary btn-sm">☁️ Enviar para nuvem</button>
+          <button onclick="forcePullNow()" class="btn btn-ghost btn-sm">⬇️ Baixar da nuvem</button>
+        </div>
+      </div>lass="form-group" style="margin-bottom:10px">
           <label class="form-label">Project URL</label>
           <input class="form-input" id="sb-url" placeholder="https://xxxx.supabase.co" style="font-size:12px"/>
         </div>
@@ -524,9 +696,19 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
       <div class="card" style="margin-bottom:13px">
         <div class="card-title">📦 Ações</div>
         <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
-          <button class="btn btn-primary btn-full" style="padding:16px;font-size:15px;font-weight:700" onclick="sbPush()">☁️ ⬆️ SALVAR NA NUVEM</button>
-          <button class="btn btn-outline btn-full" style="padding:16px;font-size:15px" onclick="sbPull()">☁️ ⬇️ CARREGAR DA NUVEM</button>
+          <button class="btn btn-primary btn-full" style="padding:16px;font-size:15px;font-weight:700;min-height:56px"
+            ontouchstart="dbg('touchstart SALVAR')"
+            onclick="dbg('click SALVAR'); sbPush()">☁️ ⬆️ SALVAR NA NUVEM</button>
+          <button class="btn btn-outline btn-full" style="padding:16px;font-size:15px;min-height:56px"
+            ontouchstart="dbg('touchstart CARREGAR')"
+            onclick="dbg('click CARREGAR'); sbPull()">☁️ ⬇️ CARREGAR DA NUVEM</button>
         </div>
+      </div>
+
+      <div class="card" style="margin-bottom:13px">
+        <div class="card-title" style="color:#0f0">🐛 Debug Log</div>
+        <div id="debug-log" style="display:none;max-height:200px;overflow-y:auto;font-family:monospace;padding:4px"></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Toque nos botões acima e veja o log aqui</div>
       </div>
 
       <div class="card" style="background:rgba(255,170,0,0.06);border-color:rgba(255,170,0,0.2)">
@@ -739,12 +921,55 @@ let currentPayStatus = 'ok';
 // UTILS
 // ══════════════════════════════════════════
 function save() {
+  // 1. Always save locally first (instant)
   localStorage.setItem('fp_v6', JSON.stringify(students));
-  if (sbClient && selectedStudentId) {
-    const s = students.find(x => x.id === selectedStudentId);
-    if (s) sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {});
+  // 2. Sync entire students array to cloud
+  syncToCloud();
+}
+
+async function syncToCloud() {
+  if (!sbClient) return;
+  try {
+    const payload = {
+      id: OWNER_ID,
+      user_id: OWNER_ID,
+      data: students,
+      updated_at: new Date().toISOString()
+    };
+    const { error } = await sbClient.from('students').upsert(payload);
+    if (error) console.warn('Cloud sync error:', error.message);
+  } catch(e) {
+    console.warn('syncToCloud failed:', e);
   }
 }
+
+async function syncFromCloud() {
+  if (!sbClient) return false;
+  try {
+    const { data, error } = await sbClient
+      .from('students')
+      .select('data, updated_at')
+      .eq('id', OWNER_ID)
+      .single();
+    if (error || !data) return false;
+    // Compare timestamps — use whichever is newer
+    const cloudTime  = new Date(data.updated_at).getTime();
+    const localTime  = parseInt(localStorage.getItem('fp_v6_ts') || '0');
+    if (cloudTime > localTime) {
+      students = Array.isArray(data.data) ? data.data : [];
+      localStorage.setItem('fp_v6', JSON.stringify(students));
+      localStorage.setItem('fp_v6_ts', cloudTime.toString());
+      return true; // cloud was newer
+    }
+    return false;
+  } catch(e) {
+    console.warn('syncFromCloud failed:', e);
+    return false;
+  }
+}
+
+// ────────────────────────────────────────────
+
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 function toast(msg, d = 2200) {
   const e = document.getElementById('toast');
@@ -919,6 +1144,7 @@ function showScreen(name) {
   document.getElementById('main').scrollTop = 0;
   if (name === 'install') initCriativo();
   if (name === 'supabase') sbStatusCard();
+  if (name === 'home') checkNotifBanner();
 }
 function showNav(tab) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -931,6 +1157,7 @@ function showNav(tab) {
 }
 function goBack() {
   if (currentScreen === 'progress') showStudentDetail(selectedStudentId);
+  else if (currentScreen === 'photos') showStudentDetail(selectedStudentId);
   else if (currentScreen === 'detail') showNav('home');
   else if (currentScreen === 'form') selectedStudentId ? showStudentDetail(selectedStudentId) : showNav('home');
   else showNav('home');
@@ -1007,9 +1234,22 @@ function openStudentForm(id) {
   document.getElementById('f-days').value = s?.daysPerWeek || '3';
   document.getElementById('f-cycle').value = s?.cycle || '3';
   document.getElementById('f-payday').value = s?.payDay || '';
+  document.getElementById('f-valor').value = s?.valor || '';
   document.getElementById('f-muscleMass').value = s?.muscleMass || '';
   document.getElementById('f-bodyFat').value = s?.bodyFat || '';
   setPayStatus(s?.payStatus || 'ok');
+
+  // Anamnese fields
+  document.getElementById('f-lesoes').value = s?.lesoes || '';
+  document.getElementById('f-doencas').value = s?.doencas || '';
+  document.getElementById('f-medicamentos').value = s?.medicamentos || '';
+  document.getElementById('f-nivel').value = s?.nivelAtividade || '';
+  document.getElementById('f-obs-legal').value = s?.obsLegal || '';
+  // Reset chips then activate saved ones
+  document.querySelectorAll('#obj-chips .anamnese-chip').forEach(chip => {
+    const val = chip.textContent.trim().replace(/^[^\w]+/,'').trim();
+    chip.classList.toggle('on', (s?.objetivosAnamnese||[]).some(o => val.includes(o)||o.includes(val)));
+  });
 
   // Show duplicate section only when creating new
   document.getElementById('dup-section').style.display = id ? 'none' : (students.length > 0 ? 'block' : 'none');
@@ -1038,10 +1278,18 @@ function saveStudent() {
     daysPerWeek: document.getElementById('f-days').value,
     cycle: document.getElementById('f-cycle').value,
     payDay: document.getElementById('f-payday').value,
+    valor: document.getElementById('f-valor').value,
     payStatus: currentPayStatus,
     photo: pendingProfilePhoto,
     muscleMass: document.getElementById('f-muscleMass').value,
     bodyFat: document.getElementById('f-bodyFat').value,
+    // anamnese
+    lesoes: document.getElementById('f-lesoes').value.trim(),
+    doencas: document.getElementById('f-doencas').value.trim(),
+    medicamentos: document.getElementById('f-medicamentos').value.trim(),
+    objetivosAnamnese: Array.from(document.querySelectorAll('#obj-chips .anamnese-chip.on')).map(c=>c.dataset.val||c.textContent.trim().replace(/^[^\w]+/,'')),
+    nivelAtividade: document.getElementById('f-nivel').value,
+    obsLegal: document.getElementById('f-obs-legal').value.trim(),
   };
 
   if (selectedStudentId) {
@@ -1153,6 +1401,23 @@ function showStudentDetail(id) {
   const obs = document.getElementById('detail-obs-box');
   if (s.obs) { obs.style.display = 'flex'; document.getElementById('detail-obs-text').textContent = s.obs; }
   else obs.style.display = 'none';
+
+  // Anamnese summary
+  const anamBox = document.getElementById('detail-anamnese-box');
+  const hasAnamnese = s.lesoes || s.doencas || s.medicamentos || (s.objetivosAnamnese||[]).length || s.nivelAtividade;
+  if (hasAnamnese) {
+    anamBox.style.display = 'block';
+    anamBox.innerHTML = `<div class="card" style="margin-bottom:0">
+      <div class="card-title">🩺 Anamnese</div>
+      ${s.lesoes ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Lesões: </span>${s.lesoes}</div>` : ''}
+      ${s.doencas ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Doenças: </span>${s.doencas}</div>` : ''}
+      ${s.medicamentos ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Medicamentos: </span>${s.medicamentos}</div>` : ''}
+      ${s.nivelAtividade ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Nível: </span>${s.nivelAtividade}</div>` : ''}
+      ${(s.objetivosAnamnese||[]).length ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px">${s.objetivosAnamnese.map(o=>`<span class="badge badge-green">${o}</span>`).join('')}</div>` : ''}
+    </div>`;
+  } else {
+    anamBox.style.display = 'none';
+  }
 
   renderDayTabs(s); renderExerciseArea(s); setMode('edit');
   showScreen('detail');
@@ -1655,14 +1920,50 @@ function renderMensalidade() {
   });
   alertsEl.innerHTML = alertsHtml.length ? `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚠️ Alertas</div>${alertsHtml.join('')}` : '';
 
-  // Stats
+  // Stats financeiros
   const comVenc = students.filter(s => s.payDay).length;
-  const pagos = students.filter(s => s.payDay && s.payStatus !== 'late').length;
-  const pend = students.filter(s => s.payDay && s.payStatus === 'late').length;
+  const pagos = students.filter(s => s.payDay && s.payStatus !== 'late');
+  const pend  = students.filter(s => s.payDay && s.payStatus === 'late');
+
+  const fmt = v => v > 0 ? `R$ ${v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.')}` : '—';
+  const receitaTotal    = students.filter(s=>s.valor).reduce((acc,s)=>acc+parseFloat(s.valor||0),0);
+  const receitaRecebida = pagos.filter(s=>s.valor).reduce((acc,s)=>acc+parseFloat(s.valor||0),0);
+  const receitaPendente = pend.filter(s=>s.valor).reduce((acc,s)=>acc+parseFloat(s.valor||0),0);
+
   document.getElementById('pay-stats-row').innerHTML = `
+    <div class="stat-card" style="grid-column:1/-1;background:rgba(59,255,160,.06);border-color:var(--accent-mid)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="card-title" style="margin:0">📊 Receita Mensal</div>
+        <span style="font-size:11px;color:var(--text3)">${new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:11px 10px;text-align:center">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">Total Esperado</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:${receitaTotal>9999?'13':'15'}px;color:var(--blue)">${fmt(receitaTotal)}</div>
+        </div>
+        <div style="background:var(--card2);border:1px solid rgba(59,255,160,.25);border-radius:11px;padding:11px 10px;text-align:center">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">✅ Recebido</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:${receitaRecebida>9999?'13':'15'}px;color:var(--accent)">${fmt(receitaRecebida)}</div>
+        </div>
+        <div style="background:var(--card2);border:1px solid rgba(255,77,106,.25);border-radius:11px;padding:11px 10px;text-align:center">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">❌ Pendente</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:${receitaPendente>9999?'13':'15'}px;color:var(--red)">${fmt(receitaPendente)}</div>
+        </div>
+      </div>
+      ${receitaTotal > 0 ? `
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:11px;color:var(--text3)">Taxa de recebimento</span>
+          <span style="font-size:11px;font-weight:700;color:var(--accent)">${Math.round(receitaRecebida/receitaTotal*100)}%</span>
+        </div>
+        <div style="height:6px;background:var(--card2);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${Math.round(receitaRecebida/receitaTotal*100)}%;background:var(--accent);border-radius:4px;transition:width .4s ease"></div>
+        </div>
+      </div>` : ''}
+    </div>
     <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${comVenc}</div><div class="stat-lbl">Com venc.</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${pagos}</div><div class="stat-lbl">Em dia</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--red)">${pend}</div><div class="stat-lbl">Pendentes</div></div>`;
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${pagos.length}</div><div class="stat-lbl">Em dia</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--red)">${pend.length}</div><div class="stat-lbl">Pendentes</div></div>`;
 
   // List
   const payList = document.getElementById('pay-list');
@@ -1701,7 +2002,7 @@ function renderMensalidade() {
         <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
           <div style="width:38px;height:38px;border-radius:11px;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
           <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:1px">Vence dia ${s.payDay}</div></div>
+          <div style="font-size:11px;color:var(--text2);margin-top:1px">Vence dia ${s.payDay}${s.valor ? ` · <span style="color:var(--accent);font-weight:700">R$ ${parseFloat(s.valor).toFixed(2).replace('.',',')}</span>` : ''}</div></div>
         </div>
         ${pi ? `<span class="pay-badge ${pi.cls}">${pi.label}</span>` : ''}
       </div>
@@ -2278,72 +2579,135 @@ function closeWppModal(e) {
   o.style.display = 'none';
 }
 
+// DEBUG
+function dbg(msg) {
+  const el = document.getElementById('debug-log');
+  if (!el) return;
+  const line = document.createElement('div');
+  line.style.cssText = 'font-size:11px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.1);color:#0f0';
+  line.textContent = new Date().toLocaleTimeString() + ' → ' + msg;
+  el.insertBefore(line, el.firstChild);
+  el.style.display = 'block';
+}
+
 // ══════════════════════════════════════════
 // SUPABASE
 // ══════════════════════════════════════════
 let sbClient = null;
+const SB_URL = 'https://qyohhadxftjgwveptifr.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5b2hoYWR4ZnRqZ3d2ZXB0aWZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MzQzMTksImV4cCI6MjA5MzUxMDMxOX0.KWFiUShRqHyrbA0GATltD2y3-xZmUY958MxvraMmils';
+// Device fingerprint — identifies this device so data syncs correctly
+const DEVICE_ID = (() => {
+  let id = localStorage.getItem('pv_device_id');
+  if (!id) { id = 'pv_' + Date.now().toString(36) + Math.random().toString(36).slice(2); localStorage.setItem('pv_device_id', id); }
+  return id;
+})();
+// Use a fixed owner key so all data belongs to one personal trainer
+const OWNER_ID = 'personalvs_owner';
 
 function sbInit() {
-  const url = localStorage.getItem('sb_url');
-  const key = localStorage.getItem('sb_key');
-  if (url && key && !sbClient) {
-    try { sbClient = window.supabase.createClient(url, key, { auth: { persistSession: false } }); } catch(e) { sbClient = null; }
+  try {
+    sbClient = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: false } });
+    // Pre-fill settings fields if they exist
+    const urlEl = document.getElementById('sb-url');
+    const keyEl = document.getElementById('sb-key');
+    if (urlEl) urlEl.value = SB_URL;
+    if (keyEl) keyEl.value = SB_KEY.slice(0, 20) + '...';
+  } catch(e) {
+    sbClient = null;
+    console.warn('Supabase init failed:', e);
   }
 }
 
 function sbStatusCard() {
   const el = document.getElementById('sb-status-card');
   if (!el) return;
-  const url = localStorage.getItem('sb_url') || '';
-  if (sbClient && url) {
-    el.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
-      <div style="width:10px;height:10px;border-radius:50%;background:#4caf50;flex-shrink:0"></div>
-      <div><div style="font-size:13px;font-weight:700;color:#4caf50">✅ Conectado</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:2px">${url.replace('https://','')}</div></div>
+  if (sbClient) {
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;padding:4px 0">
+      <div style="width:10px;height:10px;border-radius:50%;background:#4caf50;flex-shrink:0;box-shadow:0 0 8px #4caf50"></div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#4caf50">✅ Nuvem Conectada</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Dados salvos automaticamente no Supabase</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button onclick="forceSyncNow()" class="btn btn-ghost btn-sm" style="flex:1">☁️ Sincronizar agora</button>
+      <button onclick="forcePullNow()" class="btn btn-ghost btn-sm" style="flex:1">⬇️ Baixar da nuvem</button>
     </div>`;
   } else {
-    el.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
-      <div style="width:10px;height:10px;border-radius:50%;background:var(--text3);flex-shrink:0"></div>
-      <div style="font-size:13px;color:var(--text3)">Não conectado — cole as credenciais abaixo</div>
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;padding:4px 0">
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--red)">❌ Sem conexão</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Dados salvos apenas localmente</div>
+      </div>
     </div>`;
   }
-  const savedUrl = localStorage.getItem('sb_url');
-  if (savedUrl) document.getElementById('sb-url').value = savedUrl;
+  // Update PIN status
+  const pinCard = document.getElementById('pin-status-card');
+  if (pinCard) {
+    const hasPin = !!localStorage.getItem('fp_pin');
+    pinCard.innerHTML = hasPin
+      ? `<span style="color:var(--accent);font-weight:700">🔒 PIN ativado</span> — seu app está protegido`
+      : `<span style="color:var(--orange);font-weight:700">🔓 Sem PIN</span> — seu app não está protegido`;
+  }
+}
+
+async function forceSyncNow() {
+  toast('☁️ Sincronizando...', 1500);
+  await syncToCloud();
+  toast('✅ Dados enviados para a nuvem!');
+}
+
+async function forcePullNow() {
+  toast('⬇️ Baixando da nuvem...', 1500);
+  const synced = await syncFromCloud();
+  if (synced) { renderHome(); toast('✅ Dados atualizados da nuvem!'); }
+  else toast('✅ Dados já estão atualizados!');
 }
 
 async function sbConnect() {
   const url = document.getElementById('sb-url').value.trim().replace(/\/$/, '');
   const key = document.getElementById('sb-key').value.trim();
+  dbg('sbConnect: url=' + url.slice(0,30));
   if (!url || !key) { toast('⚠️ Preencha URL e Key'); return; }
   try {
     sbClient = window.supabase.createClient(url, key, { auth: { persistSession: false } });
+    dbg('client criado, testando...');
     const { error } = await sbClient.from('students').select('id').limit(1);
-    if (error) throw new Error(error.message);
+    if (error) { dbg('ERRO teste: ' + error.message); throw new Error(error.message); }
     localStorage.setItem('sb_url', url);
     localStorage.setItem('sb_key', key);
+    dbg('CONECTADO!');
     sbStatusCard();
     toast('✅ Conectado ao Supabase!');
   } catch(e) {
     sbClient = null;
+    dbg('FALHA: ' + e.message);
     toast('❌ ' + (e.message || 'Verifique URL e Key'));
   }
 }
 
 async function sbPush() {
-  if (!sbClient) { toast('⚠️ Conecte o Supabase primeiro'); return; }
+  dbg('sbPush chamado');
+  if (!sbClient) { toast('⚠️ Conecte o Supabase primeiro'); dbg('sbClient nulo!'); return; }
+  dbg('sbClient OK, students=' + students.length);
   toast('⬆️ Enviando...');
   try {
     for (const s of students) {
+      dbg('upsert: ' + s.id);
       const { error } = await sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() });
-      if (error) throw new Error(error.message);
+      if (error) { dbg('ERRO upsert: ' + error.message); throw new Error(error.message); }
+      dbg('upsert OK: ' + s.id);
     }
     const { error: e2 } = await sbClient.from('app_data').upsert([
       { key: 'attendance', value: attendanceData, updated_at: new Date().toISOString() },
       { key: 'schedule',   value: scheduleData,   updated_at: new Date().toISOString() }
     ]);
-    if (e2) throw new Error(e2.message);
+    if (e2) { dbg('ERRO app_data: ' + e2.message); throw new Error(e2.message); }
+    dbg('SUCESSO!');
     toast('✅ ' + students.length + ' aluno(s) salvos na nuvem!');
-  } catch(e) { toast('❌ ' + e.message); }
+  } catch(e) { dbg('CATCH: ' + e.message); toast('❌ ' + e.message); }
 }
 
 async function sbPull() {
@@ -2405,11 +2769,844 @@ async function sbMigrate() {
 }
 
 // ══════════════════════════════════════════
-// INIT
+// PIN LOCK
 // ══════════════════════════════════════════
-sbInit();
-renderHome();
-checkPaymentAlerts();
+let pinBuffer = '';
+let pinMode = 'check'; // 'check' | 'setup' | 'confirm'
+let pinFirst = '';
+
+function pinInit() {
+  const stored = localStorage.getItem('fp_pin');
+  const skipped = localStorage.getItem('fp_pin_skip');
+  if (!stored && !skipped) {
+    // First run — offer setup
+    pinMode = 'setup';
+    document.getElementById('pin-sub-msg').textContent = 'Crie seu PIN de 4 dígitos';
+    document.getElementById('pin-setup-msg').textContent = 'O PIN protege os dados dos seus alunos. Você pode pular e configurar depois nas configurações.';
+    document.getElementById('pin-action-row').style.display = 'flex';
+  } else if (!stored && skipped) {
+    // Skipped — unlock directly
+    document.getElementById('pin-lock').classList.add('hidden');
+  } else {
+    // Has PIN — check mode
+    pinMode = 'check';
+    document.getElementById('pin-sub-msg').textContent = 'Digite seu PIN para entrar';
+    document.getElementById('pin-action-row').style.display = 'none';
+    document.getElementById('pin-setup-msg').textContent = '';
+  }
+}
+
+function pinKey(n) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += n;
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(() => handlePinComplete(), 150);
+  }
+}
+
+function pinDel() {
+  pinBuffer = pinBuffer.slice(0,-1);
+  updatePinDots();
+}
+
+function updatePinDots(error = false) {
+  for (let i=0;i<4;i++) {
+    const d = document.getElementById('pd'+i);
+    d.classList.remove('filled','error');
+    if (error) d.classList.add('error');
+    else if (i < pinBuffer.length) d.classList.add('filled');
+  }
+}
+
+function handlePinComplete() {
+  const stored = localStorage.getItem('fp_pin');
+  if (pinMode === 'check') {
+    if (pinBuffer === stored) {
+      document.getElementById('pin-lock').classList.add('hidden');
+      toast('🔓 Bem-vindo!');
+    } else {
+      updatePinDots(true);
+      navigator.vibrate && navigator.vibrate([50,50,50]);
+      toast('❌ PIN incorreto');
+      setTimeout(() => { pinBuffer = ''; updatePinDots(); }, 800);
+    }
+  } else if (pinMode === 'setup') {
+    pinFirst = pinBuffer;
+    pinBuffer = '';
+    pinMode = 'confirm';
+    document.getElementById('pin-sub-msg').textContent = 'Confirme o PIN';
+    updatePinDots();
+  } else if (pinMode === 'confirm') {
+    if (pinBuffer === pinFirst) {
+      localStorage.setItem('fp_pin', pinBuffer);
+      document.getElementById('pin-lock').classList.add('hidden');
+      toast('✅ PIN criado com sucesso!');
+    } else {
+      updatePinDots(true);
+      toast('❌ PINs diferentes, tente novamente');
+      setTimeout(() => {
+        pinBuffer = ''; pinFirst = ''; pinMode = 'setup';
+        document.getElementById('pin-sub-msg').textContent = 'Crie seu PIN de 4 dígitos';
+        updatePinDots();
+      }, 800);
+    }
+  }
+}
+
+function pinSkip() {
+  localStorage.setItem('fp_pin_skip', '1');
+  document.getElementById('pin-lock').classList.add('hidden');
+}
+
+// PIN settings functions (called from settings area)
+function changePIN() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:24px;width:100%;max-width:300px;text-align:center">
+    <div style="font-family:Syne,sans-serif;font-weight:800;font-size:18px;margin-bottom:20px">🔐 Alterar PIN</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Vá em Configurações > Segurança para alterar o PIN.</div>
+    <button onclick="this.closest('div[style]').remove()" class="btn btn-primary btn-full">OK</button>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+function removePIN() {
+  localStorage.removeItem('fp_pin');
+  localStorage.setItem('fp_pin_skip','1');
+  toast('🔓 PIN removido. App ficará desbloqueado.');
+  sbStatusCard();
+}
+
+function setupNewPin() {
+  // Show PIN lock overlay in setup mode
+  const lockEl = document.getElementById('pin-lock');
+  pinBuffer = ''; pinFirst = ''; pinMode = 'setup';
+  document.getElementById('pin-sub-msg').textContent = 'Crie um novo PIN de 4 dígitos';
+  document.getElementById('pin-setup-msg').textContent = '';
+  document.getElementById('pin-action-row').style.display = 'flex';
+  updatePinDots();
+  lockEl.classList.remove('hidden');
+  // Override complete handler to go back to settings after
+  const origHandleComplete = handlePinComplete;
+}
+
+// ══════════════════════════════════════════
+// PUSH NOTIFICATIONS
+// ══════════════════════════════════════════
+function checkNotifBanner() {
+  const banner = document.getElementById('notif-banner-home');
+  if (!banner) return;
+  if ('Notification' in window && Notification.permission === 'default') {
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) { toast('⚠️ Seu dispositivo não suporta notificações push'); return; }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    toast('✅ Notificações ativadas!');
+    document.getElementById('notif-banner-home').style.display = 'none';
+    schedulePaymentNotifications();
+  } else {
+    toast('❌ Permissão negada. Ative nas configurações do navegador.');
+  }
+}
+
+function schedulePaymentNotifications() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const today = new Date();
+  const todayDay = today.getDate();
+  students.forEach(s => {
+    if (!s.payDay || s.payStatus === 'late') return;
+    const pd = parseInt(s.payDay);
+    const diff = pd - todayDay;
+    if (diff === 0) {
+      setTimeout(() => {
+        new Notification('💰 PersonalVS — Vence hoje!', {
+          body: `Mensalidade de ${s.name.split(' ')[0]} vence hoje (dia ${pd})`,
+          icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" rx="14" fill="%230a0c10"/%3E%3Ctext x="32" y="46" font-size="36" text-anchor="middle"%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E'
+        });
+      }, 2000);
+    } else if (diff === 1) {
+      setTimeout(() => {
+        new Notification('⏰ PersonalVS — Vence amanhã', {
+          body: `Mensalidade de ${s.name.split(' ')[0]} vence amanhã (dia ${pd})`,
+        });
+      }, 3000);
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// ANAMNESE CHIP TOGGLE
+// ══════════════════════════════════════════
+function toggleChip(el, val) {
+  el.classList.toggle('on');
+  el.dataset.val = val;
+}
+
+// ══════════════════════════════════════════
+// FOTOS DE PROGRESSO (ANTES/DEPOIS)
+// ══════════════════════════════════════════
+let pendingProgressPhotoBefore = null;
+let pendingProgressPhotoAfter = null;
+let pickingPhotoType = null;
+
+function showProgressPhotos() {
+  const s = students.find(x => x.id === selectedStudentId);
+  if (!s) return;
+  document.getElementById('top-title').textContent = 'Fotos Antes/Depois';
+  const avatar = document.getElementById('photos-avatar');
+  avatar.innerHTML = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍';
+  document.getElementById('photos-name').textContent = s.name;
+  pendingProgressPhotoBefore = null;
+  pendingProgressPhotoAfter = null;
+  resetPhotoPreview('before');
+  resetPhotoPreview('after');
+  renderPhotosHistory(s);
+  showScreen('photos');
+}
+
+function resetPhotoPreview(type) {
+  const el = document.getElementById(`photo-${type}-preview`);
+  const labelColor = type === 'before' ? 'rgba(255,170,59,.7)' : 'rgba(59,255,160,.5)';
+  const labelTextColor = type === 'before' ? '#fff' : '#0a0c10';
+  const labelTxt = type === 'before' ? 'ANTES' : 'DEPOIS';
+  el.innerHTML = `<div style="font-size:32px;margin-bottom:6px">📷</div><div style="font-size:12px;color:var(--text2)">Toque para adicionar</div><div class="photo-compare-label" style="background:${labelColor};color:${labelTextColor}">${labelTxt}</div>`;
+}
+
+function pickProgressPhoto(type) {
+  pickingPhotoType = type;
+  document.getElementById('prog-photo-input').click();
+}
+
+function handleProgressPhoto(e) {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      const el = document.getElementById(`photo-${pickingPhotoType}-preview`);
+      const labelColor = pickingPhotoType === 'before' ? 'rgba(255,170,59,.7)' : 'rgba(59,255,160,.5)';
+      const labelTextColor = pickingPhotoType === 'before' ? '#fff' : '#0a0c10';
+      const labelTxt = pickingPhotoType === 'before' ? 'ANTES' : 'DEPOIS';
+      el.innerHTML = `<img src="${dataUrl}"/><div class="photo-compare-label" style="background:${labelColor};color:${labelTextColor}">${labelTxt}</div>`;
+      if (pickingPhotoType === 'before') pendingProgressPhotoBefore = dataUrl;
+      else pendingProgressPhotoAfter = dataUrl;
+      toast('✅ Foto selecionada!');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProgressPhoto() {
+  const s = students.find(x => x.id === selectedStudentId);
+  if (!s) return;
+  if (!pendingProgressPhotoBefore && !pendingProgressPhotoAfter) { toast('⚠️ Selecione ao menos uma foto'); return; }
+  if (!s.progressPhotos) s.progressPhotos = [];
+  s.progressPhotos.push({
+    date: new Date().toISOString(),
+    before: pendingProgressPhotoBefore,
+    after: pendingProgressPhotoAfter
+  });
+  save();
+  toast('✅ Fotos salvas!');
+  pendingProgressPhotoBefore = null;
+  pendingProgressPhotoAfter = null;
+  resetPhotoPreview('before');
+  resetPhotoPreview('after');
+  renderPhotosHistory(s);
+}
+
+function renderPhotosHistory(s) {
+  const photos = s.progressPhotos || [];
+  const el = document.getElementById('photos-history');
+  if (!photos.length) {
+    el.innerHTML = `<div style="text-align:center;padding:32px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:8px">📸</div><p style="font-size:13px">Nenhuma foto registrada ainda.</p></div>`;
+    return;
+  }
+  el.innerHTML = [...photos].reverse().map((p, i) => {
+    const d = new Date(p.date);
+    const dateStr = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'2-digit'});
+    return `<div class="card" style="margin-bottom:13px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="card-title" style="margin-bottom:0">📅 ${dateStr}</div>
+        <button onclick="deleteProgressPhoto(${photos.length-1-i})" style="font-size:11px;padding:4px 10px;border-radius:7px;border:1px solid rgba(255,77,106,.3);background:rgba(255,77,106,.08);color:var(--red);cursor:pointer">🗑</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${p.before ? `<div style="position:relative;border-radius:11px;overflow:hidden;aspect-ratio:3/4"><img src="${p.before}" style="width:100%;height:100%;object-fit:cover"/><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(255,170,59,.7);color:#fff;font-size:10px;font-weight:700;text-align:center;padding:4px">ANTES</div></div>` : '<div style="background:var(--card2);border-radius:11px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:11px">Sem foto</div>'}
+        ${p.after ? `<div style="position:relative;border-radius:11px;overflow:hidden;aspect-ratio:3/4"><img src="${p.after}" style="width:100%;height:100%;object-fit:cover"/><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(59,255,160,.5);color:#0a0c10;font-size:10px;font-weight:700;text-align:center;padding:4px">DEPOIS</div></div>` : '<div style="background:var(--card2);border-radius:11px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:11px">Sem foto</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteProgressPhoto(idx) {
+  const s = students.find(x => x.id === selectedStudentId);
+  if (!s) return;
+  s.progressPhotos.splice(idx, 1);
+  save();
+  renderPhotosHistory(s);
+  toast('🗑 Foto removida');
+}
+
+// ══════════════════════════════════════════
+// RELATÓRIO MENSAL PDF
+// ══════════════════════════════════════════
+function exportRelatorioMensal() {
+  const s = students.find(x => x.id === selectedStudentId);
+  if (!s) return;
+  const now = new Date();
+  const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const monthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const mesAno = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+
+  // Attendance stats
+  const att = attendanceData[s.id] || {};
+  let presente = 0, falta = 0;
+  Object.entries(att).forEach(([k,v]) => {
+    if (k.startsWith(monthKey)) { if (v==='present') presente++; else if (v==='absent') falta++; }
+  });
+  const total = presente + falta;
+  const pct = total > 0 ? Math.round(presente/total*100) : 0;
+
+  // Weight evolution
+  const history = s.progressHistory || [];
+  const monthEntries = history.filter(e => e.date.startsWith(now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')));
+  const firstEntry = history.length >= 2 ? history[0] : null;
+  const lastEntry = history[history.length-1];
+  const weightDelta = firstEntry && lastEntry ? (parseFloat(lastEntry.weight) - parseFloat(firstEntry.weight)).toFixed(1) : null;
+
+  // All exercises count
+  const days = cycleLetters(parseInt(s.cycle||3));
+  const totalEx = days.reduce((a,d) => a + (s.exercises?.[d]||[]).length, 0);
+
+  const photoHtml = s.photo ? `<img src="${s.photo}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #3bffa0;margin-right:16px"/>` : '<div style="width:64px;height:64px;border-radius:50%;background:#f0fff8;display:flex;align-items:center;justify-content:center;font-size:28px;margin-right:16px">🧍</div>';
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><title>Relatório Mensal — ${s.name}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f7fa;color:#1a1a2e;padding:24px 16px}
+  .card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+  .header{background:linear-gradient(135deg,#0a0c10,#1a2340);color:#fff;border-radius:16px;padding:24px;margin-bottom:16px;display:flex;align-items:center}
+  h1{font-size:22px;font-weight:800;margin-bottom:4px}
+  .sub{font-size:13px;color:rgba(255,255,255,.6);margin-top:2px}
+  .accent{color:#3bffa0}
+  .section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#3bffa0;margin-bottom:12px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .stat{background:#f0f4ff;border-radius:12px;padding:14px;text-align:center}
+  .stat-val{font-size:28px;font-weight:800;color:#0a0c10}
+  .stat-lbl{font-size:11px;color:#666;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+  .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+  .row:last-child{border-bottom:none}
+  .label{color:#666}
+  .value{font-weight:700}
+  .progress-bar-wrap{height:8px;background:#e8ecf4;border-radius:4px;margin-top:8px;overflow:hidden}
+  .progress-bar{height:100%;border-radius:4px;background:#3bffa0}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+  th{text-align:left;padding:7px 8px;background:#f0f4ff;font-size:11px;text-transform:uppercase;color:#666;font-weight:600}
+  td{padding:7px 8px;border-bottom:1px solid #f0f0f0}
+  .footer{text-align:center;font-size:11px;color:#999;margin-top:20px}
+  @media print{body{padding:0;background:#fff}}
+</style></head><body>
+<div class="header">
+  ${photoHtml}
+  <div>
+    <h1>${s.name}</h1>
+    <div class="sub">Relatório Mensal · <span class="accent">${mesAno}</span></div>
+    ${s.goal ? `<div class="sub" style="margin-top:4px">🎯 ${s.goal}</div>` : ''}
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">📅 Frequência no mês</div>
+  <div class="grid3">
+    <div class="stat"><div class="stat-val" style="color:#3bffa0">${presente}</div><div class="stat-lbl">Presenças</div></div>
+    <div class="stat"><div class="stat-val" style="color:#ff4d6a">${falta}</div><div class="stat-lbl">Faltas</div></div>
+    <div class="stat"><div class="stat-val" style="color:#4d9fff">${pct}%</div><div class="stat-lbl">Frequência</div></div>
+  </div>
+  <div class="progress-bar-wrap" style="margin-top:14px"><div class="progress-bar" style="width:${pct}%"></div></div>
+</div>
+
+<div class="card">
+  <div class="section-title">⚖️ Evolução Corporal</div>
+  <div class="row"><span class="label">Peso atual</span><span class="value">${s.weight} kg</span></div>
+  ${s.bodyFat ? `<div class="row"><span class="label">Gordura corporal</span><span class="value">${s.bodyFat}%</span></div>` : ''}
+  ${s.muscleMass ? `<div class="row"><span class="label">Massa muscular</span><span class="value">${s.muscleMass}%</span></div>` : ''}
+  ${weightDelta !== null ? `<div class="row"><span class="label">Variação de peso (total)</span><span class="value" style="color:${parseFloat(weightDelta)<=0?'#3bffa0':'#ff4d6a'}">${parseFloat(weightDelta)>0?'+':''}${weightDelta} kg</span></div>` : ''}
+  ${history.length > 1 ? `<div style="margin-top:12px;font-size:12px;color:#666">📊 ${history.length} medições registradas</div>` : ''}
+</div>
+
+<div class="card">
+  <div class="section-title">💪 Treinos Prescritos</div>
+  ${days.map(d => {
+    const exs = (s.exercises||{})[d]||[];
+    return `<div class="row"><span class="label">Treino ${d}</span><span class="value">${exs.length} exercício${exs.length!==1?'s':''}</span></div>`;
+  }).join('')}
+  <div class="row" style="border-top:2px solid #f0f4ff;margin-top:4px;padding-top:12px"><span class="label" style="font-weight:700">Total de exercícios</span><span class="value" style="color:#3bffa0">${totalEx}</span></div>
+</div>
+
+${history.length > 0 ? `<div class="card">
+  <div class="section-title">📋 Histórico de medições</div>
+  <table><thead><tr><th>Data</th><th>Peso</th><th>Gordura</th><th>Músculo</th><th>IMC</th></tr></thead><tbody>
+    ${[...history].slice(-6).reverse().map(e => {
+      const d = new Date(e.date);
+      return `<tr><td>${d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}</td><td>${e.weight||'—'} kg</td><td>${e.bodyFat||'—'}%</td><td>${e.muscleMass||'—'}%</td><td>${e.bmi||'—'}</td></tr>`;
+    }).join('')}
+  </tbody></table>
+</div>` : ''}
+
+<div class="footer">Gerado pelo PersonalVS · ${new Date().toLocaleDateString('pt-BR')} · Todas as informações são confidenciais</div>
+<script>window.print();<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, '_blank');
+  if (!w) toast('⚠️ Permita pop-ups para gerar o relatório');
+  else toast('📊 Relatório gerado! Use Imprimir → Salvar como PDF');
+}
+
+// ══════════════════════════════════════════
+// GOOGLE CALENDAR EXPORT
+// ══════════════════════════════════════════
+function exportGoogleCalendar() {
+  const s = students.find(x => x.id === selectedStudentId);
+  if (!s) return;
+  const sc = scheduleData[s.id];
+  if (!sc || !sc.scheduledDays || !sc.scheduledDays.length) {
+    // Fallback: create a generic event
+    const now = new Date();
+    const dtStart = formatGCalDate(now);
+    const dtEnd = formatGCalDate(new Date(now.getTime() + 60*60*1000));
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Treino — '+s.name)}&dates=${dtStart}/${dtEnd}&details=${encodeURIComponent(`Aluno: ${s.name}\nObjetivo: ${s.goal||'—'}`)}&recur=RRULE:FREQ=WEEKLY`;
+    window.open(url, '_blank');
+    toast('📅 Abrindo Google Agenda...');
+    return;
+  }
+
+  const dayNames = ['SU','MO','TU','WE','TH','FR','SA'];
+  const byDay = sc.scheduledDays.map(d => dayNames[d]).join(',');
+
+  // Create next occurrence
+  const now = new Date();
+  const dtStart = formatGCalDate(now, sc.time);
+  const dtEnd = formatGCalDate(new Date(now.getTime() + 60*60*1000), sc.time);
+  const rrule = `RRULE:FREQ=WEEKLY;BYDAY=${byDay}`;
+  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Treino — '+s.name)}&dates=${dtStart}/${dtEnd}&details=${encodeURIComponent(`Personal: Treino de ${s.name}\nObjetivo: ${s.goal||'—'}\nCiclo: ${cycleLetters(parseInt(s.cycle||3)).join('/')}`)}&recur=${encodeURIComponent(rrule)}`;
+  window.open(url, '_blank');
+  toast('📅 Abrindo Google Agenda! Confirme o evento.', 3500);
+}
+
+function formatGCalDate(date, timeStr) {
+  // If no timeStr, use allday format
+  const pad = n => String(n).padStart(2,'0');
+  const y = date.getFullYear();
+  const m = pad(date.getMonth()+1);
+  const d = pad(date.getDate());
+  if (!timeStr) return `${y}${m}${d}`;
+  const [h,min] = timeStr.split(':');
+  return `${y}${m}${d}T${pad(h||8)}${pad(min||0)}00`;
+}
+
+// ══════════════════════════════════════════
+// STARTUP — cloud first, local fallback
+// ══════════════════════════════════════════
+async function appStart() {
+  sbInit();
+  pinInit();
+
+  // Show loading indicator
+  const main = document.getElementById('main');
+  if (main) {
+    main.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;color:var(--text3)">
+      <div style="font-size:36px">☁️</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text)">Sincronizando dados...</div>
+      <div style="font-size:12px">Conectando ao banco de dados</div>
+    </div>`;
+  }
+
+  // Try to pull from cloud (3s timeout)
+  let synced = false;
+  try {
+    const timeout = new Promise(res => setTimeout(() => res(false), 3000));
+    synced = await Promise.race([syncFromCloud(), timeout]);
+  } catch(e) { synced = false; }
+
+  // Restore main content
+  if (main) main.innerHTML = '';
+
+  renderHome();
+  checkPaymentAlerts();
+
+  if (synced) {
+    toast('☁️ Dados sincronizados da nuvem!', 2500);
+  }
+
+  if ('Notification' in window && Notification.permission === 'granted') {
+    schedulePaymentNotifications();
+  }
+}
+
+appStart();
+
+
+// ══════════════════════════════════════════
+// SUGESTÃO DE TREINO POR IA
+// ══════════════════════════════════════════
+let iaFoco = 'completo';
+let iaSugestao = null;
+
+function setIAFoco(f) {
+  iaFoco = f;
+  ['completo','hipertrofia','emagrecimento','reabilitacao','funcional','iniciante'].forEach(x => {
+    const el = document.getElementById('iafoco-'+x);
+    if (el) el.classList.toggle('active', x === f);
+  });
+}
+
+function abrirModalSugestaoIA() {
+  const s = selectedStudentId ? students.find(x => x.id === selectedStudentId) : null;
+  document.getElementById('ia-aluno-label').textContent = s ? `Aluno: ${s.name}` : 'Preencha os dados acima e salve o aluno primeiro';
+  document.getElementById('ia-config-panel').style.display = 'block';
+  document.getElementById('ia-resultado-panel').style.display = 'none';
+  document.getElementById('ia-obs-extra').value = '';
+  iaSugestao = null;
+  setIAFoco('completo');
+  document.getElementById('ia-treino-overlay').style.display = 'flex';
+}
+
+function fecharModalIA(e) {
+  const o = document.getElementById('ia-treino-overlay');
+  if (e && e.target !== o) return;
+  o.style.display = 'none';
+}
+
+function voltarConfigIA() {
+  document.getElementById('ia-config-panel').style.display = 'block';
+  document.getElementById('ia-resultado-panel').style.display = 'none';
+}
+
+async function gerarSugestaoIA() {
+  // Lê dados do aluno salvo OU dos campos abertos do formulário
+  const s = selectedStudentId ? students.find(x => x.id === selectedStudentId) : null;
+  const nome     = s?.name     || document.getElementById('f-name')?.value?.trim()  || 'Aluno';
+  const objetivo = s?.goal     || document.getElementById('f-goal')?.value?.trim()  || '';
+  const nivel    = s?.nivelAtividade || document.getElementById('f-nivel')?.value   || '';
+  const lesoes   = s?.lesoes   || document.getElementById('f-lesoes')?.value?.trim()  || '';
+  const doencas  = s?.doencas  || document.getElementById('f-doencas')?.value?.trim() || '';
+  const meds     = s?.medicamentos || document.getElementById('f-medicamentos')?.value?.trim() || '';
+  const objsAna  = s?.objetivosAnamnese?.join(', ') ||
+    Array.from(document.querySelectorAll('#obj-chips .anamnese-chip.on'))
+      .map(c => c.textContent.trim().replace(/^[^\w\u00C0-\u017F]+/, '')).join(', ') || '';
+  const cicloVal = parseInt(s?.cycle || document.getElementById('f-cycle')?.value || 3);
+  const dias     = parseInt(s?.daysPerWeek || document.getElementById('f-days')?.value || 3);
+  const idade    = s?.age  || document.getElementById('f-age')?.value  || '';
+  const sexo     = s?.sex  || document.getElementById('f-sex')?.value  || '';
+  const obsExtra = document.getElementById('ia-obs-extra').value.trim();
+  const letras   = cycleLetters(cicloVal);
+
+  const btn = document.getElementById('ia-gerar-btn');
+  btn.disabled = true;
+  document.getElementById('ia-gerar-txt').innerHTML = '<span class="spinner"></span> Gerando...';
+
+  const diasExJson = letras.map(l => `"${l}":[{"nome":"","grupo":"","series":"","reps":"","descanso":60,"dica":""}]`).join(',');
+
+  const prompt = `Você é um personal trainer especialista em prescrição de treino. Crie uma proposta detalhada para o seguinte aluno:
+
+FICHA DO ALUNO:
+- Nome: ${nome}
+- Sexo: ${sexo||'não informado'} | Idade: ${idade||'não informada'}
+- Objetivo: ${objetivo||'não informado'}
+- Objetivos anamnese: ${objsAna||'não informados'}
+- Nível de atividade: ${nivel||'não informado'}
+- Lesões/restrições: ${lesoes||'nenhuma reportada'}
+- Doenças/condições: ${doencas||'nenhuma reportada'}
+- Medicamentos: ${meds||'nenhum'}
+- Dias/semana: ${dias} | Ciclo: ${letras.join('/')}
+- Foco escolhido: ${iaFoco}
+${obsExtra?`- Obs. extra: ${obsExtra}`:''}
+
+REGRAS OBRIGATÓRIAS:
+1. Gere exatamente os treinos: ${letras.join(', ')}
+2. Cada treino: 5 a 7 exercícios
+3. Respeite ESTRITAMENTE lesões e restrições — não prescreva exercícios contraindicados
+4. Adapte volume e intensidade ao nível do aluno
+5. Distribua grupos musculares de forma inteligente entre os dias
+6. Cada exercício: nome comercial brasileiro, grupo muscular, séries (número), reps (número ou range), descanso em segundos (número), dica de execução em 1 frase
+
+Retorne SOMENTE JSON válido sem markdown, sem texto extra:
+{"resumo":"texto explicando a lógica","dias":{${diasExJson}}}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': '',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2500, messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    const raw = data.content.map(b => b.text || '').join('').replace(/```json|```/g, '').trim();
+    iaSugestao = JSON.parse(raw);
+    renderResultadoIA(iaSugestao, letras);
+    document.getElementById('ia-config-panel').style.display = 'none';
+    document.getElementById('ia-resultado-panel').style.display = 'block';
+    toast('✅ Proposta gerada! Revise e aprove.');
+  } catch(err) {
+    console.warn('API indisponível, usando gerador local:', err.message);
+    // ── FALLBACK LOCAL: gera treino completo sem API ──────────────────────
+    iaSugestao = gerarTreinoLocal(letras, iaFoco, nome, objetivo, nivel, lesoes, dias);
+    renderResultadoIA(iaSugestao, letras);
+    document.getElementById('ia-config-panel').style.display = 'none';
+    document.getElementById('ia-resultado-panel').style.display = 'block';
+    toast('✅ Proposta gerada! Revise e aprove.');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('ia-gerar-txt').textContent = '✨ Gerar Proposta de Treino';
+  }
+}
+
+// ── GERADOR LOCAL DE TREINO (funciona 100% offline) ─────────────────────
+function gerarTreinoLocal(letras, foco, nome, objetivo, nivel, lesoes, diasSemana) {
+  const isIniciante = !nivel || nivel === 'Sedentário' || nivel === 'Levemente ativo' || foco === 'iniciante';
+  const lesaoJoelho = lesoes && /joelho|patelar|menisco/i.test(lesoes);
+  const lesaoLombar = lesoes && /lombar|coluna|hérnia/i.test(lesoes);
+  const lesaoOmbro  = lesoes && /ombro|manguito|rotat/i.test(lesoes);
+
+  const banco = {
+    Peito:[
+      {nome:'Supino Reto com Barra',      series:'4',reps:'8-12', descanso:90, dica:'Desça controlado, cotovelos a 45° do tronco.'},
+      {nome:'Supino Inclinado com Halter', series:'3',reps:'10-12',descanso:75, dica:'Mantenha os ombros retraídos durante todo o movimento.'},
+      {nome:'Flexão de Braço',            series:'3',reps:'12-15',descanso:60, dica:'Corpo reto como prancha, desça até quase tocar o chão.'},
+      {nome:'Crucifixo com Halter',       series:'3',reps:'12-15',descanso:60, dica:'Leve flexão no cotovelo, sinta o alongamento no peitoral.'},
+      {nome:'Crossover no Cabo',          series:'3',reps:'15',   descanso:60, dica:'Junte as mãos na frente, contraindo o peitoral ao final.'},
+    ],
+    Costas:[
+      {nome:'Puxada Frontal no Pulley',   series:'4',reps:'10-12',descanso:90, dica:'Puxe pelos cotovelos, retorne devagar em 3 segundos.'},
+      {nome:'Remada Unilateral com Halter',series:'3',reps:'10-12',descanso:75, dica:'Apoie joelho no banco, puxe o halter até o quadril.'},
+      {nome:'Pulldown com Corda',         series:'3',reps:'12-15',descanso:60, dica:'Separe a corda ao final, cotovelos apontam para baixo.'},
+      {nome:'Remada Curvada com Barra',   series:'4',reps:'8-12', descanso:90, dica:'Coluna neutra, puxe até o abdômen, contraia escápulas.'},
+    ],
+    Ombros:[
+      {nome:'Desenvolvimento com Halter', series:'4',reps:'10-12',descanso:75, dica:'Não trave cotovelos no topo, controle a descida.'},
+      {nome:'Elevação Lateral',           series:'3',reps:'12-15',descanso:60, dica:'Cotovelo levemente flexionado, eleve até altura do ombro.'},
+      {nome:'Elevação Frontal',           series:'3',reps:'12',   descanso:60, dica:'Braços levemente flexionados, não balance o corpo.'},
+      {nome:'Encolhimento de Ombros',     series:'3',reps:'15',   descanso:45, dica:'Eleve verticalmente sem rotacionar os ombros.'},
+    ],
+    Biceps:[
+      {nome:'Rosca Direta com Barra',     series:'3',reps:'10-12',descanso:60, dica:'Cotovelos fixos ao lado do corpo, não balance.'},
+      {nome:'Rosca Martelo com Halter',   series:'3',reps:'12',   descanso:60, dica:'Pegada neutra, movimento completo, desça devagar.'},
+      {nome:'Rosca Concentrada',          series:'3',reps:'12-15',descanso:60, dica:'Apoie cotovelo na coxa, contraia no topo por 1 segundo.'},
+    ],
+    Triceps:[
+      {nome:'Tríceps Testa com Barra',    series:'3',reps:'10-12',descanso:60, dica:'Cotovelos apontados para cima, não mova os ombros.'},
+      {nome:'Tríceps Pulley com Corda',   series:'3',reps:'12-15',descanso:60, dica:'Separe a corda ao final, cotovelos fixos ao corpo.'},
+      {nome:'Mergulho no Banco',          series:'3',reps:'12-15',descanso:60, dica:'Cotovelos atrás, desça até 90° de flexão.'},
+    ],
+    Quadriceps:[
+      {nome:'Leg Press 45°',             series:'4',reps:'12-15',descanso:90, dica:'Não trave os joelhos no topo, pés na largura do quadril.'},
+      {nome:'Cadeira Extensora',          series:'3',reps:'15',   descanso:60, dica:'Controle a descida em 3s, aperte o quadríceps no topo.'},
+      {nome:'Avanço com Halter',          series:'3',reps:'12',   descanso:75, dica:'Joelho da frente não ultrapassa a ponta do pé.'},
+      {nome:'Agachamento Livre',          series:'4',reps:'8-12', descanso:120,dica:'Joelhos na linha dos pés, desça até coxa paralela.'},
+    ],
+    Gluteos:[
+      {nome:'Hip Thrust com Barra',       series:'4',reps:'10-15',descanso:90, dica:'Empurre com o calcanhar, aperte o glúteo no topo.'},
+      {nome:'Agachamento Sumô',           series:'3',reps:'12-15',descanso:75, dica:'Pés afastados e virados para fora, empurre joelhos.'},
+      {nome:'Cadeira Abdutora',           series:'3',reps:'15-20',descanso:60, dica:'Controle o retorno, não deixe os joelhos caírem.'},
+      {nome:'Elevação Pélvica no Chão',   series:'3',reps:'20',   descanso:45, dica:'Contraia o glúteo no topo por 2 segundos.'},
+    ],
+    Isquiotibiais:[
+      {nome:'Mesa Flexora',               series:'3',reps:'12-15',descanso:75, dica:'Controle a volta em 3 segundos, amplitude completa.'},
+      {nome:'Cadeira Flexora',            series:'3',reps:'12-15',descanso:60, dica:'Contraia atrás do joelho no topo do movimento.'},
+      {nome:'Stiff com Halter',           series:'3',reps:'10-12',descanso:90, dica:'Coluna neutra, sinta o alongamento dos isquiotibiais.'},
+    ],
+    Abdomen:[
+      {nome:'Prancha Isométrica',         series:'3',reps:'40s',  descanso:45, dica:'Corpo reto, core ativado, respire normalmente.'},
+      {nome:'Abdominal Crunch',           series:'3',reps:'20',   descanso:45, dica:'Não puxe a cabeça, contraia o abdômen ao subir.'},
+      {nome:'Elevação de Pernas',         series:'3',reps:'15',   descanso:45, dica:'Controle a descida, lombar colada no chão.'},
+      {nome:'Russian Twist',              series:'3',reps:'20',   descanso:45, dica:'Gire o tronco, mantenha as costas levemente inclinadas.'},
+    ],
+    Cardio:[
+      {nome:'Esteira — Caminhada Inclinada',series:'1',reps:'15min',descanso:0, dica:'Inclinação 8-10%, velocidade para manter conversa.'},
+      {nome:'Bicicleta Ergométrica',      series:'1',reps:'15min',descanso:0,  dica:'Cadência moderada, resistência média.'},
+      {nome:'Polichinelo',                series:'3',reps:'40s',  descanso:30, dica:'Aterrisse suavemente, ritmo constante.'},
+    ],
+  };
+
+  const esquemas = {
+    completo:      {A:['Peito','Triceps','Ombros'],    B:['Costas','Biceps'],             C:['Quadriceps','Gluteos','Isquiotibiais'], D:['Peito','Costas'],          E:['Ombros','Biceps','Triceps'], F:['Gluteos','Abdomen']},
+    hipertrofia:   {A:['Peito','Triceps'],             B:['Costas','Biceps'],             C:['Quadriceps','Gluteos'],                D:['Ombros','Abdomen'],        E:['Isquiotibiais','Triceps'],   F:['Peito','Biceps']},
+    emagrecimento: {A:['Quadriceps','Gluteos','Cardio'],B:['Peito','Costas','Abdomen'],   C:['Isquiotibiais','Ombros','Cardio'],     D:['Biceps','Triceps','Abdomen'],E:['Gluteos','Cardio'],         F:['Peito','Costas']},
+    reabilitacao:  {A:['Gluteos','Abdomen'],           B:['Costas','Ombros'],             C:['Quadriceps','Isquiotibiais'],          D:['Peito','Biceps'],          E:['Gluteos','Abdomen'],        F:['Cardio','Abdomen']},
+    funcional:     {A:['Quadriceps','Gluteos','Abdomen'],B:['Peito','Costas','Ombros'],  C:['Isquiotibiais','Biceps','Triceps'],    D:['Gluteos','Abdomen'],       E:['Peito','Costas'],           F:['Ombros','Cardio']},
+    iniciante:     {A:['Peito','Costas','Ombros'],     B:['Quadriceps','Gluteos'],        C:['Biceps','Triceps','Abdomen'],          D:['Peito','Costas'],          E:['Gluteos','Quadriceps'],     F:['Ombros','Abdomen']},
+  };
+
+  const pick = (arr, n) => arr.slice(0, n);
+  const exPorGrupo = isIniciante ? 2 : 3;
+  const esquema = esquemas[foco] || esquemas.completo;
+
+  const dias = {};
+  letras.forEach(letra => {
+    const grupos = esquema[letra] || esquema['A'];
+    dias[letra] = [];
+    grupos.forEach(grupo => {
+      const pool = banco[grupo] || [];
+      pool.slice(0, exPorGrupo).forEach(ex => {
+        if (lesaoJoelho && /agachamento livre|avanço/i.test(ex.nome)) return;
+        if (lesaoLombar && /stiff|remada curvada/i.test(ex.nome)) return;
+        if (lesaoOmbro  && /desenvolvimento|elevação frontal/i.test(ex.nome)) return;
+        dias[letra].push({ ...ex, grupo });
+      });
+    });
+    if (!dias[letra].length) {
+      dias[letra] = banco['Abdomen'].slice(0, 3).map(e => ({ ...e, grupo: 'Abdômen' }));
+    }
+  });
+
+  const focoLabel = {completo:'completo',hipertrofia:'hipertrofia',emagrecimento:'emagrecimento',reabilitacao:'reabilitação',funcional:'funcional',iniciante:'adaptação para iniciantes'}[foco] || foco;
+  return {
+    resumo: `Treino ${diasSemana}x/semana — ciclo ${letras.join('/')} — foco em ${focoLabel}. ${isIniciante ? 'Volume reduzido para fase de adaptação.' : 'Volume adequado ao nível do aluno.'} ${(lesaoJoelho || lesaoLombar || lesaoOmbro) ? 'Exercícios contraindicados pelas restrições foram removidos.' : ''}`.trim(),
+    dias
+  };
+}
+
+
+function renderResultadoIA(sug, letras) {
+  let html = '';
+
+  if (sug.resumo) {
+    html += `<div style="background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:12px;padding:13px;margin-bottom:14px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💡 Lógica do Treino</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7">${sug.resumo}</div>
+    </div>`;
+  }
+
+  letras.forEach(letra => {
+    const exs = sug.dias?.[letra] || [];
+    const grupos = [...new Set(exs.map(e => e.grupo).filter(Boolean))];
+    html += `<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--accent)">Treino ${letra}</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${grupos.map(g=>`<span class="badge badge-gray">${g}</span>`).join('')}</div>
+      </div>`;
+
+    exs.forEach((ex, i) => {
+      html += `<div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:8px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:${ex.dica?'8':'0'}px">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:13px;margin-bottom:2px">${i+1}. ${ex.nome}</div>
+            <div style="font-size:11px;color:var(--text3)">${ex.grupo||''}</div>
+          </div>
+          <div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+            <span class="badge badge-green">${ex.series}x</span>
+            <span class="badge badge-blue">${ex.reps} reps</span>
+            <span class="badge badge-gray">⏱${ex.descanso}s</span>
+          </div>
+        </div>
+        ${ex.dica ? `<div style="font-size:11px;color:var(--text2);font-style:italic;line-height:1.55;padding-top:8px;border-top:1px solid var(--border)">💡 ${ex.dica}</div>` : ''}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  document.getElementById('ia-resultado-content').innerHTML = html;
+}
+
+function salvarSugestaoIA() {
+  if (!iaSugestao) return;
+  const s = selectedStudentId ? students.find(x => x.id === selectedStudentId) : null;
+  if (!s) { toast('⚠️ Salve o aluno primeiro antes de aplicar o treino.'); return; }
+
+  if (!s.exercises) s.exercises = {};
+  const letras = cycleLetters(parseInt(s.cycle || 3));
+  let total = 0;
+
+  letras.forEach(letra => {
+    const exsIA = iaSugestao.dias?.[letra] || [];
+    if (!s.exercises[letra]) s.exercises[letra] = [];
+    exsIA.forEach(ex => {
+      s.exercises[letra].push({
+        id: uid(),
+        name: ex.nome || '',
+        sets: String(ex.series || '3'),
+        reps: String(ex.reps || '12'),
+        rest: String(ex.descanso || '60'),
+        muscle: ex.grupo || '',
+        obs: ex.dica || '',
+        media: []
+      });
+      total++;
+    });
+  });
+
+  save();
+  document.getElementById('ia-treino-overlay').style.display = 'none';
+  toast(`✅ ${total} exercícios adicionados ao treino de ${s.name}!`);
+  showStudentDetail(s.id);
+}
 </script>
+
+<!-- AI TRAINING SUGGESTION MODAL -->
+<div id="ia-treino-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:450;display:none;align-items:flex-end;backdrop-filter:blur(6px)" onclick="fecharModalIA(event)">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;max-height:92vh;overflow-y:auto;animation:slideUp .28s ease">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px">🤖 Sugestão de Treino IA</div>
+      <button onclick="fecharModalIA()" style="width:30px;height:30px;border-radius:9px;background:var(--card2);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:15px">✕</button>
+    </div>
+    <div id="ia-aluno-label" style="font-size:12px;color:var(--accent);margin-bottom:16px;font-weight:600"></div>
+
+    <!-- Config panel -->
+    <div id="ia-config-panel">
+      <div style="background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:12px;padding:13px;margin-bottom:14px">
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">A IA lê os dados de anamnese e gera uma proposta completa de treino personalizada. Você revisa e aprova antes de salvar.</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Foco do treino</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px">
+        <button class="bib-tab active" id="iafoco-completo"      onclick="setIAFoco('completo')">💪 Treino Completo</button>
+        <button class="bib-tab"        id="iafoco-hipertrofia"   onclick="setIAFoco('hipertrofia')">🏋️ Hipertrofia</button>
+        <button class="bib-tab"        id="iafoco-emagrecimento" onclick="setIAFoco('emagrecimento')">🔥 Emagrecimento</button>
+        <button class="bib-tab"        id="iafoco-reabilitacao"  onclick="setIAFoco('reabilitacao')">🩹 Reabilitação</button>
+        <button class="bib-tab"        id="iafoco-funcional"     onclick="setIAFoco('funcional')">⚡ Funcional</button>
+        <button class="bib-tab"        id="iafoco-iniciante"     onclick="setIAFoco('iniciante')">🌱 Para Iniciante</button>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Observação extra (opcional)</div>
+      <textarea class="form-textarea" id="ia-obs-extra" placeholder="Ex: prefere não usar máquinas, treino em casa, foco em glúteo..." style="margin-bottom:14px;height:60px"></textarea>
+      <button class="btn btn-primary btn-full" id="ia-gerar-btn" onclick="gerarSugestaoIA()" style="padding:15px;font-size:15px">
+        <span id="ia-gerar-txt">✨ Gerar Proposta de Treino</span>
+      </button>
+    </div>
+
+    <!-- Resultado panel -->
+    <div id="ia-resultado-panel" style="display:none">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">📋 Proposta Gerada pela IA</div>
+      <div id="ia-resultado-content" style="margin-bottom:14px"></div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button class="btn btn-ghost" style="flex:1" onclick="voltarConfigIA()">🔄 Refazer</button>
+        <button class="btn btn-primary" style="flex:1" onclick="salvarSugestaoIA()">✅ Aplicar ao Aluno</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;line-height:1.6">Ao aplicar, os exercícios serão adicionados ao treino do aluno e você poderá editar depois.</div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

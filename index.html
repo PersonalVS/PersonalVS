@@ -4,14 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <meta name="theme-color" content="#0a0c10"/>
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js" onerror="window._sbLoadError=true"></script>
-<script>
-// Supabase safety shim — se o CDN falhar, cria objeto vazio para não quebrar o app
-if (!window.supabase) {
-  window.supabase = { createClient: () => null };
-  window._sbLoadError = true;
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="PersonalVS"/>
@@ -336,7 +329,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
 
 /* PIN LOCK */
 #pin-lock{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px calc(var(--safe-bottom)+32px)}
-#pin-lock.hidden{display:none}
+#pin-lock.hidden{display:none !important;pointer-events:none !important;visibility:hidden !important}
 .pin-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;margin-bottom:6px}.pin-logo span{color:var(--accent)}
 .pin-sub{font-size:14px;color:var(--text2);margin-bottom:40px}
 .pin-dots{display:flex;gap:14px;margin-bottom:40px}
@@ -1120,18 +1113,10 @@ let currentPayStatus = 'ok';
 // UTILS
 // ══════════════════════════════════════════
 function save() {
-  try {
-    localStorage.setItem('fp_v6', JSON.stringify(students));
-  } catch(e) {
-    console.error('Erro ao salvar localStorage:', e);
-  }
-  try {
-    if (sbClient && selectedStudentId) {
-      const s = students.find(x => x.id === selectedStudentId);
-      if (s) sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {}).catch(() => {});
-    }
-  } catch(e) {
-    console.warn('Supabase sync ignorado:', e);
+  localStorage.setItem('fp_v6', JSON.stringify(students));
+  if (sbClient && selectedStudentId) {
+    const s = students.find(x => x.id === selectedStudentId);
+    if (s) sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {});
   }
 }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
@@ -1483,65 +1468,104 @@ function updateCycleHint() {
 
 function saveStudent() {
   try {
-    const name = document.getElementById('f-name').value.trim();
-    const weight = document.getElementById('f-weight').value;
-    const height = document.getElementById('f-height').value;
-    if (!name || !weight || !height) { toast('⚠️ Preencha nome, peso e altura'); return; }
+    const nameEl   = document.getElementById('f-name');
+    const weightEl = document.getElementById('f-weight');
+    const heightEl = document.getElementById('f-height');
+
+    if (!nameEl || !weightEl || !heightEl) {
+      toast('❌ Erro interno: campos não encontrados. Recarregue a página.');
+      return;
+    }
+
+    const name   = nameEl.value.trim();
+    const weight = weightEl.value;
+    const height = heightEl.value;
+
+    if (!name)   { toast('⚠️ Preencha o nome do aluno'); nameEl.focus(); return; }
+    if (!weight) { toast('⚠️ Preencha o peso'); weightEl.focus(); return; }
+    if (!height) { toast('⚠️ Preencha a altura'); heightEl.focus(); return; }
+
+    // Coletar todos os campos com fallback seguro
+    const g = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+    const gt = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
 
     const data = {
       name, weight, height,
-      age:          document.getElementById('f-age')?.value || '',
-      sex:          document.getElementById('f-sex')?.value || '',
-      goal:         document.getElementById('f-goal')?.value.trim() || '',
-      obs:          document.getElementById('f-obs')?.value.trim() || '',
-      daysPerWeek:  document.getElementById('f-days')?.value || '3',
-      cycle:        document.getElementById('f-cycle')?.value || '3',
-      payDay:       document.getElementById('f-payday')?.value || '',
-      valor:        document.getElementById('f-valor')?.value || '',
-      payStatus:    currentPayStatus,
-      photo:        pendingProfilePhoto,
-      muscleMass:   document.getElementById('f-muscleMass')?.value || '',
-      bodyFat:      document.getElementById('f-bodyFat')?.value || '',
-      // anamnese
-      lesoes:           document.getElementById('f-lesoes')?.value.trim() || '',
-      doencas:          document.getElementById('f-doencas')?.value.trim() || '',
-      medicamentos:     document.getElementById('f-medicamentos')?.value.trim() || '',
-      objetivosAnamnese: (() => { try { return Array.from(document.querySelectorAll('#obj-chips .anamnese-chip.on')).map(c=>c.dataset.val||c.textContent.trim().replace(/^[^\w]+/,'')); } catch(e){ return []; } })(),
-      nivelAtividade:   document.getElementById('f-nivel')?.value || '',
-      obsLegal:         document.getElementById('f-obs-legal')?.value.trim() || '',
-      tags: (() => { try { return getSelectedTags(); } catch(e){ return []; } })(),
+      age:              g('f-age'),
+      sex:              g('f-sex'),
+      goal:             gt('f-goal'),
+      obs:              gt('f-obs'),
+      daysPerWeek:      g('f-days') || '3',
+      cycle:            g('f-cycle') || '3',
+      payDay:           g('f-payday'),
+      valor:            g('f-valor'),
+      payStatus:        currentPayStatus || 'ok',
+      photo:            pendingProfilePhoto || null,
+      muscleMass:       g('f-muscleMass'),
+      bodyFat:          g('f-bodyFat'),
+      lesoes:           gt('f-lesoes'),
+      doencas:          gt('f-doencas'),
+      medicamentos:     gt('f-medicamentos'),
+      nivelAtividade:   g('f-nivel'),
+      obsLegal:         gt('f-obs-legal'),
+      objetivosAnamnese: [],
+      tags: [],
     };
 
+    // Objetivos (chips) — seguro
+    try {
+      data.objetivosAnamnese = Array.from(
+        document.querySelectorAll('#obj-chips .anamnese-chip.on')
+      ).map(c => c.dataset.val || c.textContent.trim().replace(/^[^\w\u00C0-\u017F]+/, '').trim());
+    } catch(e) { data.objetivosAnamnese = []; }
+
+    // Tags — seguro
+    try {
+      data.tags = getSelectedTags();
+    } catch(e) { data.tags = []; }
+
     if (selectedStudentId) {
+      // Editar aluno existente
       const idx = students.findIndex(s => s.id === selectedStudentId);
+      if (idx === -1) { toast('❌ Aluno não encontrado'); return; }
       const prev = students[idx];
       const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
       const entry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
-      const history = prev.progressHistory || [];
-      const lastE = history[history.length-1];
+      const history = Array.isArray(prev.progressHistory) ? prev.progressHistory : [];
+      const lastE = history[history.length - 1];
       const changed = !lastE || lastE.weight !== data.weight || lastE.bodyFat !== data.bodyFat || lastE.muscleMass !== data.muscleMass;
       if (changed) history.push(entry);
       students[idx] = { ...prev, ...data, progressHistory: history };
       save();
       toast('✅ Aluno atualizado!');
+      pendingProfilePhoto = null;
       showStudentDetail(selectedStudentId);
+
     } else {
+      // Novo aluno
       const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
       const firstEntry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
-      const exercises = window._dupExercises ? JSON.parse(JSON.stringify(window._dupExercises)) : {};
-      window._dupExercises = null;
-      window._dupCycle = null;
-      const s = { ...data, id: uid(), exercises, progressHistory: [firstEntry] };
-      students.push(s);
+      let exercises = {};
+      try {
+        if (window._dupExercises) {
+          exercises = JSON.parse(JSON.stringify(window._dupExercises));
+          window._dupExercises = null;
+          window._dupCycle = null;
+        }
+      } catch(e) { exercises = {}; }
+
+      const newStudent = { ...data, id: uid(), exercises, progressHistory: [firstEntry] };
+      students.push(newStudent);
       save();
-      toast('✅ Aluno cadastrado!');
-      selectedStudentId = s.id;
-      showStudentDetail(s.id);
+      toast('✅ Aluno cadastrado com sucesso!');
+      pendingProfilePhoto = null;
+      selectedStudentId = newStudent.id;
+      showStudentDetail(newStudent.id);
     }
-    pendingProfilePhoto = null;
+
   } catch(err) {
     console.error('Erro em saveStudent:', err);
-    toast('❌ Erro ao salvar: ' + err.message);
+    toast('❌ Erro ao salvar: ' + (err.message || String(err)));
   }
 }
 
@@ -1604,55 +1628,63 @@ function showStudentDetail(id) {
     const s = students.find(x => x.id === id);
     if (!s) { toast('⚠️ Aluno não encontrado'); showNav('home'); return; }
     viewMode = 'edit';
-    activeDay = cycleLetters(parseInt(s.cycle||3))[0];
-  document.getElementById('top-title').textContent = s.name;
+    activeDay = cycleLetters(parseInt(s.cycle || 3))[0];
 
-  // Header with avatar
-  const avatar = document.getElementById('detail-avatar');
-  avatar.innerHTML = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍';
-  document.getElementById('detail-name').textContent = s.name;
-  document.getElementById('detail-goal').textContent = s.goal ? `🎯 ${s.goal}` : '';
+    const setEl = (elId, val) => { const el = document.getElementById(elId); if (el) el.textContent = val; };
+    const setHtml = (elId, html) => { const el = document.getElementById(elId); if (el) el.innerHTML = html; };
 
-  // Payment badge in header
-  const pi = payInfo(s);
-  document.getElementById('detail-pay-badge').innerHTML = pi ? `<span class="pay-badge ${pi.cls}" title="${pi.tip}">${pi.label}</span>` : '';
+    setEl('top-title', s.name);
 
-  const bmi = calcBMI(parseFloat(s.weight), parseFloat(s.height));
-  const [bmiTxt, bmiColor] = bmi ? bmiLabel(parseFloat(bmi)) : ['—','var(--text)'];
-  document.getElementById('detail-info-grid').innerHTML = `
-    <div class="info-item"><div class="info-icon">⚖️</div><div class="info-label">Peso</div><div class="info-value">${s.weight} kg</div></div>
-    <div class="info-item"><div class="info-icon">📏</div><div class="info-label">Altura</div><div class="info-value">${s.height} cm</div></div>
-    <div class="info-item"><div class="info-icon">🗓</div><div class="info-label">Dias/Sem</div><div class="info-value">${s.daysPerWeek}x</div></div>
-    <div class="info-item"><div class="info-icon">📊</div><div class="info-label">IMC</div><div class="info-value" style="color:${bmiColor}">${bmi||'—'}${bmi?' · '+bmiTxt:''}</div></div>
-    ${s.muscleMass ? `<div class="info-item"><div class="info-icon">💪</div><div class="info-label">Massa Musc.</div><div class="info-value">${s.muscleMass}%</div></div>` : ''}
-    ${s.bodyFat ? `<div class="info-item"><div class="info-icon">🔥</div><div class="info-label">Gord. Corp.</div><div class="info-value">${s.bodyFat}%</div></div>` : ''}`;
+    const avatar = document.getElementById('detail-avatar');
+    if (avatar) avatar.innerHTML = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍';
+    setEl('detail-name', s.name);
+    setEl('detail-goal', s.goal ? `🎯 ${s.goal}` : '');
 
-  const obs = document.getElementById('detail-obs-box');
-  if (s.obs) { obs.style.display = 'flex'; document.getElementById('detail-obs-text').textContent = s.obs; }
-  else obs.style.display = 'none';
+    const pi = payInfo(s);
+    setHtml('detail-pay-badge', pi ? `<span class="pay-badge ${pi.cls}" title="${pi.tip}">${pi.label}</span>` : '');
 
-  // Anamnese summary
-  const anamBox = document.getElementById('detail-anamnese-box');
-  const hasAnamnese = s.lesoes || s.doencas || s.medicamentos || (s.objetivosAnamnese||[]).length || s.nivelAtividade;
-  if (hasAnamnese) {
-    anamBox.style.display = 'block';
-    anamBox.innerHTML = `<div class="card" style="margin-bottom:0">
-      <div class="card-title">🩺 Anamnese</div>
-      ${s.lesoes ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Lesões: </span>${s.lesoes}</div>` : ''}
-      ${s.doencas ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Doenças: </span>${s.doencas}</div>` : ''}
-      ${s.medicamentos ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Medicamentos: </span>${s.medicamentos}</div>` : ''}
-      ${s.nivelAtividade ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Nível: </span>${s.nivelAtividade}</div>` : ''}
-      ${(s.objetivosAnamnese||[]).length ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px">${s.objetivosAnamnese.map(o=>`<span class="badge badge-green">${o}</span>`).join('')}</div>` : ''}
-    </div>`;
-  } else {
-    anamBox.style.display = 'none';
-  }
+    const bmi = calcBMI(parseFloat(s.weight), parseFloat(s.height));
+    const [bmiTxt, bmiColor] = bmi ? bmiLabel(parseFloat(bmi)) : ['—', 'var(--text)'];
+    setHtml('detail-info-grid', `
+      <div class="info-item"><div class="info-icon">⚖️</div><div class="info-label">Peso</div><div class="info-value">${s.weight} kg</div></div>
+      <div class="info-item"><div class="info-icon">📏</div><div class="info-label">Altura</div><div class="info-value">${s.height} cm</div></div>
+      <div class="info-item"><div class="info-icon">🗓</div><div class="info-label">Dias/Sem</div><div class="info-value">${s.daysPerWeek}x</div></div>
+      <div class="info-item"><div class="info-icon">📊</div><div class="info-label">IMC</div><div class="info-value" style="color:${bmiColor}">${bmi || '—'}${bmi ? ' · ' + bmiTxt : ''}</div></div>
+      ${s.muscleMass ? `<div class="info-item"><div class="info-icon">💪</div><div class="info-label">Massa Musc.</div><div class="info-value">${s.muscleMass}%</div></div>` : ''}
+      ${s.bodyFat    ? `<div class="info-item"><div class="info-icon">🔥</div><div class="info-label">Gord. Corp.</div><div class="info-value">${s.bodyFat}%</div></div>` : ''}`);
 
-  renderDayTabs(s); renderExerciseArea(s); setMode('edit');
-  showScreen('detail');
+    const obs = document.getElementById('detail-obs-box');
+    if (obs) {
+      if (s.obs) { obs.style.display = 'flex'; setEl('detail-obs-text', s.obs); }
+      else obs.style.display = 'none';
+    }
+
+    const anamBox = document.getElementById('detail-anamnese-box');
+    if (anamBox) {
+      const hasAnamnese = s.lesoes || s.doencas || s.medicamentos || (s.objetivosAnamnese || []).length || s.nivelAtividade;
+      if (hasAnamnese) {
+        anamBox.style.display = 'block';
+        anamBox.innerHTML = `<div class="card" style="margin-bottom:0">
+          <div class="card-title">🩺 Anamnese</div>
+          ${s.lesoes       ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Lesões: </span>${s.lesoes}</div>` : ''}
+          ${s.doencas      ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Doenças: </span>${s.doencas}</div>` : ''}
+          ${s.medicamentos ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Medicamentos: </span>${s.medicamentos}</div>` : ''}
+          ${s.nivelAtividade ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Nível: </span>${s.nivelAtividade}</div>` : ''}
+          ${(s.objetivosAnamnese || []).length ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px">${s.objetivosAnamnese.map(o => `<span class="badge badge-green">${o}</span>`).join('')}</div>` : ''}
+        </div>`;
+      } else {
+        anamBox.style.display = 'none';
+      }
+    }
+
+    renderDayTabs(s);
+    renderExerciseArea(s);
+    setMode('edit');
+    showScreen('detail');
+
   } catch(err) {
     console.error('Erro em showStudentDetail:', err);
-    toast('❌ Erro ao abrir aluno: ' + err.message);
+    toast('❌ Erro ao abrir aluno: ' + (err.message || String(err)));
   }
 }
 

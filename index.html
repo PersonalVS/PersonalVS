@@ -4,7 +4,14 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <meta name="theme-color" content="#0a0c10"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js" onerror="window._sbLoadError=true"></script>
+<script>
+// Supabase safety shim — se o CDN falhar, cria objeto vazio para não quebrar o app
+if (!window.supabase) {
+  window.supabase = { createClient: () => null };
+  window._sbLoadError = true;
+}
+</script>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="PersonalVS"/>
@@ -1113,10 +1120,18 @@ let currentPayStatus = 'ok';
 // UTILS
 // ══════════════════════════════════════════
 function save() {
-  localStorage.setItem('fp_v6', JSON.stringify(students));
-  if (sbClient && selectedStudentId) {
-    const s = students.find(x => x.id === selectedStudentId);
-    if (s) sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {});
+  try {
+    localStorage.setItem('fp_v6', JSON.stringify(students));
+  } catch(e) {
+    console.error('Erro ao salvar localStorage:', e);
+  }
+  try {
+    if (sbClient && selectedStudentId) {
+      const s = students.find(x => x.id === selectedStudentId);
+      if (s) sbClient.from('students').upsert({ id: s.id, data: s, updated_at: new Date().toISOString() }).then(() => {}).catch(() => {});
+    }
+  } catch(e) {
+    console.warn('Supabase sync ignorado:', e);
   }
 }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
@@ -1467,59 +1482,67 @@ function updateCycleHint() {
 }
 
 function saveStudent() {
-  const name = document.getElementById('f-name').value.trim();
-  const weight = document.getElementById('f-weight').value;
-  const height = document.getElementById('f-height').value;
-  if (!name || !weight || !height) { toast('⚠️ Preencha nome, peso e altura'); return; }
+  try {
+    const name = document.getElementById('f-name').value.trim();
+    const weight = document.getElementById('f-weight').value;
+    const height = document.getElementById('f-height').value;
+    if (!name || !weight || !height) { toast('⚠️ Preencha nome, peso e altura'); return; }
 
-  const data = {
-    name, weight, height,
-    age: document.getElementById('f-age').value,
-    sex: document.getElementById('f-sex').value,
-    goal: document.getElementById('f-goal').value.trim(),
-    obs: document.getElementById('f-obs').value.trim(),
-    daysPerWeek: document.getElementById('f-days').value,
-    cycle: document.getElementById('f-cycle').value,
-    payDay: document.getElementById('f-payday').value,
-    valor: document.getElementById('f-valor').value,
-    payStatus: currentPayStatus,
-    photo: pendingProfilePhoto,
-    muscleMass: document.getElementById('f-muscleMass').value,
-    bodyFat: document.getElementById('f-bodyFat').value,
-    // anamnese
-    lesoes: document.getElementById('f-lesoes').value.trim(),
-    doencas: document.getElementById('f-doencas').value.trim(),
-    medicamentos: document.getElementById('f-medicamentos').value.trim(),
-    objetivosAnamnese: Array.from(document.querySelectorAll('#obj-chips .anamnese-chip.on')).map(c=>c.dataset.val||c.textContent.trim().replace(/^[^\w]+/,'')),
-    nivelAtividade: document.getElementById('f-nivel').value,
-    obsLegal: document.getElementById('f-obs-legal').value.trim(),
-    tags: getSelectedTags(),
-  };
+    const data = {
+      name, weight, height,
+      age:          document.getElementById('f-age')?.value || '',
+      sex:          document.getElementById('f-sex')?.value || '',
+      goal:         document.getElementById('f-goal')?.value.trim() || '',
+      obs:          document.getElementById('f-obs')?.value.trim() || '',
+      daysPerWeek:  document.getElementById('f-days')?.value || '3',
+      cycle:        document.getElementById('f-cycle')?.value || '3',
+      payDay:       document.getElementById('f-payday')?.value || '',
+      valor:        document.getElementById('f-valor')?.value || '',
+      payStatus:    currentPayStatus,
+      photo:        pendingProfilePhoto,
+      muscleMass:   document.getElementById('f-muscleMass')?.value || '',
+      bodyFat:      document.getElementById('f-bodyFat')?.value || '',
+      // anamnese
+      lesoes:           document.getElementById('f-lesoes')?.value.trim() || '',
+      doencas:          document.getElementById('f-doencas')?.value.trim() || '',
+      medicamentos:     document.getElementById('f-medicamentos')?.value.trim() || '',
+      objetivosAnamnese: (() => { try { return Array.from(document.querySelectorAll('#obj-chips .anamnese-chip.on')).map(c=>c.dataset.val||c.textContent.trim().replace(/^[^\w]+/,'')); } catch(e){ return []; } })(),
+      nivelAtividade:   document.getElementById('f-nivel')?.value || '',
+      obsLegal:         document.getElementById('f-obs-legal')?.value.trim() || '',
+      tags: (() => { try { return getSelectedTags(); } catch(e){ return []; } })(),
+    };
 
-  if (selectedStudentId) {
-    const idx = students.findIndex(s => s.id === selectedStudentId);
-    const prev = students[idx];
-    // Record progress snapshot if body metrics changed
-    const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
-    const entry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
-    const history = prev.progressHistory || [];
-    const lastE = history[history.length-1];
-    const changed = !lastE || lastE.weight !== data.weight || lastE.bodyFat !== data.bodyFat || lastE.muscleMass !== data.muscleMass;
-    if (changed) history.push(entry);
-    students[idx] = { ...prev, ...data, progressHistory: history };
-    save(); toast('✅ Aluno atualizado!'); showStudentDetail(selectedStudentId);
-  } else {
-    const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
-    const firstEntry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
-    // Apply duplicated exercises if pending
-    const exercises = window._dupExercises ? JSON.parse(JSON.stringify(window._dupExercises)) : {};
-    window._dupExercises = null;
-    window._dupCycle = null;
-    const s = { ...data, id: uid(), exercises, progressHistory: [firstEntry] };
-    students.push(s); save(); toast('✅ Aluno cadastrado!');
-    selectedStudentId = s.id; showStudentDetail(s.id);
+    if (selectedStudentId) {
+      const idx = students.findIndex(s => s.id === selectedStudentId);
+      const prev = students[idx];
+      const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
+      const entry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
+      const history = prev.progressHistory || [];
+      const lastE = history[history.length-1];
+      const changed = !lastE || lastE.weight !== data.weight || lastE.bodyFat !== data.bodyFat || lastE.muscleMass !== data.muscleMass;
+      if (changed) history.push(entry);
+      students[idx] = { ...prev, ...data, progressHistory: history };
+      save();
+      toast('✅ Aluno atualizado!');
+      showStudentDetail(selectedStudentId);
+    } else {
+      const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
+      const firstEntry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
+      const exercises = window._dupExercises ? JSON.parse(JSON.stringify(window._dupExercises)) : {};
+      window._dupExercises = null;
+      window._dupCycle = null;
+      const s = { ...data, id: uid(), exercises, progressHistory: [firstEntry] };
+      students.push(s);
+      save();
+      toast('✅ Aluno cadastrado!');
+      selectedStudentId = s.id;
+      showStudentDetail(s.id);
+    }
+    pendingProfilePhoto = null;
+  } catch(err) {
+    console.error('Erro em saveStudent:', err);
+    toast('❌ Erro ao salvar: ' + err.message);
   }
-  pendingProfilePhoto = null;
 }
 
 async function deleteStudent(e, id) {
@@ -1576,10 +1599,12 @@ function applyDuplicate(fromId) {
 // STUDENT DETAIL
 // ══════════════════════════════════════════
 function showStudentDetail(id) {
-  selectedStudentId = id;
-  const s = students.find(x => x.id === id);
-  viewMode = 'edit';
-  activeDay = cycleLetters(parseInt(s.cycle||3))[0];
+  try {
+    selectedStudentId = id;
+    const s = students.find(x => x.id === id);
+    if (!s) { toast('⚠️ Aluno não encontrado'); showNav('home'); return; }
+    viewMode = 'edit';
+    activeDay = cycleLetters(parseInt(s.cycle||3))[0];
   document.getElementById('top-title').textContent = s.name;
 
   // Header with avatar
@@ -1625,6 +1650,10 @@ function showStudentDetail(id) {
 
   renderDayTabs(s); renderExerciseArea(s); setMode('edit');
   showScreen('detail');
+  } catch(err) {
+    console.error('Erro em showStudentDetail:', err);
+    toast('❌ Erro ao abrir aluno: ' + err.message);
+  }
 }
 
 function renderDayTabs(s) {

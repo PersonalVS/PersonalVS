@@ -465,7 +465,10 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
           <div class="form-group"><label class="form-label">Massa Musc. (%)</label><input class="form-input" id="f-muscleMass" type="number" step="0.1" placeholder="Ex: 38.5"/></div>
           <div class="form-group"><label class="form-label">Gord. Corp. (%)</label><input class="form-input" id="f-bodyFat" type="number" step="0.1" placeholder="Ex: 18.0"/></div>
         </div>
-        <div class="form-group"><label class="form-label">Objetivo</label><input class="form-input" id="f-goal" placeholder="Ex: Hipertrofia, Emagrecimento..."/></div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label class="form-label">Objetivo</label><input class="form-input" id="f-goal" placeholder="Ex: Hipertrofia, Emagrecimento..."/></div>
+          <div class="form-group"><label class="form-label">Prazo da meta</label><input class="form-input" id="f-goalDeadline" type="date"/></div>
+        </div>
         <div class="form-group"><label class="form-label">Observações / Restrições</label><textarea class="form-textarea" id="f-obs" placeholder="Lesões, limitações..."></textarea></div>
       </div>
 
@@ -486,6 +489,15 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
           </div>
         </div>
         <div class="hint">💡 Ciclo: <strong id="cycle-hint-text">A → B → C</strong></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Início do ciclo atual</label><input class="form-input" id="f-cycleStartDate" type="date"/></div>
+          <div class="form-group"><label class="form-label">Duração (semanas)</label>
+            <select class="form-select" id="f-cycleWeeks">
+              <option value="4">4 semanas</option><option value="6" selected>6 semanas</option>
+              <option value="8">8 semanas</option><option value="12">12 semanas</option>
+            </select>
+          </div>
+        </div>
 
         <!-- DUPLICAR TREINO -->
         <div id="dup-section" style="display:none">
@@ -859,11 +871,32 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
           <button class="btn btn-ghost" style="flex:1;font-size:12px" onclick="showNav('home')">👥 Ver alunos</button>
           <button class="btn btn-ghost" style="flex:1;font-size:12px" onclick="showNav('add')">➕ Novo aluno</button>
         </div>
-        <div style="border-top:1px solid var(--border);padding-top:14px">
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
           <div style="font-weight:700;font-size:13px;margin-bottom:4px">📈 Ficha de Evolução Dinâmica</div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Fotos de evolução, amplitude de movimento (ADM) e notas de adesão ficam registradas direto na ficha de progresso de cada aluno.</div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.5">💡 Abra um aluno → "Registrar progresso" para lançar peso, fotos, ADM do joelho e notas de adesão do mês.</div>
           <button class="btn btn-ghost btn-full" style="font-size:12px" onclick="showNav('home')">Abrir ficha de um aluno</button>
+        </div>
+
+        <!-- Alerta de reavaliação em atraso -->
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:4px">⏳ Reavaliações em Atraso</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Alunos sem medição registrada há mais de 60 dias.</div>
+          <div id="reavaliacao-list"></div>
+        </div>
+
+        <!-- Metas com prazo -->
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:4px">🎯 Metas com Prazo</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Acompanhe o prazo da meta declarada por cada aluno.</div>
+          <div id="metas-prazo-list"></div>
+        </div>
+
+        <!-- Contagem do ciclo de treino -->
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:4px">🔄 Ciclo de Treino</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Quantas semanas faltam pra reprogramar o treino de cada aluno.</div>
+          <div id="ciclo-treino-list"></div>
         </div>
       </div>
 
@@ -878,6 +911,18 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
         <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Gere o relatório mensal de todos os alunos de uma vez, em vez de abrir aluno por aluno.</div>
         <button class="btn btn-primary btn-full" onclick="gerarRelatoriosEmLote()">📊 Gerar relatórios de todos os alunos</button>
         <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">⚠️ Permita pop-ups no navegador para os relatórios abrirem corretamente. Também é possível gerar individualmente na ficha de cada aluno.</div>
+      </div>
+
+      <!-- Backup de dados -->
+      <div class="card">
+        <div class="card-title">🛡️ Backup de Dados</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Seus dados vivem no navegador — um backup evita perder tudo se o celular for trocado ou o app for limpo.</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" style="flex:1;font-size:12px" onclick="exportarBackup()">⬇️ Baixar backup</button>
+          <button class="btn btn-ghost" style="flex:1;font-size:12px" onclick="document.getElementById('backup-file-input').click()">⬆️ Restaurar backup</button>
+        </div>
+        <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="importarBackup(event)"/>
+        <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">💡 Restaurar substitui os dados atuais pelos do arquivo — use com cuidado.</div>
       </div>
     </div>
 
@@ -1507,8 +1552,9 @@ function openStudentForm(id) {
   const pp = document.getElementById('pp-preview');
   pp.innerHTML = s?.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:14px"/>` : '🧍';
 
-  ['name','weight','height','age','goal','obs','birthDate'].forEach(k => { document.getElementById('f-'+k).value = s?.[k] || ''; });
+  ['name','weight','height','age','goal','obs','birthDate','goalDeadline','cycleStartDate'].forEach(k => { document.getElementById('f-'+k).value = s?.[k] || ''; });
   document.getElementById('f-sex').value = s?.sex || '';
+  document.getElementById('f-cycleWeeks').value = s?.cycleWeeks || '6';
   document.getElementById('f-days').value = s?.daysPerWeek || '3';
   document.getElementById('f-cycle').value = s?.cycle || '3';
   document.getElementById('f-payday').value = s?.payDay || '';
@@ -1572,9 +1618,12 @@ function saveStudent() {
       birthDate:        g('f-birthDate'),
       sex:              g('f-sex'),
       goal:             gt('f-goal'),
+      goalDeadline:     g('f-goalDeadline'),
       obs:              gt('f-obs'),
       daysPerWeek:      g('f-days') || '3',
       cycle:            g('f-cycle') || '3',
+      cycleStartDate:   g('f-cycleStartDate'),
+      cycleWeeks:       g('f-cycleWeeks') || '6',
       payDay:           g('f-payday'),
       valor:            g('f-valor'),
       payStatus:        currentPayStatus || 'ok',
@@ -2658,6 +2707,9 @@ function initCriativo() {
   renderNotasRapidas();
   renderRadarFrequencia();
   renderAniversarios();
+  renderReavaliacoes();
+  renderMetasPrazo();
+  renderCicloTreino();
 }
 
 function initFasesChecklist() {
@@ -2808,6 +2860,150 @@ function mandarParabensWpp(studentId) {
   const msg = `Feliz aniversário, ${nome}! 🎉🎂\n\nQue seu novo ciclo venha com muita saúde, energia e disposição pra continuar evoluindo! 💪\n\nUm abraço do seu personal! 🥳`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
   toast('💬 WhatsApp aberto!');
+}
+
+// ══════════════════════════════════════════
+// FASE 2 · Alerta de Reavaliação em Atraso
+// ══════════════════════════════════════════
+function diasDesdeUltimaAvaliacao(s) {
+  const hist = s.progressHistory || [];
+  if (!hist.length) return null;
+  const last = new Date(hist[hist.length-1].date);
+  const today = new Date();
+  return Math.floor((today - last) / 86400000);
+}
+function renderReavaliacoes() {
+  const el = document.getElementById('reavaliacao-list');
+  if (!el) return;
+  const atrasados = students
+    .map(s => ({ s, dias: diasDesdeUltimaAvaliacao(s) }))
+    .filter(x => x.dias === null || x.dias >= 60)
+    .sort((a,b) => (b.dias ?? 9999) - (a.dias ?? 9999));
+
+  if (!atrasados.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Todo mundo reavaliado nos últimos 60 dias. ✅</div>`;
+    return;
+  }
+  el.innerHTML = atrasados.map(({s, dias}) => {
+    const semAvaliacao = dias === null;
+    const grave = semAvaliacao || dias >= 90;
+    const cor = grave ? 'var(--red)' : 'var(--orange)';
+    const label = semAvaliacao ? 'Nunca avaliado' : `${dias} dias sem reavaliação`;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <span style="font-weight:700;font-size:13px">${s.name.split(' ')[0]}</span>
+        <div style="font-size:11px;color:${cor};margin-top:2px">${grave?'🔴':'🟡'} ${label}</div>
+      </div>
+      <button onclick="selectedStudentId='${s.id}';showNav('progress')" style="font-size:10px;padding:5px 9px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--text2);cursor:pointer;flex-shrink:0">📈 Avaliar</button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// FASE 2 · Metas com Prazo
+// ══════════════════════════════════════════
+function renderMetasPrazo() {
+  const el = document.getElementById('metas-prazo-list');
+  if (!el) return;
+  const comMeta = students
+    .filter(s => s.goal && s.goalDeadline)
+    .map(s => {
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const prazo = new Date(s.goalDeadline+'T00:00:00');
+      const dias = Math.round((prazo - hoje) / 86400000);
+      return { s, dias };
+    })
+    .sort((a,b) => a.dias - b.dias);
+
+  if (!comMeta.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum aluno com meta e prazo definidos ainda.</div>`;
+    return;
+  }
+  el.innerHTML = comMeta.map(({s, dias}) => {
+    const vencida = dias < 0;
+    const perto = dias >= 0 && dias <= 14;
+    const cor = vencida ? 'var(--red)' : perto ? 'var(--orange)' : 'var(--accent)';
+    const label = vencida ? `Prazo vencido há ${Math.abs(dias)} dias` : dias === 0 ? 'Vence hoje' : `${dias} dias restantes`;
+    return `<div style="padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="font-weight:700;font-size:13px">${s.name.split(' ')[0]}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:2px">🎯 ${s.goal}</div>
+      <div style="font-size:11px;color:${cor};margin-top:2px">${vencida?'🔴':perto?'🟡':'🟢'} ${label}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// FASE 2 · Contagem do Ciclo de Treino
+// ══════════════════════════════════════════
+function renderCicloTreino() {
+  const el = document.getElementById('ciclo-treino-list');
+  if (!el) return;
+  const comCiclo = students
+    .filter(s => s.cycleStartDate)
+    .map(s => {
+      const inicio = new Date(s.cycleStartDate+'T00:00:00');
+      const semanas = parseInt(s.cycleWeeks || 6);
+      const fim = new Date(inicio); fim.setDate(fim.getDate() + semanas*7);
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const diasRestantes = Math.round((fim - hoje) / 86400000);
+      const semanasRestantes = Math.ceil(diasRestantes / 7);
+      return { s, diasRestantes, semanasRestantes };
+    })
+    .sort((a,b) => a.diasRestantes - b.diasRestantes);
+
+  if (!comCiclo.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum aluno com início de ciclo definido ainda.</div>`;
+    return;
+  }
+  el.innerHTML = comCiclo.map(({s, diasRestantes, semanasRestantes}) => {
+    const vencido = diasRestantes < 0;
+    const perto = diasRestantes >= 0 && semanasRestantes <= 1;
+    const cor = vencido ? 'var(--red)' : perto ? 'var(--orange)' : 'var(--accent)';
+    const label = vencido ? `Ciclo encerrado há ${Math.abs(semanasRestantes)} semana(s)` : semanasRestantes <= 0 ? 'Última semana do ciclo' : `${semanasRestantes} semana(s) restantes`;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <span style="font-weight:700;font-size:13px">${s.name.split(' ')[0]}</span>
+        <div style="font-size:11px;color:${cor};margin-top:2px">${vencido||perto?'🟡':'🟢'} ${label}</div>
+      </div>
+      <button onclick="openStudentForm('${s.id}')" style="font-size:10px;padding:5px 9px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--text2);cursor:pointer;flex-shrink:0">🔄 Reprogramar</button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// FASE 3 · Backup de Dados
+// ══════════════════════════════════════════
+function exportarBackup() {
+  const backup = { app: 'PersonalVS', version: 1, exportedAt: new Date().toISOString(), data: {} };
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('fp_')) backup.data[key] = localStorage.getItem(key);
+  }
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dataStr = new Date().toISOString().slice(0,10);
+  a.href = url; a.download = `personalvs-backup-${dataStr}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('⬇️ Backup baixado!');
+}
+async function importarBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const backup = JSON.parse(text);
+    if (!backup.data) { toast('❌ Arquivo de backup inválido'); return; }
+    const ok = await showConfirm('⚠️', 'Restaurar backup?', 'Isso vai substituir todos os dados atuais do app pelos do arquivo. Essa ação não pode ser desfeita.', 'Restaurar');
+    if (!ok) { event.target.value = ''; return; }
+    Object.entries(backup.data).forEach(([key, value]) => localStorage.setItem(key, value));
+    toast('✅ Backup restaurado! Recarregando...');
+    setTimeout(() => location.reload(), 1200);
+  } catch (e) {
+    toast('❌ Erro ao ler o arquivo de backup');
+  }
+  event.target.value = '';
 }
 
 // ══════════════════════════════════════════

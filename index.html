@@ -415,7 +415,6 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
         </div>
         <div style="color:var(--blue);font-size:18px">›</div>
       </div>
-      <div id="frase-especialista" style="background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:12px;padding:11px 14px;margin-bottom:14px;font-size:12.5px;color:var(--accent);font-weight:600;line-height:1.5"></div>
       <div class="stats-row" id="stats-row"></div>
       <div class="search-wrap">
         <span class="sicon">🔍</span>
@@ -461,6 +460,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
             <select class="form-select" id="f-sex"><option value="">—</option><option value="M">Masculino</option><option value="F">Feminino</option></select>
           </div>
         </div>
+        <div class="form-group"><label class="form-label">Data de nascimento</label><input class="form-input" id="f-birthDate" type="date"/></div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Massa Musc. (%)</label><input class="form-input" id="f-muscleMass" type="number" step="0.1" placeholder="Ex: 38.5"/></div>
           <div class="form-group"><label class="form-label">Gord. Corp. (%)</label><input class="form-input" id="f-bodyFat" type="number" step="0.1" placeholder="Ex: 18.0"/></div>
@@ -668,7 +668,6 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
         <button class="btn btn-ghost btn-full" onclick="abrirModalSugestaoIA()" style="font-size:13px;color:var(--blue)">🤖 Treino IA</button>
       </div>
       <button class="btn btn-ghost btn-full" onclick="exportRelatorioMensal()" style="margin-top:9px;font-size:13px">📊 Relatório Mensal PDF</button>
-      <button class="btn btn-ghost btn-full" onclick="gerarCertificadoTrimestral()" style="margin-top:9px;font-size:13px;color:var(--accent)">🏆 Certificado de Evolução Trimestral</button>
     </div>
 
     <!-- AGENDA -->
@@ -811,13 +810,27 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
         </div>
 
         <!-- Captura rápida de treino -->
-        <div style="border-top:1px solid var(--border);padding-top:14px">
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
           <div style="font-weight:700;font-size:13px;margin-bottom:4px">✏️ Captura Rápida de Treino</div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Registre um ajuste feito no treino, na hora, antes de esquecer.</div>
           <select class="form-select" id="nota-rapida-aluno" style="margin-bottom:8px;font-size:13px"></select>
           <textarea class="form-textarea" id="nota-rapida-texto" rows="2" placeholder="Ex: Reduzir carga do agachamento, relatou desconforto no joelho" style="margin-bottom:8px"></textarea>
           <button class="btn btn-primary btn-full" style="font-size:12px" onclick="addNotaRapida()">Salvar anotação</button>
           <div id="notas-rapidas-list" style="margin-top:12px"></div>
+        </div>
+
+        <!-- Radar de frequência -->
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:4px">📉 Radar de Frequência</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Alunos com faltas seguidas — sinal de risco de cancelamento antes que ele decida parar.</div>
+          <div id="radar-frequencia-list"></div>
+        </div>
+
+        <!-- Aniversários -->
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:4px">🎂 Aniversários</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Um gesto pequeno que fortalece muito a relação no atendimento premium.</div>
+          <div id="aniversarios-list"></div>
         </div>
       </div>
 
@@ -862,157 +875,9 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
             <input type="checkbox" id="fase-check-3" onchange="toggleFaseConcluida(3)" style="width:16px;height:16px;accent-color:var(--accent)"/> concluída
           </label>
         </div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Relatórios automáticos, conteúdo, infoprodutos e sua renda passiva — tudo num só lugar.</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Gere o relatório mensal de todos os alunos de uma vez, em vez de abrir aluno por aluno.</div>
         <button class="btn btn-primary btn-full" onclick="gerarRelatoriosEmLote()">📊 Gerar relatórios de todos os alunos</button>
         <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">⚠️ Permita pop-ups no navegador para os relatórios abrirem corretamente. Também é possível gerar individualmente na ficha de cada aluno.</div>
-      </div>
-
-      <!-- Funil de conteúdo (Kanban) -->
-      <div class="card">
-        <div class="card-title">🗂️ Funil de Conteúdo</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Ideia → Roteiro → Gravação → Edição → Publicado</div>
-        <div style="display:flex;gap:6px;margin-bottom:10px">
-          <input class="form-input" id="kanban-novo-titulo" placeholder="Novo conteúdo..." style="font-size:13px;padding:9px 11px"/>
-          <button class="btn btn-primary" style="font-size:12px;padding:9px 12px" onclick="addKanbanCard()">+</button>
-        </div>
-        <div id="kanban-board" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none"></div>
-      </div>
-
-      <!-- Roadmap de infoprodutos -->
-      <div class="card">
-        <div class="card-title">🚀 Roadmap de Infoprodutos</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Acompanhe eBooks e cursos até o lançamento.</div>
-        <div style="display:flex;gap:6px;margin-bottom:12px">
-          <input class="form-input" id="infop-novo-nome" placeholder="Nome do produto..." style="flex:2;font-size:13px;padding:9px 11px"/>
-          <input class="form-input" id="infop-novo-data" type="date" style="flex:1;font-size:13px;padding:9px 11px"/>
-          <button class="btn btn-primary" style="font-size:12px;padding:9px 12px" onclick="addInfoproduto()">+</button>
-        </div>
-        <div id="infoprodutos-list"></div>
-      </div>
-
-      <!-- Monitoramento de FIIs / dividendos -->
-      <div class="card">
-        <div class="card-title">💰 Renda Passiva (FIIs/Dividendos)</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Registre aportes mensais e acompanhe sua meta de renda passiva.</div>
-        <div style="display:flex;gap:6px;margin-bottom:10px">
-          <div style="flex:1"><label class="form-label">Meta mensal (R$)</label><input class="form-input" id="fii-meta" type="number" step="0.01" placeholder="1000.00" style="font-size:13px;padding:9px 11px"/></div>
-          <button class="btn btn-ghost" style="align-self:flex-end;font-size:12px;padding:9px 12px" onclick="setMetaFii()">Salvar meta</button>
-        </div>
-        <div id="fii-progress" style="margin-bottom:14px"></div>
-        <div style="font-weight:700;font-size:12px;margin-bottom:8px">Novo aporte</div>
-        <div style="display:flex;gap:6px;margin-bottom:10px">
-          <input class="form-input" id="fii-novo-data" type="month" style="flex:1;font-size:13px;padding:9px 11px"/>
-          <input class="form-input" id="fii-novo-valor" type="number" step="0.01" placeholder="Valor R$" style="flex:1;font-size:13px;padding:9px 11px"/>
-          <button class="btn btn-primary" style="font-size:12px;padding:9px 12px" onclick="addAporteFii()">+</button>
-        </div>
-        <div id="fii-aportes-list"></div>
-      </div>
-
-      <!-- ══ NOVAS FERRAMENTAS · CARREIRA & BEM-ESTAR ══ -->
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;margin:22px 0 3px">🧭 Carreira & Bem-Estar</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Ferramentas de gestão empresarial, networking e rotina do Personal Empresário</div>
-
-      <!-- Checklist de Longevidade Pessoal -->
-      <div class="card">
-        <div class="card-title">✅ Checklist de Longevidade Pessoal</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Seu próprio treino é a base da sua autoridade como especialista em longevidade. Registre e não deixe a consistência quebrar.</div>
-        <div style="display:flex;gap:6px;margin-bottom:12px">
-          <input class="form-input" id="longevidade-horario" type="time" style="flex:1;font-size:13px;padding:9px 11px"/>
-          <button class="btn btn-ghost" style="font-size:12px;padding:9px 12px" onclick="setLongevidadeHorario()">Salvar horário</button>
-        </div>
-        <div id="longevidade-status"></div>
-      </div>
-
-      <!-- Gestor de ROI de Investimentos (Custo de Oportunidade) -->
-      <div class="card">
-        <div class="card-title">💹 Custo de Oportunidade</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Antes de gastar com algo não essencial, veja o que esse valor renderia se fosse investido rumo à sua liberdade financeira (FIIs/ações).</div>
-        <div class="form-row" style="margin-bottom:6px">
-          <div class="form-group" style="margin-bottom:0"><label class="form-label">Valor do gasto (R$)</label><input class="form-input" id="roi-valor" type="number" step="0.01" placeholder="0,00" oninput="calcularCustoOportunidade()" style="font-size:13px"/></div>
-          <div class="form-group" style="margin-bottom:0"><label class="form-label">Rendimento anual (%)</label><input class="form-input" id="roi-taxa" type="number" step="0.1" placeholder="12" oninput="calcularCustoOportunidade()" style="font-size:13px"/></div>
-        </div>
-        <div id="roi-resultado"></div>
-      </div>
-
-      <!-- Diário de Conteúdo (Voice-to-Text) -->
-      <div class="card">
-        <div class="card-title">🎙️ Diário de Conteúdo</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Teve uma ideia de e-book ou post durante o treino? Grave rápido — sua voz vira uma nota de ideia direto no Funil de Conteúdo.</div>
-        <button class="btn btn-primary btn-full" style="font-size:12px" id="diario-rec-btn" onclick="toggleGravacaoIdeia()">🎙️ Gravar Nota de Ideia</button>
-        <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center" id="diario-rec-status"></div>
-      </div>
-
-      <!-- Certificado / Passaporte da Longevidade -->
-      <div class="card">
-        <div class="card-title">🏆 Passaporte da Longevidade</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Logo da sua marca usada nos Certificados de Evolução Trimestral enviados aos alunos. Toque para escolher uma imagem.</div>
-        <div class="photo-picker" style="margin-bottom:0">
-          <div class="photo-preview" id="marca-logo-preview" onclick="pickMarcaLogo()">🏅</div>
-          <div class="photo-picker-info">
-            <div class="pp-title">Logo da marca</div>
-            <div class="pp-sub">Aparece no cabeçalho do certificado gerado na ficha de cada aluno.</div>
-          </div>
-        </div>
-        <input type="file" id="marca-logo-input" accept="image/*" style="display:none" onchange="handleMarcaLogo(event)"/>
-      </div>
-
-      <!-- Calculadora de Valor da Hora/Aula -->
-      <div class="card">
-        <div class="card-title">🧮 Calculadora de Valor da Hora/Aula</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Descubra quanto cobrar para atingir seu número de liberdade financeira.</div>
-        <div class="form-group"><label class="form-label">Custos fixos mensais (R$)</label><input class="form-input" id="calc-custos" type="number" step="0.01" placeholder="0,00" oninput="calcularValorHora()" style="font-size:13px"/></div>
-        <div class="form-group"><label class="form-label">Meta de investimento mensal — FIIs/ações (R$)</label><input class="form-input" id="calc-investimento" type="number" step="0.01" placeholder="0,00" oninput="calcularValorHora()" style="font-size:13px"/></div>
-        <div class="form-group"><label class="form-label">Pró-labore desejado (R$)</label><input class="form-input" id="calc-prolabore" type="number" step="0.01" placeholder="0,00" oninput="calcularValorHora()" style="font-size:13px"/></div>
-        <div class="form-row" style="margin-bottom:6px">
-          <div class="form-group" style="margin-bottom:0"><label class="form-label">Nº de aulas/mês</label><input class="form-input" id="calc-aulas" type="number" placeholder="0" oninput="calcularValorHora()" style="font-size:13px"/></div>
-          <div class="form-group" style="margin-bottom:0"><label class="form-label">Duração da aula (min)</label><input class="form-input" id="calc-duracao" type="number" value="60" oninput="calcularValorHora()" style="font-size:13px"/></div>
-        </div>
-        <div id="calc-resultado"></div>
-      </div>
-
-      <!-- Radar de Parcerias -->
-      <div class="card">
-        <div class="card-title">🤝 Radar de Parcerias</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Mantenha aquecida a rede de médicos, fisioterapeutas e nutricionistas — networking é o que traz alunos mais qualificados. Contato a cada 3 meses.</div>
-        <div style="display:flex;gap:6px;margin-bottom:8px">
-          <input class="form-input" id="parc-novo-nome" placeholder="Nome" style="flex:1;font-size:13px;padding:9px 11px"/>
-          <input class="form-input" id="parc-novo-especialidade" placeholder="Especialidade" style="flex:1;font-size:13px;padding:9px 11px"/>
-        </div>
-        <div style="display:flex;gap:6px;margin-bottom:12px">
-          <input class="form-input" id="parc-novo-whatsapp" placeholder="WhatsApp (DDD+número)" style="flex:1;font-size:13px;padding:9px 11px"/>
-          <button class="btn btn-primary" style="font-size:12px;padding:9px 12px" onclick="addParceria()">+</button>
-        </div>
-        <div id="parcerias-list"></div>
-      </div>
-
-      <!-- Biblioteca de Educação em Dor -->
-      <div class="card">
-        <div class="card-title">📚 Biblioteca de Educação em Dor</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Pílulas de conhecimento explicando por que um movimento é seguro — reduza o medo do aluno em relação ao exercício e aumente sua autoridade.</div>
-        <input class="form-input" id="edu-novo-titulo" placeholder="Título (ex: Dor no joelho ao agachar)" style="font-size:13px;padding:9px 11px;margin-bottom:8px"/>
-        <select class="form-select" id="edu-novo-tipo" style="font-size:13px;padding:9px 11px;margin-bottom:8px">
-          <option value="texto">📝 Texto</option>
-          <option value="video">🎬 Vídeo (link)</option>
-        </select>
-        <textarea class="form-textarea" id="edu-novo-conteudo" rows="2" placeholder="Texto explicativo ou link do vídeo..." style="margin-bottom:8px"></textarea>
-        <button class="btn btn-primary btn-full" style="font-size:12px;margin-bottom:12px" onclick="addEducacaoDor()">Salvar pílula de conhecimento</button>
-        <div id="educacao-dor-list"></div>
-      </div>
-
-      <!-- Botão de Presente / Convite -->
-      <div class="card">
-        <div class="card-title">🎁 Convite / Gift Card</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Quando um aluno indicar um amigo, gere um convite profissional para aula experimental, pronto para enviar pelo WhatsApp.</div>
-        <div class="form-group"><label class="form-label">Seu nome (aparece no convite)</label><input class="form-input" id="presente-nome-personal" placeholder="Ex: Victor Saraiva" style="font-size:13px"/></div>
-        <div class="form-group"><label class="form-label">Nome do convidado (opcional)</label><input class="form-input" id="presente-nome-convidado" placeholder="Ex: Ana" style="font-size:13px"/></div>
-        <div class="form-group">
-          <label class="form-label">Tipo</label>
-          <select class="form-select" id="presente-tipo" style="font-size:13px">
-            <option value="experimental">🏋️ Convite para Aula Experimental</option>
-            <option value="gift">🎁 Gift Card</option>
-          </select>
-        </div>
-        <button class="btn btn-primary btn-full" style="font-size:12px" onclick="gerarConvitePresente()">✨ Gerar Convite</button>
       </div>
     </div>
 
@@ -1351,30 +1216,6 @@ function closeConfirm(r) {
 }
 function cycleLetters(n) { return ['A','B','C','D','E','F'].slice(0, n); }
 function calcBMI(w, h) { if (!w || !h) return null; return (w / ((h/100)**2)).toFixed(1); }
-
-// ══════════════════════════════════════════
-// 🩺 Anamnese Digital · Score de Risco
-// ══════════════════════════════════════════
-function calcRiskScore(s) {
-  let pontos = 0;
-  const idade = parseInt(s.age) || 0;
-  if (idade >= 60) pontos += 2; else if (idade >= 45) pontos += 1;
-  if (s.doencas && s.doencas.trim())      pontos += 2;
-  if (s.medicamentos && s.medicamentos.trim()) pontos += 1;
-  if (s.lesoes && s.lesoes.trim())        pontos += 2;
-  if (s.nivelAtividade === 'Sedentário')  pontos += 1;
-
-  if (pontos >= 4) {
-    return { nivel:'alto', label:'⚠️ Risco Alto', cls:'badge-orange',
-      sugestao:'Evite exercícios de alto impacto e alta intensidade sem liberação médica prévia. Priorize progressão lenta e monitoramento próximo.' };
-  }
-  if (pontos >= 2) {
-    return { nivel:'moderado', label:'🟡 Risco Moderado', cls:'badge-blue',
-      sugestao:'Atenção redobrada a exercícios de impacto e cargas altas. Considere adaptações conforme lesões/condições relatadas.' };
-  }
-  return { nivel:'baixo', label:'✅ Risco Baixo', cls:'badge-green',
-    sugestao:'Sem contraindicações relevantes identificadas na anamnese. Progrida o treino normalmente, respeitando a individualidade do aluno.' };
-}
 function bmiLabel(b) {
   if (b < 18.5) return ['Abaixo do Peso','var(--orange)'];
   if (b < 25)   return ['Normal','var(--accent)'];
@@ -1554,29 +1395,7 @@ function goBack() {
 // ══════════════════════════════════════════
 // HOME
 // ══════════════════════════════════════════
-function renderHome() { renderFraseEspecialista(); renderStats(); renderStudentList(); }
-
-// ══════════════════════════════════════════
-// 🧭 Modo Especialista · Personalização Dinâmica
-// ══════════════════════════════════════════
-const FRASES_ESPECIALISTA = [
-  'Hoje é dia de preservar articulações e construir base.',
-  'Hoje é dia de fortalecer músculos e prevenir quedas.',
-  'Hoje é dia de investir em mais anos de vida com autonomia.',
-  'Hoje é dia de trabalhar equilíbrio e mobilidade.',
-  'Hoje é dia de construir força para os próximos 30 anos.',
-  'Hoje é dia de cuidar do coração e da resistência.',
-  'Hoje é dia de ensinar o corpo a envelhecer com dignidade.',
-  'Hoje é dia de transformar consistência em longevidade.',
-];
-function renderFraseEspecialista() {
-  const el = document.getElementById('frase-especialista');
-  if (!el) return;
-  const now = new Date();
-  const diaDoAno = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
-  const frase = FRASES_ESPECIALISTA[diaDoAno % FRASES_ESPECIALISTA.length];
-  el.innerHTML = `🧭 ${frase}`;
-}
+function renderHome() { renderStats(); renderStudentList(); }
 
 function renderStats() {
   const t = students.length;
@@ -1688,7 +1507,7 @@ function openStudentForm(id) {
   const pp = document.getElementById('pp-preview');
   pp.innerHTML = s?.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:14px"/>` : '🧍';
 
-  ['name','weight','height','age','goal','obs'].forEach(k => { document.getElementById('f-'+k).value = s?.[k] || ''; });
+  ['name','weight','height','age','goal','obs','birthDate'].forEach(k => { document.getElementById('f-'+k).value = s?.[k] || ''; });
   document.getElementById('f-sex').value = s?.sex || '';
   document.getElementById('f-days').value = s?.daysPerWeek || '3';
   document.getElementById('f-cycle').value = s?.cycle || '3';
@@ -1750,6 +1569,7 @@ function saveStudent() {
     const data = {
       name, weight, height,
       age:              g('f-age'),
+      birthDate:        g('f-birthDate'),
       sex:              g('f-sex'),
       goal:             gt('f-goal'),
       obs:              gt('f-obs'),
@@ -1922,18 +1742,13 @@ function showStudentDetail(id) {
       const hasAnamnese = s.lesoes || s.doencas || s.medicamentos || (s.objetivosAnamnese || []).length || s.nivelAtividade;
       if (hasAnamnese) {
         anamBox.style.display = 'block';
-        const risco = calcRiskScore(s);
         anamBox.innerHTML = `<div class="card" style="margin-bottom:0">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div class="card-title" style="margin-bottom:0">🩺 Anamnese</div>
-            <span class="badge ${risco.cls}" title="${risco.sugestao}">${risco.label}</span>
-          </div>
+          <div class="card-title">🩺 Anamnese</div>
           ${s.lesoes       ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Lesões: </span>${s.lesoes}</div>` : ''}
           ${s.doencas      ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Doenças: </span>${s.doencas}</div>` : ''}
           ${s.medicamentos ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Medicamentos: </span>${s.medicamentos}</div>` : ''}
           ${s.nivelAtividade ? `<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-size:10px;font-weight:700">Nível: </span>${s.nivelAtividade}</div>` : ''}
           ${(s.objetivosAnamnese || []).length ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px">${s.objetivosAnamnese.map(o => `<span class="badge badge-green">${o}</span>`).join('')}</div>` : ''}
-          <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">💡 ${risco.sugestao}</div>
         </div>`;
       } else {
         anamBox.style.display = 'none';
@@ -2841,430 +2656,8 @@ function initCriativo() {
   renderRituais();
   renderNotasRapidasAlunoSelect();
   renderNotasRapidas();
-  renderKanban();
-  renderInfoprodutos();
-  renderFii();
-  renderLongevidade();
-  initCustoOportunidade();
-  calcularCustoOportunidade();
-  renderMarcaLogo();
-  initCalcValorHora();
-  renderParcerias();
-  renderEducacaoDor();
-  initPresenteForm();
-}
-
-// ══════════════════════════════════════════
-// ✅ Checklist de Longevidade Pessoal
-// ══════════════════════════════════════════
-let longevidade = JSON.parse(localStorage.getItem('fp_longevidade') || '{"horario":"11:00","log":{}}');
-function saveLongevidade() { localStorage.setItem('fp_longevidade', JSON.stringify(longevidade)); }
-function setLongevidadeHorario() {
-  const v = document.getElementById('longevidade-horario').value;
-  if (v) longevidade.horario = v;
-  saveLongevidade();
-  renderLongevidade();
-  toast('⏰ Horário salvo!');
-}
-function marcarTreinoHoje() {
-  const hoje = new Date().toISOString().slice(0,10);
-  longevidade.log[hoje] = true;
-  saveLongevidade();
-  renderLongevidade();
-  toast('💪 Treino de hoje registrado!');
-}
-function calcularStreakLongevidade() {
-  let streak = 0;
-  let d = new Date();
-  while (true) {
-    const key = d.toISOString().slice(0,10);
-    if (longevidade.log[key]) { streak++; d.setDate(d.getDate()-1); }
-    else break;
-  }
-  return streak;
-}
-function renderLongevidade() {
-  const el = document.getElementById('longevidade-status');
-  if (!el) return;
-  const hInput = document.getElementById('longevidade-horario');
-  if (hInput && document.activeElement !== hInput) hInput.value = longevidade.horario || '11:00';
-  const hoje = new Date().toISOString().slice(0,10);
-  const feitoHoje = !!longevidade.log[hoje];
-  const streak = calcularStreakLongevidade();
-  const [hh,mm] = (longevidade.horario||'11:00').split(':').map(Number);
-  const agora = new Date();
-  const limite = new Date(); limite.setHours(hh, mm, 0, 0);
-  const passouHorario = agora > limite;
-  const quebrou = !feitoHoje && passouHorario;
-  el.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-      <div style="background:var(--card2);border-radius:12px;padding:12px 16px;text-align:center;flex:1">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent)">${streak}</div>
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">dias seguidos</div>
-      </div>
-      <div style="flex:2">
-        ${feitoHoje
-          ? `<div style="font-size:12px;color:var(--accent);font-weight:700">✅ Treino de hoje registrado!</div>`
-          : quebrou
-            ? `<div style="font-size:12px;color:var(--red);font-weight:700">⚠️ Quebra de meta — treino de hoje ainda não registrado</div>`
-            : `<div style="font-size:12px;color:var(--text2)">Ainda não registrado hoje (previsto ${longevidade.horario})</div>`}
-      </div>
-    </div>
-    ${!feitoHoje ? `<button class="btn btn-primary btn-full" style="font-size:12px" onclick="marcarTreinoHoje()">✅ Marquei meu treino hoje</button>` : ''}
-  `;
-}
-
-// ══════════════════════════════════════════
-// 💹 Gestor de ROI · Custo de Oportunidade
-// ══════════════════════════════════════════
-function calcularCustoOportunidade() {
-  const valorEl = document.getElementById('roi-valor');
-  const taxaEl  = document.getElementById('roi-taxa');
-  const resEl   = document.getElementById('roi-resultado');
-  if (!valorEl || !taxaEl || !resEl) return;
-  const valor = parseFloat(valorEl.value) || 0;
-  const taxa  = parseFloat(taxaEl.value) || 0;
-  localStorage.setItem('fp_roi_taxa', String(taxaEl.value || ''));
-  if (!valor || !taxa) { resEl.innerHTML = ''; return; }
-  const anual  = valor * (taxa/100);
-  const mensal = anual/12;
-  resEl.innerHTML = `
-    <div style="background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:12px;padding:13px;margin-top:4px">
-      <div style="font-size:12px;color:var(--text2);line-height:1.6">Esse valor investido a <strong style="color:var(--accent)">${taxa}% ao ano</strong> renderia:</div>
-      <div style="display:flex;justify-content:space-between;margin-top:8px">
-        <div><div class="stat-val" style="font-size:20px;color:var(--accent)">R$ ${anual.toFixed(2)}</div><div class="stat-lbl">por ano em dividendos</div></div>
-        <div style="text-align:right"><div class="stat-val" style="font-size:20px">R$ ${mensal.toFixed(2)}</div><div class="stat-lbl">por mês</div></div>
-      </div>
-    </div>`;
-}
-function initCustoOportunidade() {
-  const taxaSalva = localStorage.getItem('fp_roi_taxa');
-  const taxaEl = document.getElementById('roi-taxa');
-  if (taxaEl && taxaSalva) taxaEl.value = taxaSalva;
-}
-
-// ══════════════════════════════════════════
-// 🎙️ Diário de Conteúdo (Voice-to-Text)
-// ══════════════════════════════════════════
-let diarioRecognition = null, diarioGravando = false;
-function toggleGravacaoIdeia() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const statusEl = document.getElementById('diario-rec-status');
-  const btn = document.getElementById('diario-rec-btn');
-  if (!SR) {
-    toast('⚠️ Seu navegador não suporta gravação por voz. Use o Chrome no Android.');
-    return;
-  }
-  if (diarioGravando) {
-    diarioRecognition && diarioRecognition.stop();
-    return;
-  }
-  diarioRecognition = new SR();
-  diarioRecognition.lang = 'pt-BR';
-  diarioRecognition.interimResults = false;
-  diarioRecognition.maxAlternatives = 1;
-  diarioRecognition.onstart = () => {
-    diarioGravando = true;
-    if (btn) btn.textContent = '⏹️ Parar gravação';
-    if (statusEl) statusEl.textContent = '🔴 Ouvindo... fale sua ideia';
-  };
-  diarioRecognition.onerror = () => {
-    if (statusEl) statusEl.textContent = '⚠️ Não entendi. Tente novamente.';
-  };
-  diarioRecognition.onend = () => {
-    diarioGravando = false;
-    if (btn) btn.textContent = '🎙️ Gravar Nota de Ideia';
-  };
-  diarioRecognition.onresult = (e) => {
-    const texto = e.results[0][0].transcript;
-    if (texto && texto.trim()) {
-      kanbanCards.push({ id: uid(), titulo: texto.trim(), etapa: 0 });
-      saveKanban();
-      renderKanban();
-      if (statusEl) statusEl.textContent = `💡 Nota de ideia salva: "${texto.trim()}"`;
-      toast('✅ Ideia transcrita e salva no Funil de Conteúdo!');
-    }
-  };
-  diarioRecognition.start();
-}
-
-// ══════════════════════════════════════════
-// 🏆 Passaporte da Longevidade · Logo & Certificado
-// ══════════════════════════════════════════
-function renderMarcaLogo() {
-  const el = document.getElementById('marca-logo-preview');
-  if (!el) return;
-  const logo = localStorage.getItem('fp_marca_logo');
-  el.innerHTML = logo ? `<img src="${logo}"/>` : '🏅';
-}
-function pickMarcaLogo() { document.getElementById('marca-logo-input').click(); }
-function handleMarcaLogo(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    localStorage.setItem('fp_marca_logo', e.target.result);
-    renderMarcaLogo();
-    toast('✅ Logo da marca salva!');
-  };
-  reader.readAsDataURL(file);
-}
-
-const FRASES_TRIMESTRE = [
-  'preservar suas articulações e construir uma base sólida',
-  'ganhar autonomia e qualidade de vida a cada década',
-  'fortalecer músculos e prevenir quedas',
-  'construir mais anos de vida com saúde e independência',
-];
-function gerarCertificadoTrimestral() {
-  const s = students.find(x => x.id === selectedStudentId);
-  if (!s) return;
-  const now = new Date();
-  const history = s.progressHistory || [];
-  const treMesesAtras = new Date(now); treMesesAtras.setMonth(now.getMonth()-3);
-  const entriesTrimestre = history.filter(e => new Date(e.date) >= treMesesAtras);
-  const first = entriesTrimestre[0] || history[0];
-  const last = history[history.length-1];
-  const weightDelta = first && last ? (parseFloat(last.weight) - parseFloat(first.weight)).toFixed(1) : null;
-
-  const att = attendanceData[s.id] || {};
-  const monthKeyPrefix = `${treMesesAtras.getFullYear()}`;
-  let presencasTrimestre = 0;
-  Object.entries(att).forEach(([k,v]) => { if (new Date(k) >= treMesesAtras && v === 'present') presencasTrimestre++; });
-
-  const logo = localStorage.getItem('fp_marca_logo');
-  const logoHtml = logo ? `<img src="${logo}" style="width:60px;height:60px;object-fit:contain;border-radius:12px;margin-bottom:10px"/>` : '';
-  const nomePersonal = localStorage.getItem('fp_presente_nome_personal') || 'Seu Personal Trainer';
-
-  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><title>Certificado — ${s.name}</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Georgia',serif;background:#f4efe3;padding:30px 16px;display:flex;justify-content:center}
-  .cert{max-width:640px;width:100%;background:#fff;border:10px solid #c9a667;border-radius:6px;padding:40px 32px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.1)}
-  .titulo{font-size:26px;font-weight:800;color:#2f3e36;letter-spacing:1px;margin-bottom:6px}
-  .sub{font-size:13px;color:#8a8370;text-transform:uppercase;letter-spacing:2px;margin-bottom:24px}
-  .nome{font-size:30px;font-weight:800;color:#c9a667;margin:18px 0;font-family:'Syne',sans-serif}
-  .texto{font-size:15px;color:#4a4a4a;line-height:1.8;margin-bottom:24px}
-  .stats{display:flex;justify-content:center;gap:28px;margin:24px 0}
-  .stat-val{font-size:24px;font-weight:800;color:#2f3e36}
-  .stat-lbl{font-size:10px;color:#8a8370;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-  .assinatura{margin-top:34px;font-size:13px;color:#2f3e36;border-top:1px solid #ece4d2;padding-top:14px}
-  @media print{body{padding:0;background:#fff}.cert{box-shadow:none}}
-</style></head><body>
-<div class="cert">
-  ${logoHtml}
-  <div class="titulo">🏆 Certificado de Mérito</div>
-  <div class="sub">Passaporte da Longevidade · Evolução Trimestral</div>
-  <div class="texto">Certificamos que</div>
-  <div class="nome">${s.name}</div>
-  <div class="texto">tem se dedicado com consistência ao seu programa de treino, avançando rumo a ${FRASES_TRIMESTRE[now.getMonth()%FRASES_TRIMESTRE.length]}.</div>
-  <div class="stats">
-    ${weightDelta !== null ? `<div><div class="stat-val">${parseFloat(weightDelta)>0?'+':''}${weightDelta} kg</div><div class="stat-lbl">Variação de peso</div></div>` : ''}
-    <div><div class="stat-val">${presencasTrimestre}</div><div class="stat-lbl">Presenças no trimestre</div></div>
-  </div>
-  <div class="assinatura">${nomePersonal}<br>${now.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</div>
-</div>
-<script>window.print();<\/script>
-</body></html>`;
-
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const w = window.open(url, '_blank');
-  if (!w) { toast('⚠️ Permita pop-ups para gerar o certificado'); return; }
-  toast('🏆 Certificado gerado! Salve como PDF/imagem e envie pelo WhatsApp.');
-  setTimeout(() => {
-    window.open(`https://wa.me/?text=${encodeURIComponent(`Parabéns, ${s.name.split(' ')[0]}! 🏆 Seu Certificado de Evolução Trimestral está pronto. Envio o arquivo em seguida!`)}`, '_blank');
-  }, 800);
-}
-
-// ══════════════════════════════════════════
-// 🧮 Calculadora de Valor da Hora/Aula
-// ══════════════════════════════════════════
-function calcularValorHora() {
-  const custos = parseFloat(document.getElementById('calc-custos').value) || 0;
-  const investimento = parseFloat(document.getElementById('calc-investimento').value) || 0;
-  const prolabore = parseFloat(document.getElementById('calc-prolabore').value) || 0;
-  const aulas = parseFloat(document.getElementById('calc-aulas').value) || 0;
-  const duracao = parseFloat(document.getElementById('calc-duracao').value) || 60;
-  const el = document.getElementById('calc-resultado');
-  const totalNecessario = custos + investimento + prolabore;
-  localStorage.setItem('fp_calc_valor', JSON.stringify({custos,investimento,prolabore,aulas,duracao}));
-  if (aulas <= 0) { el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:8px 0">Informe o número de aulas/mês para calcular.</div>`; return; }
-  const valorPorAula = totalNecessario / aulas;
-  const valorPorHora = valorPorAula / (duracao/60);
-  el.innerHTML = `
-    <div style="background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:12px;padding:14px;margin-top:4px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px"><span>Total necessário / mês</span><span style="font-weight:700;color:var(--text)">R$ ${totalNecessario.toFixed(2)}</span></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-        <div style="background:var(--card);border-radius:10px;padding:10px;text-align:center">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Valor por aula</div>
-          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:19px;color:var(--accent)">R$ ${valorPorAula.toFixed(2)}</div>
-        </div>
-        <div style="background:var(--card);border-radius:10px;padding:10px;text-align:center">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Valor por hora</div>
-          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:19px;color:var(--accent)">R$ ${valorPorHora.toFixed(2)}</div>
-        </div>
-      </div>
-    </div>`;
-}
-function initCalcValorHora() {
-  const saved = JSON.parse(localStorage.getItem('fp_calc_valor') || '{}');
-  if (saved.custos!=null) document.getElementById('calc-custos').value = saved.custos;
-  if (saved.investimento!=null) document.getElementById('calc-investimento').value = saved.investimento;
-  if (saved.prolabore!=null) document.getElementById('calc-prolabore').value = saved.prolabore;
-  if (saved.aulas!=null) document.getElementById('calc-aulas').value = saved.aulas;
-  if (saved.duracao!=null) document.getElementById('calc-duracao').value = saved.duracao;
-  calcularValorHora();
-}
-
-// ══════════════════════════════════════════
-// 🤝 Radar de Parcerias
-// ══════════════════════════════════════════
-let parcerias = JSON.parse(localStorage.getItem('fp_parcerias') || '[]');
-function saveParcerias() { localStorage.setItem('fp_parcerias', JSON.stringify(parcerias)); }
-function addParceria() {
-  const nome = document.getElementById('parc-novo-nome').value.trim();
-  const especialidade = document.getElementById('parc-novo-especialidade').value.trim();
-  const whatsapp = document.getElementById('parc-novo-whatsapp').value.trim();
-  if (!nome) { toast('⚠️ Informe o nome'); return; }
-  parcerias.push({ id:'parc'+Date.now(), nome, especialidade, whatsapp, ultimoContato: new Date().toISOString() });
-  saveParcerias();
-  document.getElementById('parc-novo-nome').value = '';
-  document.getElementById('parc-novo-especialidade').value = '';
-  document.getElementById('parc-novo-whatsapp').value = '';
-  renderParcerias();
-  toast('🤝 Parceria adicionada!');
-}
-function deleteParceria(id) { parcerias = parcerias.filter(p => p.id !== id); saveParcerias(); renderParcerias(); }
-function marcarContatoParceria(id) {
-  const p = parcerias.find(x => x.id === id);
-  if (p) { p.ultimoContato = new Date().toISOString(); saveParcerias(); renderParcerias(); toast('✅ Contato registrado!'); }
-}
-function abrirWhatsappParceria(whatsapp, nome) {
-  if (!whatsapp) { toast('⚠️ Sem número de WhatsApp cadastrado'); return; }
-  const numero = whatsapp.replace(/\D/g,'');
-  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(`Olá ${nome.split(' ')[0]}! Tudo bem? Passando para manter contato e falar sobre parcerias no método de longevidade 💪`)}`, '_blank');
-}
-function renderParcerias() {
-  const el = document.getElementById('parcerias-list');
-  if (!el) return;
-  if (!parcerias.length) { el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum parceiro cadastrado ainda.</div>`; return; }
-  const hoje = new Date();
-  el.innerHTML = [...parcerias].sort((a,b)=> new Date(a.ultimoContato)-new Date(b.ultimoContato)).map(p => {
-    const ultimo = new Date(p.ultimoContato);
-    const dias = Math.floor((hoje - ultimo) / (1000*60*60*24));
-    const vencido = dias >= 90;
-    const proximoDias = 90 - dias;
-    return `<div style="border-bottom:1px solid var(--border);padding:9px 0">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <div style="font-size:13px;font-weight:700">${p.nome}</div>
-          ${p.especialidade ? `<div style="font-size:11px;color:var(--text2)">${p.especialidade}</div>` : ''}
-          <div style="font-size:11px;margin-top:3px;color:${vencido?'var(--red)':'var(--text3)'}">${vencido ? `⚠️ Contato atrasado há ${Math.max(dias-90,0)} dia(s)` : `Próximo contato em ${proximoDias} dia(s)`}</div>
-        </div>
-        <button onclick="deleteParceria('${p.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px">✕</button>
-      </div>
-      <div style="display:flex;gap:6px;margin-top:8px">
-        <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:7px" onclick="abrirWhatsappParceria('${p.whatsapp}','${p.nome.replace(/'/g,"\\'")}')">💬 WhatsApp</button>
-        <button class="btn btn-primary" style="flex:1;font-size:11px;padding:7px" onclick="marcarContatoParceria('${p.id}')">✅ Marquei contato</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ══════════════════════════════════════════
-// 📚 Biblioteca de Educação em Dor
-// ══════════════════════════════════════════
-let educacaoDor = JSON.parse(localStorage.getItem('fp_educacao_dor') || '[]');
-function saveEducacaoDor() { localStorage.setItem('fp_educacao_dor', JSON.stringify(educacaoDor)); }
-function addEducacaoDor() {
-  const titulo = document.getElementById('edu-novo-titulo').value.trim();
-  const tipo = document.getElementById('edu-novo-tipo').value;
-  const conteudo = document.getElementById('edu-novo-conteudo').value.trim();
-  if (!titulo || !conteudo) { toast('⚠️ Preencha título e conteúdo'); return; }
-  educacaoDor.unshift({ id: 'edu'+Date.now(), titulo, tipo, conteudo });
-  saveEducacaoDor();
-  document.getElementById('edu-novo-titulo').value = '';
-  document.getElementById('edu-novo-conteudo').value = '';
-  renderEducacaoDor();
-  toast('📚 Pílula de conhecimento salva!');
-}
-function deleteEducacaoDor(id) { educacaoDor = educacaoDor.filter(e => e.id !== id); saveEducacaoDor(); renderEducacaoDor(); }
-function toggleEducacaoDor(id) {
-  const el = document.getElementById('edu-body-'+id);
-  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-function renderEducacaoDor() {
-  const el = document.getElementById('educacao-dor-list');
-  if (!el) return;
-  if (!educacaoDor.length) { el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhuma pílula de conhecimento ainda.</div>`; return; }
-  el.innerHTML = educacaoDor.map(e => {
-    const isVideo = e.tipo === 'video';
-    const linkHtml = isVideo ? `<a href="${e.conteudo}" target="_blank" style="color:var(--blue);font-size:12px;word-break:break-all">${e.conteudo}</a>` : `<div style="font-size:12px;color:var(--text2);line-height:1.5;white-space:pre-wrap">${e.conteudo}</div>`;
-    return `<div style="border-bottom:1px solid var(--border);padding:9px 0">
-      <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleEducacaoDor('${e.id}')">
-        <span style="font-size:13px;font-weight:700">${isVideo?'🎬':'📝'} ${e.titulo}</span>
-        <button onclick="event.stopPropagation();deleteEducacaoDor('${e.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px">✕</button>
-      </div>
-      <div id="edu-body-${e.id}" style="display:none;margin-top:8px">${linkHtml}</div>
-    </div>`;
-  }).join('');
-}
-
-// ══════════════════════════════════════════
-// 🎁 Convite / Gift Card (referral)
-// ══════════════════════════════════════════
-function initPresenteForm() {
-  const nomeInput = document.getElementById('presente-nome-personal');
-  if (nomeInput && !nomeInput.value) {
-    nomeInput.value = localStorage.getItem('fp_presente_nome_personal') || '';
-  }
-}
-function gerarConvitePresente() {
-  const nomePersonal = document.getElementById('presente-nome-personal').value.trim() || 'Personal Trainer';
-  const nomeConvidado = document.getElementById('presente-nome-convidado').value.trim();
-  const tipo = document.getElementById('presente-tipo').value;
-  const isGift = tipo === 'gift';
-  const titulo = isGift ? 'Gift Card' : 'Convite para Aula Experimental';
-  const saudacao = nomeConvidado ? `Para ${nomeConvidado}` : 'Um presente especial para você';
-  const mensagem = isGift
-    ? 'Você ganhou uma aula experimental gratuita! Venha viver o método de treino focado em longevidade e qualidade de vida.'
-    : 'Você foi convidado(a) para uma aula experimental gratuita, sem compromisso. Venha conhecer o método de treino focado em longevidade e qualidade de vida.';
-
-  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><title>${titulo}</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',Arial,sans-serif;background:#f4efe3;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
-  .invite{background:linear-gradient(135deg,#2f3e36,#17211c);color:#f4efe3;border-radius:24px;padding:44px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;overflow:hidden}
-  .icon{width:64px;height:64px;border-radius:50%;border:3px solid #c9a667;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#c9a667;margin:0 auto 18px;font-family:Georgia,serif}
-  .kicker{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#c9a667;margin-bottom:10px}
-  h1{font-family:Georgia,serif;font-size:26px;margin-bottom:14px}
-  .sub{font-size:14px;color:rgba(244,239,227,.75);margin-bottom:26px}
-  .msg{font-size:14px;line-height:1.6;color:rgba(244,239,227,.9);margin-bottom:28px;padding:0 6px}
-  .divider{width:60px;height:2px;background:#c9a667;margin:0 auto 22px}
-  .from{font-size:13px;color:rgba(244,239,227,.6)}
-  .from b{color:#c9a667}
-  .btn-print{margin-top:26px;background:#c9a667;color:#17211c;border:none;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer}
-  @media print{body{background:#fff}.btn-print{display:none}}
-</style></head><body>
-<div class="invite">
-  <div class="icon">∞</div>
-  <div class="kicker">${saudacao}</div>
-  <h1>${titulo}</h1>
-  <div class="sub">Método de Treino &amp; Longevidade</div>
-  <div class="msg">${mensagem}</div>
-  <div class="divider"></div>
-  <div class="from">Com carinho,<br/><b>${nomePersonal}</b></div>
-  <button class="btn-print" onclick="window.print()">🖨️ Salvar como PDF</button>
-</div>
-</body></html>`;
-
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const w = window.open(url, '_blank');
-  if (!w) { toast('⚠️ Permita pop-ups para gerar o convite'); return; }
-  localStorage.setItem('fp_presente_nome_personal', nomePersonal);
-  toast('🎁 Convite gerado! Salve como PDF e compartilhe pelo WhatsApp');
+  renderRadarFrequencia();
+  renderAniversarios();
 }
 
 function initFasesChecklist() {
@@ -3318,9 +2711,103 @@ function renderHojeObjetivos() {
         ${sc.time?`<span style="font-size:11px;color:var(--accent);margin-left:6px">${sc.time}</span>`:''}
         ${sc.objetivo?`<div style="font-size:11px;color:var(--text2);margin-top:2px">🎯 ${sc.objetivo}</div>`:'<div style="font-size:11px;color:var(--text3);margin-top:2px">Sem objetivo definido</div>'}
       </div>
-      <button onclick="openScheduleModal('${s.id}')" style="font-size:10px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--text3);cursor:pointer">⚙️</button>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="confirmarPresencaWpp('${s.id}')" title="Confirmar presença via WhatsApp" style="font-size:10px;padding:4px 8px;border-radius:6px;border:1px solid rgba(37,211,102,.35);background:rgba(37,211,102,.12);color:#25d366;cursor:pointer">💬</button>
+        <button onclick="openScheduleModal('${s.id}')" style="font-size:10px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--text3);cursor:pointer">⚙️</button>
+      </div>
     </div>`;
   }).join('');
+}
+function confirmarPresencaWpp(studentId) {
+  const s = students.find(x => x.id === studentId);
+  if (!s) return;
+  const sc = scheduleData[studentId] || {};
+  const nome = s.name.split(' ')[0];
+  const hora = sc.time ? ` às *${sc.time}*` : '';
+  const msg = `Oi, ${nome}! 👋\n\nConfirma sua aula hoje${hora}? 💪\n\nQualquer imprevisto, só me avisar!`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  toast('💬 WhatsApp aberto!');
+}
+
+// ══════════════════════════════════════════
+// FASE 1 · Radar de Frequência
+// ══════════════════════════════════════════
+function getFaltasConsecutivas(studentId) {
+  const att = attendanceData[studentId] || {};
+  const dates = Object.keys(att).sort();
+  let streak = 0;
+  for (let i = dates.length - 1; i >= 0; i--) {
+    if (att[dates[i]] === 'absent') streak++;
+    else break;
+  }
+  return streak;
+}
+function renderRadarFrequencia() {
+  const el = document.getElementById('radar-frequencia-list');
+  if (!el) return;
+  const risco = students
+    .map(s => ({ s, streak: getFaltasConsecutivas(s.id) }))
+    .filter(x => x.streak >= 2)
+    .sort((a,b) => b.streak - a.streak);
+
+  if (!risco.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum aluno com faltas seguidas no momento. ✅</div>`;
+    return;
+  }
+  el.innerHTML = risco.map(({s, streak}) => {
+    const alto = streak >= 3;
+    const cor = alto ? 'var(--red)' : 'var(--orange)';
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <span style="font-weight:700;font-size:13px">${s.name.split(' ')[0]}</span>
+        <div style="font-size:11px;color:${cor};margin-top:2px">${alto?'🔴':'🟡'} ${streak} faltas seguidas ${alto?'— risco alto':''}</div>
+      </div>
+      <button onclick="openWppModal('${s.id}','ausencia')" style="font-size:10px;padding:5px 9px;border-radius:6px;border:1px solid rgba(37,211,102,.35);background:rgba(37,211,102,.12);color:#25d366;cursor:pointer;flex-shrink:0">💬 Falar</button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// FASE 1 · Aniversários
+// ══════════════════════════════════════════
+function diasAteAniversario(birthDate) {
+  if (!birthDate) return null;
+  const b = new Date(birthDate+'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  let next = new Date(today.getFullYear(), b.getMonth(), b.getDate());
+  if (next < today) next = new Date(today.getFullYear()+1, b.getMonth(), b.getDate());
+  return Math.round((next - today) / 86400000);
+}
+function renderAniversarios() {
+  const el = document.getElementById('aniversarios-list');
+  if (!el) return;
+  const proximos = students
+    .map(s => ({ s, dias: diasAteAniversario(s.birthDate) }))
+    .filter(x => x.dias !== null && x.dias <= 7)
+    .sort((a,b) => a.dias - b.dias);
+
+  if (!proximos.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum aniversário nos próximos 7 dias.</div>`;
+    return;
+  }
+  el.innerHTML = proximos.map(({s, dias}) => {
+    const label = dias === 0 ? '🎉 Hoje!' : dias === 1 ? 'Amanhã' : `Em ${dias} dias`;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <span style="font-weight:700;font-size:13px">${s.name.split(' ')[0]}</span>
+        <div style="font-size:11px;color:var(--accent);margin-top:2px">🎂 ${label}</div>
+      </div>
+      <button onclick="mandarParabensWpp('${s.id}')" style="font-size:10px;padding:5px 9px;border-radius:6px;border:1px solid rgba(37,211,102,.35);background:rgba(37,211,102,.12);color:#25d366;cursor:pointer;flex-shrink:0">💬 Parabenizar</button>
+    </div>`;
+  }).join('');
+}
+function mandarParabensWpp(studentId) {
+  const s = students.find(x => x.id === studentId);
+  if (!s) return;
+  const nome = s.name.split(' ')[0];
+  const msg = `Feliz aniversário, ${nome}! 🎉🎂\n\nQue seu novo ciclo venha com muita saúde, energia e disposição pra continuar evoluindo! 💪\n\nUm abraço do seu personal! 🥳`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  toast('💬 WhatsApp aberto!');
 }
 
 // ══════════════════════════════════════════
@@ -3423,179 +2910,6 @@ function renderNotasRapidas() {
         </div>
       </div>
       <div style="font-size:12px;color:var(--text)">${n.texto}</div>
-    </div>`;
-  }).join('');
-}
-
-// ══════════════════════════════════════════
-// FASE 3 · Funil de Conteúdo (Kanban)
-// ══════════════════════════════════════════
-const KANBAN_ETAPAS = ['Ideia','Roteiro','Gravação','Edição','Publicado'];
-let kanbanCards = JSON.parse(localStorage.getItem('fp_kanban') || '[]');
-function saveKanban() { localStorage.setItem('fp_kanban', JSON.stringify(kanbanCards)); }
-
-function addKanbanCard() {
-  const input = document.getElementById('kanban-novo-titulo');
-  const titulo = input.value.trim();
-  if (!titulo) { toast('⚠️ Dê um título ao conteúdo'); return; }
-  kanbanCards.push({ id: uid(), titulo, etapa: 0 });
-  saveKanban();
-  input.value = '';
-  renderKanban();
-}
-function moveKanbanCard(id, dir) {
-  const c = kanbanCards.find(k => k.id === id);
-  if (!c) return;
-  c.etapa = Math.max(0, Math.min(KANBAN_ETAPAS.length-1, c.etapa + dir));
-  saveKanban();
-  renderKanban();
-}
-function deleteKanbanCard(id) {
-  kanbanCards = kanbanCards.filter(k => k.id !== id);
-  saveKanban();
-  renderKanban();
-}
-function renderKanban() {
-  const el = document.getElementById('kanban-board');
-  if (!el) return;
-  el.innerHTML = KANBAN_ETAPAS.map((etapa, idx) => {
-    const cards = kanbanCards.filter(c => c.etapa === idx);
-    return `<div style="flex:0 0 150px;background:var(--card2);border-radius:12px;padding:9px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:8px">${etapa} ${cards.length?`(${cards.length})`:''}</div>
-      ${cards.map(c => `
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:8px;margin-bottom:6px">
-          <div style="font-size:12px;margin-bottom:6px">${c.titulo}</div>
-          <div style="display:flex;justify-content:space-between;gap:4px">
-            <button onclick="moveKanbanCard('${c.id}',-1)" ${idx===0?'disabled style="opacity:.3"':''} style="font-size:11px;background:none;border:none;color:var(--text2);cursor:pointer">◀</button>
-            <button onclick="deleteKanbanCard('${c.id}')" style="font-size:11px;background:none;border:none;color:var(--red);cursor:pointer">✕</button>
-            <button onclick="moveKanbanCard('${c.id}',1)" ${idx===KANBAN_ETAPAS.length-1?'disabled style="opacity:.3"':''} style="font-size:11px;background:none;border:none;color:var(--text2);cursor:pointer">▶</button>
-          </div>
-        </div>`).join('') || `<div style="font-size:11px;color:var(--text3);padding:6px 0">Vazio</div>`}
-    </div>`;
-  }).join('');
-}
-
-// ══════════════════════════════════════════
-// FASE 3 · Roadmap de Infoprodutos
-// ══════════════════════════════════════════
-const INFOP_MARCOS = ['Planejamento','Produção','Revisão','Lançamento'];
-let infoprodutos = JSON.parse(localStorage.getItem('fp_infoprodutos') || '[]');
-function saveInfoprodutos() { localStorage.setItem('fp_infoprodutos', JSON.stringify(infoprodutos)); }
-
-function addInfoproduto() {
-  const nome = document.getElementById('infop-novo-nome').value.trim();
-  const dataLancamento = document.getElementById('infop-novo-data').value;
-  if (!nome) { toast('⚠️ Dê um nome ao produto'); return; }
-  infoprodutos.push({ id: uid(), nome, dataLancamento, marcos: INFOP_MARCOS.map(() => false) });
-  saveInfoprodutos();
-  document.getElementById('infop-novo-nome').value = '';
-  document.getElementById('infop-novo-data').value = '';
-  renderInfoprodutos();
-}
-function toggleMarco(prodId, idx) {
-  const p = infoprodutos.find(x => x.id === prodId);
-  if (!p) return;
-  p.marcos[idx] = !p.marcos[idx];
-  saveInfoprodutos();
-  renderInfoprodutos();
-}
-function deleteInfoproduto(id) {
-  infoprodutos = infoprodutos.filter(p => p.id !== id);
-  saveInfoprodutos();
-  renderInfoprodutos();
-}
-function renderInfoprodutos() {
-  const el = document.getElementById('infoprodutos-list');
-  if (!el) return;
-  if (!infoprodutos.length) {
-    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum infoproduto cadastrado ainda.</div>`;
-    return;
-  }
-  el.innerHTML = infoprodutos.map(p => {
-    const done = p.marcos.filter(Boolean).length;
-    const pct = Math.round(done / p.marcos.length * 100);
-    const dataStr = p.dataLancamento ? new Date(p.dataLancamento+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
-    return `<div style="background:var(--card2);border-radius:12px;padding:12px;margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <div style="font-weight:700;font-size:13px">${p.nome}</div>
-        <button onclick="deleteInfoproduto('${p.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px">✕</button>
-      </div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">🚀 Lançamento: ${dataStr}</div>
-      <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px">
-        <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:3px"></div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        ${INFOP_MARCOS.map((m,i) => `<label style="display:flex;align-items:center;gap:4px;font-size:10px;color:${p.marcos[i]?'var(--accent)':'var(--text3)'};cursor:pointer">
-          <input type="checkbox" ${p.marcos[i]?'checked':''} onchange="toggleMarco('${p.id}',${i})" style="width:13px;height:13px;accent-color:var(--accent)"/> ${m}
-        </label>`).join('')}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ══════════════════════════════════════════
-// FASE 3 · Monitoramento de FIIs / Dividendos
-// ══════════════════════════════════════════
-let fiiData = JSON.parse(localStorage.getItem('fp_fii') || '{"meta":0,"aportes":[]}');
-function saveFii() { localStorage.setItem('fp_fii', JSON.stringify(fiiData)); }
-
-function setMetaFii() {
-  const meta = parseFloat(document.getElementById('fii-meta').value) || 0;
-  fiiData.meta = meta;
-  saveFii();
-  renderFii();
-  toast('✅ Meta salva');
-}
-function addAporteFii() {
-  const mes = document.getElementById('fii-novo-data').value;
-  const valor = parseFloat(document.getElementById('fii-novo-valor').value);
-  if (!mes || !valor) { toast('⚠️ Preencha mês e valor'); return; }
-  fiiData.aportes.unshift({ id: uid(), mes, valor });
-  saveFii();
-  document.getElementById('fii-novo-valor').value = '';
-  renderFii();
-  toast('✅ Aporte registrado');
-}
-function deleteAporteFii(id) {
-  fiiData.aportes = fiiData.aportes.filter(a => a.id !== id);
-  saveFii();
-  renderFii();
-}
-function renderFii() {
-  const metaInput = document.getElementById('fii-meta');
-  if (metaInput && document.activeElement !== metaInput) metaInput.value = fiiData.meta || '';
-
-  const progEl = document.getElementById('fii-progress');
-  const listEl = document.getElementById('fii-aportes-list');
-  if (!progEl || !listEl) return;
-
-  const now = new Date();
-  const mesAtual = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const aporteMesAtual = fiiData.aportes.filter(a => a.mes === mesAtual).reduce((s,a) => s + a.valor, 0);
-  const pct = fiiData.meta > 0 ? Math.min(100, Math.round(aporteMesAtual / fiiData.meta * 100)) : 0;
-
-  progEl.innerHTML = `
-    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
-      <span style="color:var(--text2)">Aportado este mês</span>
-      <span style="font-weight:700">R$ ${aporteMesAtual.toFixed(2)} ${fiiData.meta>0?`/ R$ ${fiiData.meta.toFixed(2)}`:''}</span>
-    </div>
-    <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden">
-      <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px"></div>
-    </div>`;
-
-  if (!fiiData.aportes.length) {
-    listEl.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum aporte registrado ainda.</div>`;
-    return;
-  }
-  listEl.innerHTML = fiiData.aportes.map(a => {
-    const [y,m] = a.mes.split('-');
-    const label = `${MONTHS_FULL ? MONTHS_FULL[parseInt(m)-1] : m}/${y}`;
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
-      <span style="font-size:12px;color:var(--text2)">${label}</span>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:13px;font-weight:700">R$ ${a.valor.toFixed(2)}</span>
-        <button onclick="deleteAporteFii('${a.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px">✕</button>
-      </div>
     </div>`;
   }).join('');
 }

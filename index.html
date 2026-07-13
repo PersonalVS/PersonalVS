@@ -802,6 +802,9 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
           <button class="btn btn-ghost" style="flex:1;font-size:12px" onclick="showNav('dashboard')">📊 Financeiro</button>
         </div>
 
+        <!-- Resumo do dia -->
+        <button class="btn btn-primary btn-full" style="margin-bottom:14px" onclick="gerarResumoDia()">📋 Resumo do dia via WhatsApp</button>
+
         <!-- Agenda inteligente: hoje -->
         <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
           <div style="font-weight:700;font-size:13px;margin-bottom:4px">🎯 Hoje: aluno + objetivo</div>
@@ -836,6 +839,13 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
           <div style="font-weight:700;font-size:13px;margin-bottom:4px">📉 Radar de Frequência</div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Alunos com faltas seguidas — sinal de risco de cancelamento antes que ele decida parar.</div>
           <div id="radar-frequencia-list"></div>
+        </div>
+
+        <!-- Aulas a repor -->
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:4px">📋 Aulas a Repor</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Faltas marcadas pra reposição — pra não esquecer nem virar discussão.</div>
+          <div id="aulas-repor-list"></div>
         </div>
 
         <!-- Aniversários -->
@@ -2236,12 +2246,106 @@ function toggleAttendance(studentId, dk) {
   if (!cur || cur === 'absent') {
     attendanceData[studentId][dk] = 'present';
     toast('✅ Presença registrada!');
+    saveAttendance();
+    renderAgenda();
   } else if (cur === 'present') {
-    attendanceData[studentId][dk] = 'absent';
-    toast('❌ Falta registrada');
+    openFaltaModal(studentId, dk);
   }
+}
+
+// ══════════════════════════════════════════
+// Motivo da falta + Aula a repor
+// ══════════════════════════════════════════
+let faltaMotivos = JSON.parse(localStorage.getItem('fp_falta_motivos') || '{}');
+function saveFaltaMotivos() { localStorage.setItem('fp_falta_motivos', JSON.stringify(faltaMotivos)); }
+let aulasARepor = JSON.parse(localStorage.getItem('fp_aulas_repor') || '[]');
+function saveAulasARepor() { localStorage.setItem('fp_aulas_repor', JSON.stringify(aulasARepor)); }
+
+function openFaltaModal(studentId, dk) {
+  const s = students.find(x => x.id === studentId);
+  if (!s) return;
+  const dataStr = new Date(dk+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});
+  const modalHtml = `
+    <div id="falta-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:flex-end;backdrop-filter:blur(4px)" onclick="closeFaltaModal(event)">
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;max-height:80vh;overflow-y:auto;animation:slideUp .28s ease">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;margin-bottom:4px">❌ Falta de ${s.name.split(' ')[0]}</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:16px">${dataStr}</div>
+        <div class="form-label">Motivo</div>
+        <select class="form-select" id="falta-motivo" style="margin-bottom:16px">
+          <option value="Doente">🤒 Doente</option>
+          <option value="Viagem">✈️ Viagem</option>
+          <option value="Sem aviso prévio">🚫 Sem aviso prévio</option>
+          <option value="Outro">✏️ Outro</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:20px;cursor:pointer">
+          <input type="checkbox" id="falta-repor" checked style="width:17px;height:17px;accent-color:var(--accent)"/> Marcar como aula a repor
+        </label>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeFaltaModal()">Cancelar</button>
+          <button class="btn btn-primary" style="flex:1" onclick="confirmarFalta('${studentId}','${dk}')">Registrar falta</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+function closeFaltaModal(e) {
+  const overlay = document.getElementById('falta-modal-overlay');
+  if (!overlay) return;
+  if (e && e.target !== overlay) return;
+  overlay.remove();
+}
+function confirmarFalta(studentId, dk) {
+  const motivo = document.getElementById('falta-motivo').value;
+  const repor = document.getElementById('falta-repor').checked;
+  attendanceData[studentId][dk] = 'absent';
   saveAttendance();
+  if (!faltaMotivos[studentId]) faltaMotivos[studentId] = {};
+  faltaMotivos[studentId][dk] = motivo;
+  saveFaltaMotivos();
+  if (repor) {
+    aulasARepor.push({ id: uid(), studentId, dataOriginal: dk, motivo, reposta: false });
+    saveAulasARepor();
+  }
+  closeFaltaModal();
+  toast(`❌ Falta registrada${repor?' · marcada pra repor':''}`);
   renderAgenda();
+  renderAulasARepor();
+}
+function marcarAulaReposta(id) {
+  const a = aulasARepor.find(x => x.id === id);
+  if (!a) return;
+  a.reposta = true;
+  saveAulasARepor();
+  renderAulasARepor();
+  toast('✅ Aula marcada como reposta!');
+}
+function excluirAulaARepor(id) {
+  aulasARepor = aulasARepor.filter(x => x.id !== id);
+  saveAulasARepor();
+  renderAulasARepor();
+}
+function renderAulasARepor() {
+  const el = document.getElementById('aulas-repor-list');
+  if (!el) return;
+  const pendentes = aulasARepor.filter(a => !a.reposta);
+  if (!pendentes.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhuma aula pendente de reposição. ✅</div>`;
+    return;
+  }
+  el.innerHTML = pendentes.map(a => {
+    const s = students.find(x => x.id === a.studentId);
+    const dataStr = new Date(a.dataOriginal+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <span style="font-weight:700;font-size:13px">${s ? s.name.split(' ')[0] : '—'}</span>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">Faltou em ${dataStr} · ${a.motivo}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="marcarAulaReposta('${a.id}')" style="font-size:10px;padding:5px 9px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--accent);cursor:pointer">✅ Reposta</button>
+        <button onclick="excluirAulaARepor('${a.id}')" style="font-size:10px;padding:5px 9px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--text3);cursor:pointer">✕</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // Schedule config modal
@@ -2710,6 +2814,7 @@ function initCriativo() {
   renderReavaliacoes();
   renderMetasPrazo();
   renderCicloTreino();
+  renderAulasARepor();
 }
 
 function initFasesChecklist() {
@@ -2779,6 +2884,42 @@ function confirmarPresencaWpp(studentId) {
   const msg = `Oi, ${nome}! 👋\n\nConfirma sua aula hoje${hora}? 💪\n\nQualquer imprevisto, só me avisar!`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
   toast('💬 WhatsApp aberto!');
+}
+
+// ══════════════════════════════════════════
+// FASE 1 · Resumo do Dia via WhatsApp
+// ══════════════════════════════════════════
+function gerarResumoDia() {
+  const dk = dateKey(new Date());
+  const today = new Date().getDay();
+  const agendados = students.filter(s => scheduleData[s.id]?.scheduledDays?.includes(today));
+
+  let presentes = 0, faltas = 0;
+  const faltasDetalhe = [];
+  agendados.forEach(s => {
+    const status = attendanceData[s.id]?.[dk];
+    if (status === 'present') presentes++;
+    else if (status === 'absent') {
+      faltas++;
+      const motivo = faltaMotivos[s.id]?.[dk] || 'sem motivo registrado';
+      faltasDetalhe.push(`   ❌ ${s.name.split(' ')[0]} (${motivo})`);
+    }
+  });
+  const naoMarcados = agendados.length - presentes - faltas;
+  const cobrancasPendentes = students.filter(s => s.payStatus === 'late').length;
+  const reporPendentes = aulasARepor.filter(a => !a.reposta).length;
+
+  const dataStr = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  let msg = `📋 *Resumo do dia* — ${dataStr}\n\n`;
+  msg += `✅ Aulas realizadas: ${presentes}\n`;
+  msg += `❌ Faltas: ${faltas}\n`;
+  if (faltasDetalhe.length) msg += faltasDetalhe.join('\n') + '\n';
+  if (naoMarcados > 0) msg += `⏳ Ainda não marcados: ${naoMarcados}\n`;
+  msg += `\n💰 Cobranças pendentes: ${cobrancasPendentes}`;
+  msg += `\n🔁 Aulas a repor em aberto: ${reporPendentes}`;
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  toast('📋 Resumo gerado! Envie pra você mesmo ou salve no seu chat favorito.');
 }
 
 // ══════════════════════════════════════════

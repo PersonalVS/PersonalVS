@@ -888,6 +888,27 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
         <div id="wpp-list"></div>
       </div>
 
+      <!-- Lista de espera -->
+      <div class="card">
+        <div class="card-title">📝 Lista de Espera</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Guarde quem demonstrou interesse pra chamar assim que abrir uma vaga.</div>
+        <div id="lista-espera-list" style="margin-bottom:12px"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="espera-nome" placeholder="Nome do interessado"/></div>
+          <div class="form-group"><label class="form-label">Contato</label><input class="form-input" id="espera-contato" placeholder="WhatsApp"/></div>
+        </div>
+        <div class="form-group"><label class="form-label">Observação (opcional)</label><input class="form-input" id="espera-obs" placeholder="Ex: prefere manhã, indicação da Dona Maria..."/></div>
+        <button class="btn btn-primary btn-full" style="font-size:12px" onclick="addListaEspera()">Adicionar à lista</button>
+      </div>
+
+      <!-- Vagas livres na semana -->
+      <div class="card">
+        <div class="card-title">📆 Vagas Livres na Semana</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Configure seu horário de trabalho pra ver rapidinho o que ainda está livre.</div>
+        <button class="btn btn-ghost btn-full" style="font-size:12px;margin-bottom:12px" onclick="abrirConfigHorarioTrabalho()">⚙️ Configurar horário de trabalho</button>
+        <div id="vagas-semana-list"></div>
+      </div>
+
       <!-- ══ FASE 2 ══ -->
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -2873,6 +2894,8 @@ function initCriativo() {
   renderPacotes();
   const cartaoInput = document.getElementById('cartao-contato');
   if (cartaoInput && !cartaoInput.value) cartaoInput.value = localStorage.getItem('fp_cartao_contato') || '';
+  renderListaEspera();
+  renderVagasSemana();
 }
 
 function initFasesChecklist() {
@@ -3282,6 +3305,177 @@ function mandarParabensWpp(studentId) {
   const msg = `Feliz aniversário, ${nome}! 🎉🎂\n\nQue seu novo ciclo venha com muita saúde, energia e disposição pra continuar evoluindo! 💪\n\nUm abraço do seu personal! 🥳`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
   toast('💬 WhatsApp aberto!');
+}
+
+// ══════════════════════════════════════════
+// FASE 1 · Lista de Espera
+// ══════════════════════════════════════════
+let listaEspera = JSON.parse(localStorage.getItem('fp_lista_espera') || '[]');
+function saveListaEspera() { localStorage.setItem('fp_lista_espera', JSON.stringify(listaEspera)); }
+
+function addListaEspera() {
+  const nome = document.getElementById('espera-nome').value.trim();
+  const contato = document.getElementById('espera-contato').value.trim();
+  const obs = document.getElementById('espera-obs').value.trim();
+  if (!nome) { toast('⚠️ Informe o nome do interessado'); return; }
+  listaEspera.push({ id: uid(), nome, contato, obs, data: dateKey(new Date()) });
+  saveListaEspera();
+  ['espera-nome','espera-contato','espera-obs'].forEach(id => document.getElementById(id).value = '');
+  renderListaEspera();
+  toast('✅ Adicionado à lista de espera');
+}
+function deleteListaEspera(id) {
+  listaEspera = listaEspera.filter(x => x.id !== id);
+  saveListaEspera();
+  renderListaEspera();
+}
+function chamarListaEspera(id) {
+  const p = listaEspera.find(x => x.id === id);
+  if (!p) return;
+  const nome = p.nome.split(' ')[0];
+  const msg = `Oi, ${nome}! Tudo bem? 👋\n\nAbriu uma vaga aqui no meu horário — lembrei que você tinha demonstrado interesse em treinar comigo. Ainda tem interesse? Posso te passar os detalhes! 💪`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  toast('💬 WhatsApp aberto!');
+}
+function renderListaEspera() {
+  const el = document.getElementById('lista-espera-list');
+  if (!el) return;
+  if (!listaEspera.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Ninguém na lista de espera no momento.</div>`;
+    return;
+  }
+  el.innerHTML = listaEspera.map(p => {
+    const dataStr = new Date(p.data+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+    return `<div style="background:var(--card2);border-radius:11px;padding:11px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px">
+        <div>
+          <div style="font-weight:700;font-size:13px">${p.nome}</div>
+          <div style="font-size:11px;color:var(--text2)">${p.contato || '—'} · desde ${dataStr}</div>
+          ${p.obs ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">${p.obs}</div>` : ''}
+        </div>
+        <button onclick="deleteListaEspera('${p.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;flex-shrink:0">✕</button>
+      </div>
+      <button onclick="chamarListaEspera('${p.id}')" style="font-size:11px;padding:6px 10px;border-radius:6px;border:1px solid rgba(37,211,102,.35);background:rgba(37,211,102,.12);color:#25d366;cursor:pointer;margin-top:4px">💬 Chamar agora</button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// FASE 1 · Vagas Livres na Semana
+// ══════════════════════════════════════════
+function getHorarioTrabalho() {
+  return JSON.parse(localStorage.getItem('fp_horario_trabalho') || 'null') || { dias: [1,2,3,4,5,6], inicio: '06:00', fim: '19:00', duracao: 60 };
+}
+function saveHorarioTrabalho(cfg) { localStorage.setItem('fp_horario_trabalho', JSON.stringify(cfg)); }
+
+function abrirConfigHorarioTrabalho() {
+  const cfg = getHorarioTrabalho();
+  const modalHtml = `
+    <div id="horario-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:flex-end;backdrop-filter:blur(4px)" onclick="closeHorarioModal(event)">
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px)+22px);width:100%;max-height:85vh;overflow-y:auto;animation:slideUp .28s ease">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;margin-bottom:16px">⚙️ Horário de Trabalho</div>
+        <div class="form-label">Dias que você atende</div>
+        <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+          ${DAY_NAMES_SHORT.map((d,i) => `<button id="ht-dia-${i}" onclick="toggleHtDia(${i})" style="padding:8px 12px;border-radius:9px;font-weight:700;font-size:12px;cursor:pointer;border:1px solid ${cfg.dias.includes(i)?'var(--accent)':'var(--border)'};background:${cfg.dias.includes(i)?'var(--accent-dim)':'var(--card)'};color:${cfg.dias.includes(i)?'var(--accent)':'var(--text3)'}">${d}</button>`).join('')}
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Início</label><input class="form-input" id="ht-inicio" type="time" value="${cfg.inicio}"/></div>
+          <div class="form-group"><label class="form-label">Fim</label><input class="form-input" id="ht-fim" type="time" value="${cfg.fim}"/></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duração de cada horário</label>
+          <select class="form-select" id="ht-duracao">
+            <option value="30" ${cfg.duracao==30?'selected':''}>30 minutos</option>
+            <option value="60" ${cfg.duracao==60?'selected':''}>60 minutos</option>
+            <option value="90" ${cfg.duracao==90?'selected':''}>90 minutos</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeHorarioModal()">Cancelar</button>
+          <button class="btn btn-primary" style="flex:1" onclick="salvarHorarioTrabalho()">Salvar</button>
+        </div>
+      </div>
+    </div>`;
+  window._htDias = [...cfg.dias];
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+function toggleHtDia(i) {
+  const idx = window._htDias.indexOf(i);
+  if (idx > -1) window._htDias.splice(idx,1); else window._htDias.push(i);
+  const btn = document.getElementById('ht-dia-'+i);
+  const ativo = window._htDias.includes(i);
+  btn.style.border = '1px solid ' + (ativo ? 'var(--accent)' : 'var(--border)');
+  btn.style.background = ativo ? 'var(--accent-dim)' : 'var(--card)';
+  btn.style.color = ativo ? 'var(--accent)' : 'var(--text3)';
+}
+function closeHorarioModal(e) {
+  const overlay = document.getElementById('horario-modal-overlay');
+  if (!overlay) return;
+  if (e && e.target !== overlay) return;
+  overlay.remove();
+}
+function salvarHorarioTrabalho() {
+  const cfg = {
+    dias: window._htDias.sort((a,b)=>a-b),
+    inicio: document.getElementById('ht-inicio').value || '06:00',
+    fim: document.getElementById('ht-fim').value || '19:00',
+    duracao: parseInt(document.getElementById('ht-duracao').value),
+  };
+  saveHorarioTrabalho(cfg);
+  closeHorarioModal();
+  renderVagasSemana();
+  toast('✅ Horário de trabalho salvo!');
+}
+function gerarSlotsDia(inicio, fim, duracao) {
+  const slots = [];
+  let [h,m] = inicio.split(':').map(Number);
+  const [hf,mf] = fim.split(':').map(Number);
+  while (h < hf || (h === hf && m < mf)) {
+    slots.push(String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'));
+    m += duracao;
+    while (m >= 60) { m -= 60; h++; }
+  }
+  return slots;
+}
+function renderVagasSemana() {
+  const el = document.getElementById('vagas-semana-list');
+  if (!el) return;
+  const cfg = getHorarioTrabalho();
+  if (!cfg.dias.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Configure seus dias de trabalho pra ver as vagas.</div>`;
+    return;
+  }
+  const slotsPadrao = gerarSlotsDia(cfg.inicio, cfg.fim, cfg.duracao);
+  const dias = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(); d.setDate(d.getDate()+i);
+    if (cfg.dias.includes(d.getDay())) dias.push(d);
+  }
+  el.innerHTML = dias.map(d => {
+    const diaSemana = d.getDay();
+    const ocupados = new Set(
+      students
+        .filter(s => scheduleData[s.id]?.scheduledDays?.includes(diaSemana) && scheduleData[s.id]?.time)
+        .map(s => scheduleData[s.id].time)
+    );
+    const livres = slotsPadrao.filter(t => !ocupados.has(t));
+    const label = i0Label(d);
+    return `<div style="margin-bottom:12px">
+      <div style="font-weight:700;font-size:12px;margin-bottom:6px">${label}</div>
+      ${livres.length
+        ? `<div style="display:flex;gap:6px;flex-wrap:wrap">${livres.map(t => `<span style="font-size:11px;padding:5px 9px;border-radius:7px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent)">${t}</span>`).join('')}</div>`
+        : `<div style="font-size:11px;color:var(--text3)">Sem horários livres</div>`}
+    </div>`;
+  }).join('');
+}
+function i0Label(d) {
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const alvo = new Date(d); alvo.setHours(0,0,0,0);
+  const diff = Math.round((alvo-hoje)/86400000);
+  const dataStr = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+  if (diff === 0) return `Hoje · ${dataStr}`;
+  if (diff === 1) return `Amanhã · ${dataStr}`;
+  return `${DAY_NAMES_FULL[d.getDay()]} · ${dataStr}`;
 }
 
 // ══════════════════════════════════════════

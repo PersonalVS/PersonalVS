@@ -418,6 +418,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
         </div>
         <div style="color:var(--blue);font-size:18px">›</div>
       </div>
+      <div id="pay-alert-home" style="display:none"></div>
       <div class="stats-row" id="stats-row"></div>
       <div class="search-wrap">
         <span class="sicon">🔍</span>
@@ -1011,6 +1012,12 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
       <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px">📊 Dashboard Financeiro</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Visão geral do seu negócio</div>
 
+      <!-- Resumo Rápido do Negócio -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">📋 Resumo Rápido do Negócio</div>
+        <div id="dash-resumo-rapido" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+      </div>
+
       <!-- Cards de resumo -->
       <div id="dash-summary" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"></div>
 
@@ -1522,7 +1529,41 @@ function goBack() {
 // ══════════════════════════════════════════
 // HOME
 // ══════════════════════════════════════════
-function renderHome() { renderStats(); renderStudentList(); }
+function renderHome() { renderPayAlertHome(); renderStats(); renderStudentList(); }
+
+// ══════════════════════════════════════════
+// 🔴 Alerta automático de vencimento (tela inicial)
+// ══════════════════════════════════════════
+function renderPayAlertHome() {
+  const el = document.getElementById('pay-alert-home');
+  if (!el) return;
+  const today = new Date().getDate();
+
+  const jaVencidas = students.filter(s => s.payStatus === 'late');
+  const venceHoje  = students.filter(s => s.payDay && s.payStatus !== 'late' && parseInt(s.payDay) === today);
+  const venceAmanha = students.filter(s => s.payDay && s.payStatus !== 'late' && parseInt(s.payDay) === today + 1);
+  const venceuNaoMarcado = students.filter(s => s.payDay && s.payStatus !== 'late' && parseInt(s.payDay) < today);
+
+  const total = jaVencidas.length + venceHoje.length + venceAmanha.length + venceuNaoMarcado.length;
+
+  if (!total) { el.style.display = 'none'; return; }
+
+  const partes = [];
+  if (jaVencidas.length || venceuNaoMarcado.length) partes.push(`${jaVencidas.length + venceuNaoMarcado.length} vencida${(jaVencidas.length+venceuNaoMarcado.length)!==1?'s':''}`);
+  if (venceHoje.length) partes.push(`${venceHoje.length} vence${venceHoje.length!==1?'m':''} hoje`);
+  if (venceAmanha.length) partes.push(`${venceAmanha.length} vence${venceAmanha.length!==1?'m':''} amanhã`);
+
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div onclick="showNav('mensalidade')" style="display:flex;align-items:center;gap:11px;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:13px;padding:12px 14px;margin-bottom:14px;cursor:pointer">
+      <div style="font-size:22px">🔴</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--red)">${total} mensalidade${total!==1?'s':''} ${total!==1?'precisam':'precisa'} de atenção</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">${partes.join(' · ')}</div>
+      </div>
+      <div style="color:var(--red);font-size:18px">›</div>
+    </div>`;
+}
 
 function renderStats() {
   const t = students.length;
@@ -1854,7 +1895,8 @@ function showStudentDetail(id) {
     setEl('detail-goal', s.goal ? `🎯 ${s.goal}` : '');
 
     const pi = payInfo(s);
-    setHtml('detail-pay-badge', pi ? `<span class="pay-badge ${pi.cls}" title="${pi.tip}">${pi.label}</span>` : '');
+    const streakLbl = getStreakLabel(s);
+    setHtml('detail-pay-badge', `${pi ? `<span class="pay-badge ${pi.cls}" title="${pi.tip}">${pi.label}</span>` : ''}${streakLbl ? `<div style="font-size:11px;color:var(--accent);font-weight:700;margin-top:4px;white-space:nowrap">${streakLbl}</div>` : ''}`);
 
     const bmi = calcBMI(parseFloat(s.weight), parseFloat(s.height));
     const [bmiTxt, bmiColor] = bmi ? bmiLabel(parseFloat(bmi)) : ['—', 'var(--text)'];
@@ -2301,11 +2343,13 @@ function renderAgenda() {
       const total = present + absent;
       const pct = total > 0 ? Math.round(present/total*100) : 0;
       const name = s.name.split(' ').slice(0,2).join(' ');
+      const streakHtml = getStreakLabel(s);
       return `<div class="attend-row">
         <div style="width:28px;height:28px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:13px">${s.photo?`<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>`:'🧍'}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
           <div class="attend-bar-wrap" style="margin-top:4px"><div class="attend-bar" style="width:${pct}%"></div></div>
+          ${streakHtml ? `<div style="font-size:10px;color:var(--accent);margin-top:3px;font-weight:600">${streakHtml}</div>` : ''}
         </div>
         <div style="text-align:right;flex-shrink:0;min-width:64px">
           <div style="font-size:12px;font-weight:700;color:var(--accent)">${present} aulas</div>
@@ -3267,6 +3311,26 @@ function getFaltasConsecutivas(studentId) {
     else break;
   }
   return streak;
+}
+
+// 🔥 Streak positivo: presenças seguidas sem falta (motivação do aluno)
+function getPresencaStreak(studentId) {
+  const att = attendanceData[studentId] || {};
+  const dates = Object.keys(att).sort();
+  let streak = 0;
+  for (let i = dates.length - 1; i >= 0; i--) {
+    if (att[dates[i]] === 'present') streak++;
+    else break;
+  }
+  return streak;
+}
+function getStreakLabel(s) {
+  const sessoes = getPresencaStreak(s.id);
+  if (sessoes < 2) return '';
+  const diasSemana = parseInt(s.daysPerWeek) || 3;
+  const semanas = Math.floor(sessoes / diasSemana);
+  if (semanas >= 1) return `🔥 ${semanas} semana${semanas!==1?'s':''} seguida${semanas!==1?'s':''} sem falta`;
+  return `🔥 ${sessoes} aulas seguidas sem falta`;
 }
 function renderRadarFrequencia() {
   const el = document.getElementById('radar-frequencia-list');
@@ -4338,6 +4402,7 @@ function schedulePaymentNotifications() {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   const today = new Date();
   const todayDay = today.getDate();
+  let vencidasCount = 0;
   students.forEach(s => {
     if (!s.payDay || s.payStatus === 'late') return;
     const pd = parseInt(s.payDay);
@@ -4355,8 +4420,17 @@ function schedulePaymentNotifications() {
           body: `Mensalidade de ${s.name.split(' ')[0]} vence amanhã (dia ${pd})`,
         });
       }, 3000);
+    } else if (diff < 0) {
+      vencidasCount++;
     }
   });
+  if (vencidasCount > 0) {
+    setTimeout(() => {
+      new Notification('🔴 PersonalVS — Mensalidades vencidas', {
+        body: `${vencidasCount} aluno${vencidasCount!==1?'s':''} com mensalidade vencida e ainda não marcada como pendente.`,
+      });
+    }, 4000);
+  }
 }
 
 // ══════════════════════════════════════════
@@ -4765,7 +4839,56 @@ function getDashData() {
 }
 function saveDashData(d) { localStorage.setItem('fp_dash_hist', JSON.stringify(d)); }
 
+// ══════════════════════════════════════════
+// 📋 Resumo Rápido do Negócio
+// ══════════════════════════════════════════
+function renderResumoRapidoNegocio() {
+  const el = document.getElementById('dash-resumo-rapido');
+  if (!el) return;
+
+  const alunosAtivos = students.length;
+
+  // Taxa média de frequência do mês corrente (todos os alunos combinados)
+  const now = new Date();
+  const monthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  let presentes = 0, faltas = 0;
+  students.forEach(s => {
+    const att = attendanceData[s.id] || {};
+    Object.entries(att).forEach(([k,v]) => {
+      if (k.startsWith(monthKey)) { if (v==='present') presentes++; else if (v==='absent') faltas++; }
+    });
+  });
+  const totalAulas = presentes + faltas;
+  const freqMedia = totalAulas > 0 ? Math.round(presentes/totalAulas*100) : null;
+
+  // Receita prevista do mês
+  const receitaPrevista = students.filter(s => s.valor).reduce((a,s) => a + parseFloat(s.valor||0), 0);
+  const fmt = v => `R$ ${v.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,'.')}`;
+
+  // Alunos com risco de cancelamento (faltas seguidas >= 2)
+  const risco = students.filter(s => getFaltasConsecutivas(s.id) >= 2).length;
+
+  el.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">👥 Alunos ativos</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px">${alunosAtivos}</div>
+    </div>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">📅 Frequência média</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--blue)">${freqMedia !== null ? freqMedia+'%' : '—'}</div>
+    </div>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">💰 Receita prevista</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent)">${fmt(receitaPrevista)}</div>
+    </div>
+    <div onclick="showNav('fases')" style="background:${risco>0?'rgba(255,77,106,.08)':'var(--card2)'};border:1px solid ${risco>0?'rgba(255,77,106,.25)':'var(--border)'};border-radius:12px;padding:13px;cursor:pointer">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">⚠️ Risco cancelamento</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:${risco>0?'var(--red)':'var(--text)'}">${risco}</div>
+    </div>`;
+}
+
 function renderDashboard() {
+  renderResumoRapidoNegocio();
   const now = new Date();
   const thisYear = now.getFullYear();
   const thisMonth = now.getMonth();

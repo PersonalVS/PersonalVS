@@ -2316,16 +2316,38 @@ function renderAgenda() {
   }
 }
 
+let lastToggleClick = {};
 function toggleAttendance(studentId, dk) {
+  // Trava contra clique/toque duplicado: em telas touch, um único toque às
+  // vezes dispara o evento de clique 2x muito rápido. Sem essa trava, isso
+  // fazia o 3º clique (reverter) "não funcionar" — ele revertia e, na sequência,
+  // o disparo duplicado já marcava presença de novo, no mesmo instante.
+  const clickKey = studentId + '|' + dk;
+  const now = Date.now();
+  if (lastToggleClick[clickKey] && (now - lastToggleClick[clickKey]) < 400) return;
+  lastToggleClick[clickKey] = now;
+
   if (!attendanceData[studentId]) attendanceData[studentId] = {};
   const cur = attendanceData[studentId][dk];
-  if (!cur || cur === 'absent') {
+  if (!cur) {
     attendanceData[studentId][dk] = 'present';
     toast('✅ Presença registrada!');
     saveAttendance();
     renderAgenda();
   } else if (cur === 'present') {
     openFaltaModal(studentId, dk);
+  } else if (cur === 'absent') {
+    // Volta ao estado original (antes de qualquer marcação)
+    delete attendanceData[studentId][dk];
+    if (faltaMotivos[studentId]) delete faltaMotivos[studentId][dk];
+    saveFaltaMotivos();
+    saveAttendance();
+    aulasARepor = aulasARepor.filter(a => !(a.studentId === studentId && a.dataOriginal === dk));
+    saveAulasARepor();
+    toast('↩️ Marcação removida');
+    renderAgenda();
+    renderRadarFrequencia();
+    renderAulasARepor();
   }
 }
 
@@ -2338,8 +2360,12 @@ let aulasARepor = JSON.parse(localStorage.getItem('fp_aulas_repor') || '[]');
 function saveAulasARepor() { localStorage.setItem('fp_aulas_repor', JSON.stringify(aulasARepor)); }
 
 function openFaltaModal(studentId, dk) {
+  faltaConfirmando = false;
   const s = students.find(x => x.id === studentId);
   if (!s) return;
+  // Remove qualquer modal de falta que por algum motivo já esteja aberto
+  // (ex: toque duplicado) antes de abrir um novo — evita 2 overlays empilhados.
+  document.querySelectorAll('#falta-modal-overlay').forEach(el => el.remove());
   const dataStr = new Date(dk+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});
   const modalHtml = `
     <div id="falta-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:flex-end;backdrop-filter:blur(4px)" onclick="closeFaltaModal(event)">
@@ -2365,12 +2391,15 @@ function openFaltaModal(studentId, dk) {
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 function closeFaltaModal(e) {
-  const overlay = document.getElementById('falta-modal-overlay');
-  if (!overlay) return;
-  if (e && e.target !== overlay) return;
-  overlay.remove();
+  const overlays = document.querySelectorAll('#falta-modal-overlay');
+  if (!overlays.length) return;
+  if (e && ![...overlays].includes(e.target)) return;
+  overlays.forEach(el => el.remove());
 }
+let faltaConfirmando = false;
 function confirmarFalta(studentId, dk) {
+  if (faltaConfirmando) return;
+  faltaConfirmando = true;
   const motivo = document.getElementById('falta-motivo').value;
   const repor = document.getElementById('falta-repor').checked;
   attendanceData[studentId][dk] = 'absent';

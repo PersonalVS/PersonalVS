@@ -1355,18 +1355,92 @@ function bmiLabel(b) {
   return ['Obesidade','var(--red)'];
 }
 
-// Payment status helpers
+// ══════════════════════════════════════════
+// Payment status helpers · sistema de ciclo real (paidUntil)
+// ══════════════════════════════════════════
+
+// Retorna a data (dia payDayNum) dentro do mês/ano informado, ajustando para
+// o último dia do mês quando o mês não tem esse dia (ex: dia 31 em fevereiro).
+function diaVencimentoData(payDayNum, ano, mes) {
+  const ultimoDiaMes = new Date(ano, mes+1, 0).getDate();
+  const dia = Math.min(payDayNum, ultimoDiaMes);
+  return new Date(ano, mes, dia);
+}
+
+// Retorna a primeira data com dia-do-mês = payDayNum estritamente posterior a dataRef.
+function proximoVencimentoApos(payDayNum, dataRef) {
+  let ano = dataRef.getFullYear(), mes = dataRef.getMonth();
+  let candidato = diaVencimentoData(payDayNum, ano, mes);
+  if (candidato <= dataRef) {
+    mes += 1; if (mes > 11) { mes = 0; ano += 1; }
+    candidato = diaVencimentoData(payDayNum, ano, mes);
+  }
+  return candidato;
+}
+
+// Garante que o aluno tenha um "paidUntil" (data até quando está em dia).
+// Migra dados antigos: se já existia payStatus==='late', considera vencido;
+// caso contrário assume o vencimento do dia cadastrado no mês atual.
+function ensurePaidUntil(s) {
+  if (!s.payDay) return;
+  if (s.paidUntil) return;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const payDayNum = parseInt(s.payDay);
+  const vencAtual = diaVencimentoData(payDayNum, hoje.getFullYear(), hoje.getMonth());
+  if (s.payStatus === 'late') {
+    const ontem = new Date(hoje); ontem.setDate(ontem.getDate()-1);
+    s.paidUntil = ontem.toISOString().slice(0,10);
+  } else {
+    s.paidUntil = vencAtual.toISOString().slice(0,10);
+  }
+}
+
+// Retorna { label, cls, tip, atrasado, diasAtraso, diffDias, dataVenc } ou null se não tem vencimento.
 function payInfo(s) {
   if (!s.payDay) return null;
-  const today = new Date();
-  const day = today.getDate();
+  ensurePaidUntil(s);
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const venc = new Date(s.paidUntil + 'T00:00:00');
+  const diffDias = Math.round((venc - hoje) / 86400000);
   const payDay = parseInt(s.payDay);
-  const status = s.payStatus || 'ok';
-  if (status === 'late') return { label: '❌ Pendente', cls: 'pay-late', tip: `Vence dia ${payDay}` };
-  const diff = payDay - day;
-  if (diff < 0) return { label: '⚠️ Venceu', cls: 'pay-near', tip: `Venceu dia ${payDay}` };
-  if (diff <= 3) return { label: `⏰ Vence em ${diff}d`, cls: 'pay-near', tip: `Vence dia ${payDay}` };
-  return { label: `✅ Dia ${payDay}`, cls: 'pay-ok', tip: `Vence dia ${payDay}` };
+  const dataVencFmt = venc.toLocaleDateString('pt-BR');
+
+  if (diffDias < 0) {
+    return { label: `❌ ${-diffDias}d em atraso`, cls: 'pay-late', tip: `Venceu em ${dataVencFmt}`, atrasado: true, diasAtraso: -diffDias, diffDias, dataVenc: venc };
+  }
+  if (diffDias === 0) {
+    return { label: '⚠️ Vence hoje', cls: 'pay-near', tip: `Vence hoje (dia ${payDay})`, atrasado: false, diasAtraso: 0, diffDias, dataVenc: venc };
+  }
+  if (diffDias <= 3) {
+    return { label: `⏰ Vence em ${diffDias}d`, cls: 'pay-near', tip: `Vence em ${dataVencFmt}`, atrasado: false, diasAtraso: 0, diffDias, dataVenc: venc };
+  }
+  return { label: `✅ Dia ${payDay}`, cls: 'pay-ok', tip: `Em dia até ${dataVencFmt}`, atrasado: false, diasAtraso: 0, diffDias, dataVenc: venc };
+}
+
+// Marca o aluno como pago: avança o vencimento para o próximo ciclo (mês seguinte).
+function markPaid(id) {
+  const s = students.find(x => x.id === id);
+  if (!s || !s.payDay) return;
+  ensurePaidUntil(s);
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const vencAtual = new Date(s.paidUntil + 'T00:00:00');
+  const base = vencAtual > hoje ? vencAtual : hoje;
+  const proximo = proximoVencimentoApos(parseInt(s.payDay), base);
+  s.paidUntil = proximo.toISOString().slice(0,10);
+  s.payStatus = 'ok';
+  save(); renderMensalidade(); renderHome(); renderStudentList();
+  toast(`✅ ${s.name} marcado como pago! Próx. vencimento: ${proximo.toLocaleDateString('pt-BR')}`);
+}
+
+// Marca manualmente o aluno como pendente/atrasado (força vencido a partir de hoje).
+function markPending(id) {
+  const s = students.find(x => x.id === id);
+  if (!s) return;
+  const ontem = new Date(); ontem.setHours(0,0,0,0); ontem.setDate(ontem.getDate()-1);
+  s.paidUntil = ontem.toISOString().slice(0,10);
+  s.payStatus = 'late';
+  save(); renderMensalidade(); renderHome(); renderStudentList();
+  toast(`⚠️ ${s.name} marcado como pendente`);
 }
 
 // ══════════════════════════════════════════
@@ -1537,38 +1611,53 @@ function renderHome() { renderPayAlertHome(); renderStats(); renderStudentList()
 function renderPayAlertHome() {
   const el = document.getElementById('pay-alert-home');
   if (!el) return;
-  const today = new Date().getDate();
 
-  const jaVencidas = students.filter(s => s.payStatus === 'late');
-  const venceHoje  = students.filter(s => s.payDay && s.payStatus !== 'late' && parseInt(s.payDay) === today);
-  const venceAmanha = students.filter(s => s.payDay && s.payStatus !== 'late' && parseInt(s.payDay) === today + 1);
-  const venceuNaoMarcado = students.filter(s => s.payDay && s.payStatus !== 'late' && parseInt(s.payDay) < today);
+  const comInfo = students.filter(s => s.payDay).map(s => ({ s, pi: payInfo(s) }));
+  const atrasados = comInfo.filter(x => x.pi.atrasado).sort((a,b) => b.pi.diasAtraso - a.pi.diasAtraso);
+  const venceHoje = comInfo.filter(x => !x.pi.atrasado && x.pi.diffDias === 0);
+  const venceAmanha = comInfo.filter(x => !x.pi.atrasado && x.pi.diffDias === 1);
 
-  const total = jaVencidas.length + venceHoje.length + venceAmanha.length + venceuNaoMarcado.length;
-
+  const total = atrasados.length + venceHoje.length + venceAmanha.length;
   if (!total) { el.style.display = 'none'; return; }
 
   const partes = [];
-  if (jaVencidas.length || venceuNaoMarcado.length) partes.push(`${jaVencidas.length + venceuNaoMarcado.length} vencida${(jaVencidas.length+venceuNaoMarcado.length)!==1?'s':''}`);
+  if (atrasados.length) partes.push(`${atrasados.length} vencida${atrasados.length!==1?'s':''}`);
   if (venceHoje.length) partes.push(`${venceHoje.length} vence${venceHoje.length!==1?'m':''} hoje`);
   if (venceAmanha.length) partes.push(`${venceAmanha.length} vence${venceAmanha.length!==1?'m':''} amanhã`);
 
+  // Mostra até 3 alunos com ação rápida "Marcar pago" — prioriza os mais atrasados
+  const destaque = [...atrasados, ...venceHoje, ...venceAmanha].slice(0, 3);
+  const restantes = total - destaque.length;
+
+  const itensHtml = destaque.map(({s, pi}) => `
+    <div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin-top:6px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+        <div style="font-size:10.5px;color:${pi.atrasado?'var(--red)':'var(--orange)'};margin-top:1px">${pi.label}</div>
+      </div>
+      <button class="btn btn-sm btn-outline" style="flex-shrink:0;padding:6px 10px;font-size:11px" onclick="event.stopPropagation(); markPaid('${s.id}')">✅ Marcar pago</button>
+    </div>`).join('');
+
   el.style.display = 'block';
   el.innerHTML = `
-    <div onclick="showNav('mensalidade')" style="display:flex;align-items:center;gap:11px;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:13px;padding:12px 14px;margin-bottom:14px;cursor:pointer">
-      <div style="font-size:22px">🔴</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:700;color:var(--red)">${total} mensalidade${total!==1?'s':''} ${total!==1?'precisam':'precisa'} de atenção</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:2px">${partes.join(' · ')}</div>
+    <div style="background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:13px;padding:12px 14px;margin-bottom:14px">
+      <div onclick="showNav('mensalidade')" style="display:flex;align-items:center;gap:11px;cursor:pointer">
+        <div style="font-size:22px">🔴</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:700;color:var(--red)">${total} mensalidade${total!==1?'s':''} ${total!==1?'precisam':'precisa'} de atenção</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">${partes.join(' · ')}</div>
+        </div>
+        <div style="color:var(--red);font-size:18px">›</div>
       </div>
-      <div style="color:var(--red);font-size:18px">›</div>
+      ${itensHtml}
+      ${restantes > 0 ? `<div onclick="showNav('mensalidade')" style="text-align:center;font-size:11px;color:var(--red);margin-top:8px;cursor:pointer;font-weight:600">Ver mais ${restantes} ›</div>` : ''}
     </div>`;
 }
 
 function renderStats() {
   const t = students.length;
   const w = students.filter(s => Object.values(s.exercises||{}).some(e => e.length > 0)).length;
-  const late = students.filter(s => s.payDay && s.payStatus === 'late').length;
+  const late = students.filter(s => s.payDay && payInfo(s)?.atrasado).length;
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${t}</div><div class="stat-lbl">Alunos</div></div>
     <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${w}</div><div class="stat-lbl">Com treino</div></div>
@@ -1611,14 +1700,14 @@ function renderStudentList() {
   let list = students.filter(s => s.name.toLowerCase().includes(q));
 
   // Filter
-  if (activeFilter === 'late')    list = list.filter(s => s.payStatus === 'late');
-  else if (activeFilter === 'ok') list = list.filter(s => s.payDay && s.payStatus !== 'late');
+  if (activeFilter === 'late')    list = list.filter(s => payInfo(s)?.atrasado);
+  else if (activeFilter === 'ok') list = list.filter(s => s.payDay && !payInfo(s)?.atrasado);
   else if (activeFilter === 'active')  list = list.filter(s => Object.values(s.exercises||{}).some(e=>e.length>0));
   else if (activeFilter === 'pending') list = list.filter(s => !Object.values(s.exercises||{}).some(e=>e.length>0));
 
   // Sort
   if (sortMode === 'az') list = [...list].sort((a,b) => a.name.localeCompare(b.name,'pt'));
-  else if (sortMode === 'late') list = [...list].sort((a,b) => (b.payStatus==='late'?1:0) - (a.payStatus==='late'?1:0));
+  else if (sortMode === 'late') list = [...list].sort((a,b) => (payInfo(b)?.atrasado?1:0) - (payInfo(a)?.atrasado?1:0));
   else if (sortMode === 'active') list = [...list].sort((a,b) => {
     const ha = Object.values(a.exercises||{}).some(e=>e.length>0);
     const hb = Object.values(b.exercises||{}).some(e=>e.length>0);
@@ -1714,6 +1803,24 @@ function updateCycleHint() {
   document.getElementById('cycle-hint-text').textContent = cycleLetters(parseInt(document.getElementById('f-cycle').value)).join(' → ');
 }
 
+// Sincroniza o toggle manual "Em dia / Pendente" do formulário com o sistema de ciclo real.
+// Só age quando o usuário efetivamente MUDOU o status pelo formulário.
+function applyManualPayToggle(s, novoStatus, prevStatus) {
+  if (!s.payDay) return;
+  ensurePaidUntil(s);
+  if (novoStatus === 'late' && prevStatus !== 'late') {
+    const ontem = new Date(); ontem.setHours(0,0,0,0); ontem.setDate(ontem.getDate()-1);
+    s.paidUntil = ontem.toISOString().slice(0,10);
+  } else if (novoStatus !== 'late' && prevStatus === 'late') {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const vencAtual = new Date(s.paidUntil + 'T00:00:00');
+    const base = vencAtual > hoje ? vencAtual : hoje;
+    s.paidUntil = proximoVencimentoApos(parseInt(s.payDay), base).toISOString().slice(0,10);
+  }
+  // payStatus vira só um espelho do estado derivado (mantido por compatibilidade)
+  s.payStatus = payInfo(s)?.atrasado ? 'late' : 'ok';
+}
+
 function saveStudent() {
   try {
     const nameEl   = document.getElementById('f-name');
@@ -1783,6 +1890,7 @@ function saveStudent() {
       const idx = students.findIndex(s => s.id === selectedStudentId);
       if (idx === -1) { toast('❌ Aluno não encontrado'); return; }
       const prev = students[idx];
+      const prevPayStatus = prev.payStatus || 'ok';
       const bmi = calcBMI(parseFloat(data.weight), parseFloat(data.height));
       const entry = { date: new Date().toISOString(), weight: data.weight, bodyFat: data.bodyFat, muscleMass: data.muscleMass, bmi };
       const history = Array.isArray(prev.progressHistory) ? prev.progressHistory : [];
@@ -1790,6 +1898,7 @@ function saveStudent() {
       const changed = !lastE || lastE.weight !== data.weight || lastE.bodyFat !== data.bodyFat || lastE.muscleMass !== data.muscleMass;
       if (changed) history.push(entry);
       students[idx] = { ...prev, ...data, progressHistory: history };
+      applyManualPayToggle(students[idx], data.payStatus, prevPayStatus);
       save();
       toast('✅ Aluno atualizado!');
       pendingProfilePhoto = null;
@@ -1809,6 +1918,7 @@ function saveStudent() {
       } catch(e) { exercises = {}; }
 
       const newStudent = { ...data, id: uid(), exercises, progressHistory: [firstEntry] };
+      ensurePaidUntil(newStudent);
       students.push(newStudent);
       save();
       toast('✅ Aluno cadastrado com sucesso!');
@@ -2559,26 +2669,25 @@ function closeSchedModal(e) {
 // MENSALIDADE
 // ══════════════════════════════════════════
 function renderMensalidade() {
-  const today = new Date();
-  const day = today.getDate();
-  const tomorrow = day + 1;
-
-  // Alerts: vence hoje ou amanhã (só pendentes)
+  // Alerts: atrasados, vence hoje, vence amanhã
   const alertsEl = document.getElementById('pay-alerts-box');
   const alertsHtml = [];
-  students.forEach(s => {
-    if (!s.payDay || s.payStatus !== 'late') {
-      const pd = parseInt(s.payDay);
-      if (pd === day) alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🔴</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--red)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence HOJE (dia ${pd})</div></div><button class="btn btn-sm btn-danger" onclick="markPaid('${s.id}')">Marcar pago</button></div>`);
-      else if (pd === tomorrow) alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🟡</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--orange)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence amanhã (dia ${pd})</div></div></div>`);
+  students.filter(s => s.payDay).forEach(s => {
+    const pi = payInfo(s);
+    if (pi.atrasado) {
+      alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🔴</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--red)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">${pi.diasAtraso} dia${pi.diasAtraso!==1?'s':''} em atraso</div></div><button class="btn btn-sm btn-danger" onclick="markPaid('${s.id}')">Marcar pago</button></div>`);
+    } else if (pi.diffDias === 0) {
+      alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🔴</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--red)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence HOJE</div></div><button class="btn btn-sm btn-danger" onclick="markPaid('${s.id}')">Marcar pago</button></div>`);
+    } else if (pi.diffDias === 1) {
+      alertsHtml.push(`<div style="display:flex;align-items:center;gap:10px;background:rgba(255,170,59,.1);border:1px solid rgba(255,170,59,.35);border-radius:12px;padding:11px 13px;margin-bottom:8px"><span style="font-size:20px">🟡</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--orange)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Mensalidade vence amanhã</div></div><button class="btn btn-sm btn-outline" onclick="markPaid('${s.id}')">Marcar pago</button></div>`);
     }
   });
   alertsEl.innerHTML = alertsHtml.length ? `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚠️ Alertas</div>${alertsHtml.join('')}` : '';
 
   // Stats financeiros
   const comVenc = students.filter(s => s.payDay).length;
-  const pagos = students.filter(s => s.payDay && s.payStatus !== 'late');
-  const pend  = students.filter(s => s.payDay && s.payStatus === 'late');
+  const pagos = students.filter(s => s.payDay && !payInfo(s)?.atrasado);
+  const pend  = students.filter(s => s.payDay && payInfo(s)?.atrasado);
 
   const fmt = v => v > 0 ? `R$ ${v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.')}` : '—';
   const receitaTotal    = students.filter(s=>s.valor).reduce((acc,s)=>acc+parseFloat(s.valor||0),0);
@@ -2629,17 +2738,8 @@ function renderMensalidade() {
   }
   payList.innerHTML = withPay.sort((a,b) => parseInt(a.payDay)-parseInt(b.payDay)).map(s => {
     const pi = payInfo(s);
-    const isPend = s.payStatus === 'late';
-    const pd = parseInt(s.payDay);
-    // Countdown calculation
-    const now2 = new Date();
-    const todayDay = now2.getDate();
-    let daysLeft = pd - todayDay;
-    if (daysLeft < 0) {
-      // Next month
-      const daysInMonth = new Date(now2.getFullYear(), now2.getMonth()+2, 0).getDate();
-      daysLeft = daysInMonth - todayDay + pd;
-    }
+    const isPend = pi.atrasado;
+    const daysLeft = pi.diffDias;
     let countdownHtml = '';
     if (!isPend) {
       const countdownColor = daysLeft <= 3 ? 'var(--red)' : daysLeft <= 7 ? 'var(--orange)' : 'var(--accent)';
@@ -2667,15 +2767,6 @@ function renderMensalidade() {
       </div>
     </div>`;
   }).join('');
-}
-
-function markPaid(id) {
-  const s = students.find(x => x.id === id);
-  if (s) { s.payStatus = 'ok'; save(); renderMensalidade(); renderHome(); toast(`✅ ${s.name} marcado como pago!`); }
-}
-function markPending(id) {
-  const s = students.find(x => x.id === id);
-  if (s) { s.payStatus = 'late'; save(); renderMensalidade(); renderHome(); toast(`⚠️ ${s.name} marcado como pendente`); }
 }
 
 // ══════════════════════════════════════════
@@ -2799,15 +2890,12 @@ function renderProgressChart(s) {
 // PAYMENT ALERTS ON LOAD
 // ══════════════════════════════════════════
 function checkPaymentAlerts() {
-  const today = new Date().getDate();
-  const tomorrow = today + 1;
   const alertStudents = students.filter(s => {
-    if (!s.payDay || s.payStatus === 'late') return false;
-    const pd = parseInt(s.payDay);
-    return pd === today || pd === tomorrow;
+    const pi = payInfo(s);
+    return pi && !pi.atrasado && (pi.diffDias === 0 || pi.diffDias === 1);
   });
   if (alertStudents.length) {
-    const msgs = alertStudents.map(s => `${s.name}: vence ${parseInt(s.payDay)===today?'HOJE':'amanhã'}`);
+    const msgs = alertStudents.map(s => `${s.name}: vence ${payInfo(s).diffDias===0?'HOJE':'amanhã'}`);
     setTimeout(() => toast(`💰 ${msgs[0]}${msgs.length>1?` (+${msgs.length-1})`:''}`, 4000), 800);
   }
 }
@@ -3265,7 +3353,7 @@ function gerarResumoDia() {
     }
   });
   const naoMarcados = agendados.length - presentes - faltas;
-  const cobrancasPendentes = students.filter(s => s.payStatus === 'late').length;
+  const cobrancasPendentes = students.filter(s => payInfo(s)?.atrasado).length;
   const reporPendentes = aulasARepor.filter(a => !a.reposta).length;
 
   // Prévia de amanhã
@@ -3997,7 +4085,7 @@ function renderWppList() {
   const endOfWeek = todayDay + 7;
 
   let list = students.filter(s => s.payDay);
-  if (wppFiltro === 'pendente') list = list.filter(s => s.payStatus === 'late');
+  if (wppFiltro === 'pendente') list = list.filter(s => payInfo(s)?.atrasado);
   else if (wppFiltro === 'hoje') list = list.filter(s => parseInt(s.payDay) === todayDay);
   else if (wppFiltro === 'semana') list = list.filter(s => {
     const pd = parseInt(s.payDay);
@@ -4014,7 +4102,7 @@ function renderWppList() {
     const pd = parseInt(s.payDay);
     let daysLeft = pd - todayDay;
     if (daysLeft < 0) { const dim = new Date(today.getFullYear(), today.getMonth()+2, 0).getDate(); daysLeft = dim - todayDay + pd; }
-    const isPend = s.payStatus === 'late';
+    const isPend = payInfo(s)?.atrasado;
     const statusColor = isPend ? 'var(--red)' : daysLeft <= 3 ? 'var(--orange)' : 'var(--accent)';
     const statusTxt = isPend ? '❌ Pendente' : daysLeft === 0 ? '🔴 Vence Hoje' : daysLeft === 1 ? '🟡 Vence Amanhã' : `⏳ ${daysLeft} dias`;
     return `<div class="wpp-card">
@@ -4400,34 +4488,30 @@ async function requestNotifPermission() {
 
 function schedulePaymentNotifications() {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  const today = new Date();
-  const todayDay = today.getDate();
   let vencidasCount = 0;
   students.forEach(s => {
-    if (!s.payDay || s.payStatus === 'late') return;
-    const pd = parseInt(s.payDay);
-    const diff = pd - todayDay;
-    if (diff === 0) {
+    if (!s.payDay) return;
+    const pi = payInfo(s);
+    if (pi.atrasado) { vencidasCount++; return; }
+    if (pi.diffDias === 0) {
       setTimeout(() => {
         new Notification('💰 PersonalVS — Vence hoje!', {
-          body: `Mensalidade de ${s.name.split(' ')[0]} vence hoje (dia ${pd})`,
+          body: `Mensalidade de ${s.name.split(' ')[0]} vence hoje`,
           icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" rx="14" fill="%230a0c10"/%3E%3Ctext x="32" y="46" font-size="36" text-anchor="middle"%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E'
         });
       }, 2000);
-    } else if (diff === 1) {
+    } else if (pi.diffDias === 1) {
       setTimeout(() => {
         new Notification('⏰ PersonalVS — Vence amanhã', {
-          body: `Mensalidade de ${s.name.split(' ')[0]} vence amanhã (dia ${pd})`,
+          body: `Mensalidade de ${s.name.split(' ')[0]} vence amanhã`,
         });
       }, 3000);
-    } else if (diff < 0) {
-      vencidasCount++;
     }
   });
   if (vencidasCount > 0) {
     setTimeout(() => {
       new Notification('🔴 PersonalVS — Mensalidades vencidas', {
-        body: `${vencidasCount} aluno${vencidasCount!==1?'s':''} com mensalidade vencida e ainda não marcada como pendente.`,
+        body: `${vencidasCount} aluno${vencidasCount!==1?'s':''} com mensalidade em atraso.`,
       });
     }, 4000);
   }
@@ -4911,7 +4995,7 @@ function renderDashboard() {
     const saved = hist[key];
     // Current month: use real payment status
     if (year === thisYear && mi === thisMonth) {
-      const recebido = students.filter(s => s.valor && s.payStatus !== 'late')
+      const recebido = students.filter(s => s.valor && !payInfo(s)?.atrasado)
         .reduce((a,s) => a + parseFloat(s.valor||0), 0);
       return { label: m, valor: recebido, isCurrent: true, isPast: false };
     }
@@ -4927,7 +5011,7 @@ function renderDashboard() {
 
   // Summary cards
   const recebidoMes = monthlyData[thisMonth]?.valor || 0;
-  const pendente = students.filter(s => s.valor && s.payStatus === 'late').reduce((a,s) => a+parseFloat(s.valor||0),0);
+  const pendente = students.filter(s => s.valor && payInfo(s)?.atrasado).reduce((a,s) => a+parseFloat(s.valor||0),0);
   const fmt = v => `R$ ${v.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,'.')}`;
   document.getElementById('dash-summary').innerHTML = `
     <div style="background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:13px;padding:14px">
@@ -4986,7 +5070,7 @@ function renderDashboard() {
     : students.sort((a,b) => parseFloat(b.valor||0) - parseFloat(a.valor||0)).map(s => {
         const av = s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover"/>` : '🧍';
         const val = parseFloat(s.valor||0);
-        const pago = s.payStatus !== 'late';
+        const pago = s.payDay ? !payInfo(s)?.atrasado : true;
         return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
           <div style="width:34px;height:34px;border-radius:10px;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${av}</div>
           <div style="flex:1;min-width:0">
@@ -5022,7 +5106,7 @@ function editarMesHistorico(key, label) {
 function registrarMesHistorico() {
   const mes = document.getElementById('dash-hist-mes').value;
   if (!mes) { toast('⚠️ Selecione um mês'); return; }
-  const recebido = students.filter(s => s.valor && s.payStatus !== 'late')
+  const recebido = students.filter(s => s.valor && !payInfo(s)?.atrasado)
     .reduce((a,s) => a + parseFloat(s.valor||0), 0);
   const hist = getDashData();
   hist[mes] = recebido;

@@ -1538,9 +1538,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
             <input type="checkbox" id="fase-check-3" onchange="toggleFaseConcluida(3)" style="width:16px;height:16px;accent-color:var(--accent)"/> concluída
           </label>
         </div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Gere o relatório mensal de todos os alunos de uma vez, em vez de abrir aluno por aluno.</div>
-        <button class="btn btn-primary btn-full" onclick="gerarRelatoriosEmLote()">📊 Gerar relatórios de todos os alunos</button>
-        <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">⚠️ Permita pop-ups no navegador para os relatórios abrirem corretamente. Também é possível gerar individualmente na ficha de cada aluno.</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.5">Pacotes de sessões, apresentações pra leads e backup do seu negócio — tudo organizado logo abaixo.</div>
       </div>
 
       <!-- Controle de pacotes de sessões -->
@@ -3680,20 +3678,6 @@ function toggleFaseConcluida(n) {
   saved[n] = el.checked;
   localStorage.setItem('fp_mvp_fases', JSON.stringify(saved));
   toast(el.checked ? `✅ Fase ${n} marcada como concluída` : `Fase ${n} reaberta`);
-}
-function gerarRelatoriosEmLote() {
-  if (!students.length) { toast('⚠️ Nenhum aluno cadastrado ainda'); return; }
-  const prevId = selectedStudentId;
-  toast(`📊 Gerando relatório de ${students.length} aluno(s)...`);
-  let i = 0;
-  function next() {
-    if (i >= students.length) { selectedStudentId = prevId; return; }
-    selectedStudentId = students[i].id;
-    exportRelatorioMensal();
-    i++;
-    setTimeout(next, 600);
-  }
-  next();
 }
 
 // ══════════════════════════════════════════

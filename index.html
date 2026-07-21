@@ -1411,18 +1411,6 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
           <div id="hoje-objetivos-list"></div>
         </div>
 
-        <!-- Checklist de rituais -->
-        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
-          <div style="font-weight:700;font-size:13px;margin-bottom:4px">✅ Checklist de Rituais</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Sua rotina fixa de autocuidado, pra não ser atropelada pelo trabalho.</div>
-          <div id="rituais-list" style="margin-bottom:10px"></div>
-          <div style="display:flex;gap:6px">
-            <input class="form-input" id="ritual-novo-texto" placeholder="Ex: Acordar às 05:00" style="flex:2;font-size:13px;padding:9px 11px"/>
-            <input class="form-input" id="ritual-novo-hora" type="time" style="flex:1;font-size:13px;padding:9px 11px"/>
-            <button class="btn btn-primary" style="font-size:12px;padding:9px 12px" onclick="addRitual()">+</button>
-          </div>
-        </div>
-
         <!-- Captura rápida de treino -->
         <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
           <div style="font-weight:700;font-size:13px;margin-bottom:4px">✏️ Captura Rápida de Treino</div>
@@ -3651,7 +3639,6 @@ function initCriativo() {
   renderWppList();
   initFasesChecklist();
   renderHojeObjetivos();
-  renderRituais();
   renderNotasRapidasAlunoSelect();
   renderNotasRapidas();
   renderRadarFrequencia();
@@ -4456,55 +4443,6 @@ async function importarBackup(event) {
     toast('❌ Erro ao ler o arquivo de backup');
   }
   event.target.value = '';
-}
-
-// ══════════════════════════════════════════
-// FASE 1 · Checklist de Rituais
-// ══════════════════════════════════════════
-let rituais = JSON.parse(localStorage.getItem('fp_rituais') || '[]');
-let rituaisLog = JSON.parse(localStorage.getItem('fp_rituais_log') || '{}');
-function saveRituais() { localStorage.setItem('fp_rituais', JSON.stringify(rituais)); }
-function saveRituaisLog() { localStorage.setItem('fp_rituais_log', JSON.stringify(rituaisLog)); }
-
-function addRitual() {
-  const texto = document.getElementById('ritual-novo-texto').value.trim();
-  const hora = document.getElementById('ritual-novo-hora').value;
-  if (!texto) { toast('⚠️ Descreva o ritual'); return; }
-  rituais.push({ id: uid(), texto, hora });
-  rituais.sort((a,b) => (a.hora||'99:99').localeCompare(b.hora||'99:99'));
-  saveRituais();
-  document.getElementById('ritual-novo-texto').value = '';
-  document.getElementById('ritual-novo-hora').value = '';
-  renderRituais();
-  toast('✅ Ritual adicionado');
-}
-function toggleRitual(id) {
-  const dk = dateKey(new Date());
-  if (!rituaisLog[dk]) rituaisLog[dk] = {};
-  rituaisLog[dk][id] = !rituaisLog[dk][id];
-  saveRituaisLog();
-  renderRituais();
-}
-function deleteRitual(id) {
-  rituais = rituais.filter(r => r.id !== id);
-  saveRituais();
-  renderRituais();
-}
-function renderRituais() {
-  const el = document.getElementById('rituais-list');
-  if (!el) return;
-  if (!rituais.length) {
-    el.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum ritual cadastrado ainda.</div>`;
-    return;
-  }
-  const dk = dateKey(new Date());
-  const log = rituaisLog[dk] || {};
-  el.innerHTML = rituais.map(r => `
-    <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
-      <input type="checkbox" ${log[r.id]?'checked':''} onchange="toggleRitual('${r.id}')" style="width:17px;height:17px;accent-color:var(--accent);flex-shrink:0"/>
-      <div style="flex:1;font-size:13px;${log[r.id]?'text-decoration:line-through;color:var(--text3)':''}">${r.texto}${r.hora?` <span style="color:var(--accent);font-size:11px">· ${r.hora}</span>`:''}</div>
-      <button onclick="deleteRitual('${r.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px">✕</button>
-    </div>`).join('');
 }
 
 // ══════════════════════════════════════════

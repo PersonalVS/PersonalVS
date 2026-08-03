@@ -86,6 +86,19 @@ const SYNC_DEBOUNCE_MS = 500;
 // realmente mudou desde a última vez — não a lista inteira.
 let _lastSyncedSnapshot = {};
 
+// ── Controle de "pendências" que sobrevive a fechar o app ──────────
+// Problema que isso resolve: o salvamento local é instantâneo, mas o
+// envio pra nuvem espera 0.5s (debounce) + o tempo da chamada de rede.
+// Se o usuário sair do app (ou o app for encerrado/recarregado pelo
+// sistema) ANTES desse envio terminar, a próxima abertura chamava
+// sbPull() e sobrescrevia o dado local recém-alterado com a versão
+// antiga que ainda estava na nuvem — a marcação "sumia". Por isso,
+// toda chave com alteração ainda não confirmada na nuvem fica marcada
+// aqui (persistida), e é reenviada ANTES de qualquer pull acontecer.
+let _dirtyKeys = new Set();
+try { _dirtyKeys = new Set(JSON.parse(localStorage.getItem('fp_sync_dirty') || '[]')); } catch(e) {}
+function saveDirtyKeys() { _originalSetItem('fp_sync_dirty', JSON.stringify([..._dirtyKeys])); }
+
 // Grava no localStorage SEM disparar sincronização — usado quando o
 // próprio dado já veio da nuvem (evita ping-pong de sync inútil).
 function setLocalNoSync(key, value) {
@@ -95,6 +108,7 @@ function setLocalNoSync(key, value) {
 function queueSync(key) {
   if (key === 'fp_v6') { queueStudentsSync(); return; }
   if (!SYNC_KEYS.has(key)) return;
+  _dirtyKeys.add(key); saveDirtyKeys();
   if (!currentUser) return; // sem login, não há onde sincronizar ainda
   setSyncStatus(key, 'pending');
   clearTimeout(_syncTimers[key]);
@@ -112,6 +126,7 @@ async function flushSyncKey(key) {
       { key, user_id: currentUser.id, value, updated_at: new Date().toISOString() }
     );
     if (error) throw new Error(error.message);
+    _dirtyKeys.delete(key); saveDirtyKeys();
     setSyncStatus(key, 'ok');
   } catch(e) {
     dbg && dbg('flushSyncKey(' + key + ') falhou: ' + e.message);
@@ -123,6 +138,7 @@ async function flushSyncKey(key) {
 }
 
 function queueStudentsSync() {
+  _dirtyKeys.add('fp_v6'); saveDirtyKeys();
   if (!currentUser) return;
   setSyncStatus('__students__', 'pending');
   clearTimeout(_syncTimers.__students__);
@@ -139,7 +155,7 @@ async function flushStudentsSync() {
     return _lastSyncedSnapshot[s.id] !== atual;
   });
 
-  if (!alterados.length) { setSyncStatus('__students__', 'ok'); return; }
+  if (!alterados.length) { _dirtyKeys.delete('fp_v6'); saveDirtyKeys(); setSyncStatus('__students__', 'ok'); return; }
 
   setSyncStatus('__students__', 'syncing');
   try {
@@ -151,6 +167,7 @@ async function flushStudentsSync() {
     if (falhou) throw new Error(falhou.error.message);
 
     alterados.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
+    _dirtyKeys.delete('fp_v6'); saveDirtyKeys();
     setSyncStatus('__students__', 'ok');
   } catch(e) {
     dbg && dbg('flushStudentsSync falhou: ' + e.message);
@@ -5898,10 +5915,47 @@ async function sbPush() {
   } catch(e) { toast('❌ ' + e.message); }
 }
 
+// Antes de puxar dados da nuvem (que substituem o que está na tela),
+// garante que qualquer alteração local ainda não confirmada como
+// sincronizada seja enviada primeiro. Sem isso, uma marcação feita
+// segundos antes do app fechar podia ser apagada pelo próprio pull.
+async function pushDirtyBeforePull() {
+  if (!currentUser || !_dirtyKeys.size) return;
+
+  if (_dirtyKeys.has('fp_v6')) {
+    try {
+      const nowIso = new Date().toISOString();
+      const resultados = await Promise.all(students.map(s =>
+        sb.from('students').upsert({ id: s.id, user_id: currentUser.id, data: s, updated_at: nowIso })
+      ));
+      if (!resultados.find(r => r.error)) {
+        students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
+        _dirtyKeys.delete('fp_v6');
+      }
+    } catch(e) { dbg && dbg('pushDirtyBeforePull(fp_v6) falhou: ' + e.message); }
+  }
+
+  for (const key of [..._dirtyKeys]) {
+    if (!SYNC_KEYS.has(key)) { _dirtyKeys.delete(key); continue; }
+    const raw = localStorage.getItem(key);
+    let value = null;
+    try { value = raw === null ? null : JSON.parse(raw); } catch(e) { value = raw; }
+    try {
+      const { error } = await sb.from('app_data').upsert(
+        { key, user_id: currentUser.id, value, updated_at: new Date().toISOString() }
+      );
+      if (error) throw new Error(error.message);
+      _dirtyKeys.delete(key);
+    } catch(e) { dbg && dbg('pushDirtyBeforePull(' + key + ') falhou: ' + e.message); }
+  }
+  saveDirtyKeys();
+}
+
 async function sbPull() {
   if (!currentUser) { toast('⚠️ Faça login primeiro'); return; }
   toast('⬇️ Carregando...');
   try {
+    await pushDirtyBeforePull();
     // RLS já filtra pelo usuário logado; o .eq abaixo é só clareza/performance extra.
     const { data, error } = await sb.from('students').select('data').eq('user_id', currentUser.id).order('updated_at', { ascending: false });
     if (error) throw new Error(error.message);

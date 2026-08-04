@@ -5944,9 +5944,12 @@ async function sbPull() {
     _lastSyncedSnapshot = {};
     students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
 
-    const { data: extras, error: e2 } = await sb.from('app_data').select('key,value').eq('user_id', currentUser.id);
+    const { data: extras, error: e2 } = await sb.from('app_data').select('key,value,updated_at').eq('user_id', currentUser.id).order('updated_at', { ascending: true });
     if (e2) throw new Error(e2.message);
     const cloudMap = {};
+    // Se por algum motivo existir mais de uma linha pra mesma chave (não deveria,
+    // mas é uma proteção extra), a ordenação acima garante que a mais recente
+    // (processada por último) sempre vence.
     (extras || []).forEach(r => { cloudMap[r.key] = r.value; });
 
     // Cada chave sincronizável é resolvida a partir da nuvem — se essa

@@ -86,19 +86,6 @@ const SYNC_DEBOUNCE_MS = 500;
 // realmente mudou desde a última vez — não a lista inteira.
 let _lastSyncedSnapshot = {};
 
-// ── Controle de "pendências" que sobrevive a fechar o app ──────────
-// Problema que isso resolve: o salvamento local é instantâneo, mas o
-// envio pra nuvem espera 0.5s (debounce) + o tempo da chamada de rede.
-// Se o usuário sair do app (ou o app for encerrado/recarregado pelo
-// sistema) ANTES desse envio terminar, a próxima abertura chamava
-// sbPull() e sobrescrevia o dado local recém-alterado com a versão
-// antiga que ainda estava na nuvem — a marcação "sumia". Por isso,
-// toda chave com alteração ainda não confirmada na nuvem fica marcada
-// aqui (persistida), e é reenviada ANTES de qualquer pull acontecer.
-let _dirtyKeys = new Set();
-try { _dirtyKeys = new Set(JSON.parse(localStorage.getItem('fp_sync_dirty') || '[]')); } catch(e) {}
-function saveDirtyKeys() { _originalSetItem('fp_sync_dirty', JSON.stringify([..._dirtyKeys])); }
-
 // Grava no localStorage SEM disparar sincronização — usado quando o
 // próprio dado já veio da nuvem (evita ping-pong de sync inútil).
 function setLocalNoSync(key, value) {
@@ -108,7 +95,6 @@ function setLocalNoSync(key, value) {
 function queueSync(key) {
   if (key === 'fp_v6') { queueStudentsSync(); return; }
   if (!SYNC_KEYS.has(key)) return;
-  _dirtyKeys.add(key); saveDirtyKeys();
   if (!currentUser) return; // sem login, não há onde sincronizar ainda
   setSyncStatus(key, 'pending');
   clearTimeout(_syncTimers[key]);
@@ -116,7 +102,7 @@ function queueSync(key) {
 }
 
 async function flushSyncKey(key) {
-  if (!currentUser) return;
+  if (!currentUser) return true;
   const raw = localStorage.getItem(key);
   let value = null;
   try { value = raw === null ? null : JSON.parse(raw); } catch(e) { value = raw; }
@@ -126,19 +112,19 @@ async function flushSyncKey(key) {
       { key, user_id: currentUser.id, value, updated_at: new Date().toISOString() }
     );
     if (error) throw new Error(error.message);
-    _dirtyKeys.delete(key); saveDirtyKeys();
     setSyncStatus(key, 'ok');
+    return true;
   } catch(e) {
     dbg && dbg('flushSyncKey(' + key + ') falhou: ' + e.message);
     setSyncStatus(key, 'error');
     // tenta de novo em breve — não perde a alteração silenciosamente
     clearTimeout(_syncTimers[key]);
     _syncTimers[key] = setTimeout(() => flushSyncKey(key), 8000);
+    return false;
   }
 }
 
 function queueStudentsSync() {
-  _dirtyKeys.add('fp_v6'); saveDirtyKeys();
   if (!currentUser) return;
   setSyncStatus('__students__', 'pending');
   clearTimeout(_syncTimers.__students__);
@@ -146,7 +132,7 @@ function queueStudentsSync() {
 }
 
 async function flushStudentsSync() {
-  if (!currentUser) return;
+  if (!currentUser) return true;
 
   // Descobre só quem mudou de verdade desde a última sincronização —
   // evita reenviar todo mundo quando só 1 aluno foi editado.
@@ -155,7 +141,7 @@ async function flushStudentsSync() {
     return _lastSyncedSnapshot[s.id] !== atual;
   });
 
-  if (!alterados.length) { _dirtyKeys.delete('fp_v6'); saveDirtyKeys(); setSyncStatus('__students__', 'ok'); return; }
+  if (!alterados.length) { setSyncStatus('__students__', 'ok'); return true; }
 
   setSyncStatus('__students__', 'syncing');
   try {
@@ -167,13 +153,14 @@ async function flushStudentsSync() {
     if (falhou) throw new Error(falhou.error.message);
 
     alterados.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
-    _dirtyKeys.delete('fp_v6'); saveDirtyKeys();
     setSyncStatus('__students__', 'ok');
+    return true;
   } catch(e) {
     dbg && dbg('flushStudentsSync falhou: ' + e.message);
     setSyncStatus('__students__', 'error');
     clearTimeout(_syncTimers.__students__);
     _syncTimers.__students__ = setTimeout(flushStudentsSync, 8000);
+    return false;
   }
 }
 
@@ -199,6 +186,10 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') flushAllPendingSync();
 });
 window.addEventListener('beforeunload', flushAllPendingSync);
+// 'pagehide' é bem mais confiável que 'beforeunload' em Safari/iOS,
+// principalmente com o app instalado na tela inicial (PWA) — é o que
+// mais garante que a última alteração saia antes do app ser suspenso.
+window.addEventListener('pagehide', flushAllPendingSync);
 
 // Estado individual de cada "gaveta" de sincronização (alunos +
 // cada chave de SYNC_KEYS). O ícone mostrado é sempre calculado a
@@ -2405,6 +2396,7 @@ function markPaid(id) {
   s.paidUntil = proximo.toISOString().slice(0,10);
   s.payStatus = 'ok';
   save(); renderMensalidade(); renderHome(); renderStudentList();
+  clearTimeout(_syncTimers.__students__); flushStudentsSync(); // envia na hora, não espera o debounce
   toast(`✅ ${s.name} marcado como pago! Próx. vencimento: ${proximo.toLocaleDateString('pt-BR')}`);
 }
 
@@ -2416,6 +2408,7 @@ function markPending(id) {
   s.paidUntil = ontem.toISOString().slice(0,10);
   s.payStatus = 'late';
   save(); renderMensalidade(); renderHome(); renderStudentList();
+  clearTimeout(_syncTimers.__students__); flushStudentsSync(); // envia na hora, não espera o debounce
   toast(`⚠️ ${s.name} marcado como pendente`);
 }
 
@@ -3632,6 +3625,7 @@ function toggleAttendance(studentId, dk) {
     attendanceData[studentId][dk] = 'present';
     toast('✅ Presença registrada!');
     saveAttendance();
+    clearTimeout(_syncTimers.fp_attendance); flushSyncKey('fp_attendance'); // envia na hora
     renderAgenda();
   } else if (cur === 'present') {
     openFaltaModal(studentId, dk);
@@ -3641,6 +3635,7 @@ function toggleAttendance(studentId, dk) {
     if (faltaMotivos[studentId]) delete faltaMotivos[studentId][dk];
     saveFaltaMotivos();
     saveAttendance();
+    clearTimeout(_syncTimers.fp_attendance); flushSyncKey('fp_attendance'); // envia na hora
     aulasARepor = aulasARepor.filter(a => !(a.studentId === studentId && a.dataOriginal === dk));
     saveAulasARepor();
     toast('↩️ Marcação removida');
@@ -3703,6 +3698,7 @@ function confirmarFalta(studentId, dk) {
   const repor = document.getElementById('falta-repor').checked;
   attendanceData[studentId][dk] = 'absent';
   saveAttendance();
+  clearTimeout(_syncTimers.fp_attendance); flushSyncKey('fp_attendance'); // envia na hora
   if (!faltaMotivos[studentId]) faltaMotivos[studentId] = {};
   faltaMotivos[studentId][dk] = motivo;
   saveFaltaMotivos();
@@ -3870,6 +3866,7 @@ function saveSchedModal(studentId) {
   const objetivo = document.getElementById('sched-objetivo').value.trim();
   scheduleData[studentId] = { scheduledDays: window._schedDays.sort((a,b)=>a-b), time, objetivo };
   saveSchedule();
+  clearTimeout(_syncTimers.fp_schedule); flushSyncKey('fp_schedule'); // envia na hora
   closeSchedModal();
   toast('✅ Agenda salva!');
   renderAgenda();
@@ -5718,7 +5715,8 @@ async function flushAllPendingSyncNow() {
   Object.values(_syncTimers).forEach(t => clearTimeout(t));
   const tasks = [flushStudentsSync()];
   SYNC_KEYS.forEach(key => tasks.push(flushSyncKey(key)));
-  await Promise.all(tasks);
+  const resultados = await Promise.all(tasks);
+  return resultados.every(ok => ok !== false);
 }
 
 // Abre o WhatsApp com uma mensagem pré-montada, já identificando quem
@@ -5735,7 +5733,20 @@ function enviarFeedback() {
 async function doSignOut() {
   if (!confirm('Sair da sua conta neste dispositivo?')) return;
   toast('☁️ Salvando alterações antes de sair...');
-  await flushAllPendingSyncNow();
+  const tudoSalvo = await flushAllPendingSyncNow();
+  if (!tudoSalvo) {
+    const tentarDeNovo = confirm(
+      '⚠️ Não foi possível confirmar que todas as alterações foram salvas na nuvem (parece problema de conexão).\n\n' +
+      'Se você sair agora, o que ainda não sincronizou pode ser perdido neste aparelho.\n\n' +
+      'Toque em OK pra tentar salvar de novo, ou Cancelar pra sair mesmo assim.'
+    );
+    if (tentarDeNovo) {
+      toast('☁️ Tentando salvar de novo...');
+      await flushAllPendingSyncNow();
+      return; // não sai ainda — deixa o usuário conferir e tentar "Sair" de novo
+    }
+    // usuário escolheu "Cancelar" = sair mesmo assim, sem tudo confirmado
+  }
   await sb.auth.signOut();
 }
 
@@ -5915,77 +5926,23 @@ async function sbPush() {
   } catch(e) { toast('❌ ' + e.message); }
 }
 
-// Antes de puxar dados da nuvem (que substituem o que está na tela),
-// garante que qualquer alteração local ainda não confirmada como
-// sincronizada seja enviada primeiro. Sem isso, uma marcação feita
-// segundos antes do app fechar podia ser apagada pelo próprio pull.
-// Retorna a mensagem de erro (se algo falhou ao enviar), ou null se
-// deu tudo certo — usado pelo sbPull para saber o que NÃO pode
-// sobrescrever com o valor da nuvem.
-async function pushDirtyBeforePull() {
-  let erro = null;
-  if (!currentUser || !_dirtyKeys.size) return erro;
-
-  if (_dirtyKeys.has('fp_v6')) {
-    try {
-      const nowIso = new Date().toISOString();
-      const resultados = await Promise.all(students.map(s =>
-        sb.from('students').upsert({ id: s.id, user_id: currentUser.id, data: s, updated_at: nowIso })
-      ));
-      const falhou = resultados.find(r => r.error);
-      if (falhou) throw new Error(falhou.error.message);
-      students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
-      _dirtyKeys.delete('fp_v6');
-    } catch(e) {
-      dbg && dbg('pushDirtyBeforePull(fp_v6) falhou: ' + e.message);
-      erro = e.message;
-    }
-  }
-
-  for (const key of [..._dirtyKeys]) {
-    if (!SYNC_KEYS.has(key)) { _dirtyKeys.delete(key); continue; }
-    const raw = localStorage.getItem(key);
-    let value = null;
-    try { value = raw === null ? null : JSON.parse(raw); } catch(e) { value = raw; }
-    try {
-      const { error } = await sb.from('app_data').upsert(
-        { key, user_id: currentUser.id, value, updated_at: new Date().toISOString() }
-      );
-      if (error) throw new Error(error.message);
-      _dirtyKeys.delete(key);
-    } catch(e) { dbg && dbg('pushDirtyBeforePull(' + key + ') falhou: ' + e.message); erro = e.message; }
-  }
-  saveDirtyKeys();
-  return erro;
-}
-
 async function sbPull() {
   if (!currentUser) { toast('⚠️ Faça login primeiro'); return; }
   toast('⬇️ Carregando...');
   try {
-    const erroEnvioPendente = await pushDirtyBeforePull();
     // RLS já filtra pelo usuário logado; o .eq abaixo é só clareza/performance extra.
     const { data, error } = await sb.from('students').select('data').eq('user_id', currentUser.id).order('updated_at', { ascending: false });
     if (error) throw new Error(error.message);
-
-    if (_dirtyKeys.has('fp_v6')) {
-      // O envio de uma alteração recente ainda não confirmou (rede, ou
-      // possivelmente RLS/permissão na tabela `students`). Substituir
-      // agora apagaria essa alteração sem avisar — melhor manter o que
-      // está na tela e avisar, do que perder dado em silêncio.
-      dbg && dbg('sbPull: fp_v6 continua pendente, pulando substituição dos alunos');
-    } else {
-      // IMPORTANTE: substitui SEMPRE, mesmo se vier vazio. Uma lista vazia
-      // também é um resultado válido (conta nova, ou nenhum aluno ainda) —
-      // é isso que garante que uma conta nunca fique "com sobra" de outra
-      // conta testada antes no mesmo aparelho/navegador.
-      students = (data || []).map(r => r.data);
-      setLocalNoSync('fp_v6', JSON.stringify(students));
-      // Marca todo mundo como "já sincronizado" nesse ponto — evita reenviar
-      // tudo de novo por engano logo depois de um pull.
-      _lastSyncedSnapshot = {};
-      students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
-    }
+    // IMPORTANTE: substitui SEMPRE, mesmo se vier vazio. Uma lista vazia
+    // também é um resultado válido (conta nova, ou nenhum aluno ainda) —
+    // é isso que garante que uma conta nunca fique "com sobra" de outra
+    // conta testada antes no mesmo aparelho/navegador.
+    students = (data || []).map(r => r.data);
+    setLocalNoSync('fp_v6', JSON.stringify(students));
+    // Marca todo mundo como "já sincronizado" nesse ponto — evita reenviar
+    // tudo de novo por engano logo depois de um pull.
+    _lastSyncedSnapshot = {};
+    students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
 
     const { data: extras, error: e2 } = await sb.from('app_data').select('key,value').eq('user_id', currentUser.id);
     if (e2) throw new Error(e2.message);
@@ -5995,10 +5952,7 @@ async function sbPull() {
     // Cada chave sincronizável é resolvida a partir da nuvem — se essa
     // conta não tem nada salvo pra ela, volta pro valor padrão em vez de
     // manter o que sobrou na memória/localStorage de uma sessão anterior.
-    // Exceção: chaves que ainda estão "pendentes" (não confirmadas na
-    // nuvem) não são tocadas, pra não apagar uma alteração recente.
     SYNC_KEYS.forEach(key => {
-      if (_dirtyKeys.has(key)) { dbg && dbg('sbPull: ' + key + ' continua pendente, pulando substituição'); return; }
       const hasCloudValue = Object.prototype.hasOwnProperty.call(cloudMap, key);
       const value = hasCloudValue ? cloudMap[key] : SYNC_DEFAULTS[key];
       if (value === null || value === undefined) {
@@ -6011,11 +5965,7 @@ async function sbPull() {
     });
 
     renderHome();
-    if (erroEnvioPendente) {
-      toast('⚠️ Uma alteração recente não foi confirmada na nuvem (mantida só neste aparelho): ' + erroEnvioPendente);
-    } else {
-      toast('✅ ' + students.length + ' aluno(s) e dados carregados!');
-    }
+    toast('✅ ' + students.length + ' aluno(s) e dados carregados!');
   } catch(e) { toast('❌ ' + e.message); }
 }
 

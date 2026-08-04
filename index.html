@@ -5919,8 +5919,12 @@ async function sbPush() {
 // garante que qualquer alteração local ainda não confirmada como
 // sincronizada seja enviada primeiro. Sem isso, uma marcação feita
 // segundos antes do app fechar podia ser apagada pelo próprio pull.
+// Retorna a mensagem de erro (se algo falhou ao enviar), ou null se
+// deu tudo certo — usado pelo sbPull para saber o que NÃO pode
+// sobrescrever com o valor da nuvem.
 async function pushDirtyBeforePull() {
-  if (!currentUser || !_dirtyKeys.size) return;
+  let erro = null;
+  if (!currentUser || !_dirtyKeys.size) return erro;
 
   if (_dirtyKeys.has('fp_v6')) {
     try {
@@ -5928,11 +5932,14 @@ async function pushDirtyBeforePull() {
       const resultados = await Promise.all(students.map(s =>
         sb.from('students').upsert({ id: s.id, user_id: currentUser.id, data: s, updated_at: nowIso })
       ));
-      if (!resultados.find(r => r.error)) {
-        students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
-        _dirtyKeys.delete('fp_v6');
-      }
-    } catch(e) { dbg && dbg('pushDirtyBeforePull(fp_v6) falhou: ' + e.message); }
+      const falhou = resultados.find(r => r.error);
+      if (falhou) throw new Error(falhou.error.message);
+      students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
+      _dirtyKeys.delete('fp_v6');
+    } catch(e) {
+      dbg && dbg('pushDirtyBeforePull(fp_v6) falhou: ' + e.message);
+      erro = e.message;
+    }
   }
 
   for (const key of [..._dirtyKeys]) {
@@ -5946,29 +5953,39 @@ async function pushDirtyBeforePull() {
       );
       if (error) throw new Error(error.message);
       _dirtyKeys.delete(key);
-    } catch(e) { dbg && dbg('pushDirtyBeforePull(' + key + ') falhou: ' + e.message); }
+    } catch(e) { dbg && dbg('pushDirtyBeforePull(' + key + ') falhou: ' + e.message); erro = e.message; }
   }
   saveDirtyKeys();
+  return erro;
 }
 
 async function sbPull() {
   if (!currentUser) { toast('⚠️ Faça login primeiro'); return; }
   toast('⬇️ Carregando...');
   try {
-    await pushDirtyBeforePull();
+    const erroEnvioPendente = await pushDirtyBeforePull();
     // RLS já filtra pelo usuário logado; o .eq abaixo é só clareza/performance extra.
     const { data, error } = await sb.from('students').select('data').eq('user_id', currentUser.id).order('updated_at', { ascending: false });
     if (error) throw new Error(error.message);
-    // IMPORTANTE: substitui SEMPRE, mesmo se vier vazio. Uma lista vazia
-    // também é um resultado válido (conta nova, ou nenhum aluno ainda) —
-    // é isso que garante que uma conta nunca fique "com sobra" de outra
-    // conta testada antes no mesmo aparelho/navegador.
-    students = (data || []).map(r => r.data);
-    setLocalNoSync('fp_v6', JSON.stringify(students));
-    // Marca todo mundo como "já sincronizado" nesse ponto — evita reenviar
-    // tudo de novo por engano logo depois de um pull.
-    _lastSyncedSnapshot = {};
-    students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
+
+    if (_dirtyKeys.has('fp_v6')) {
+      // O envio de uma alteração recente ainda não confirmou (rede, ou
+      // possivelmente RLS/permissão na tabela `students`). Substituir
+      // agora apagaria essa alteração sem avisar — melhor manter o que
+      // está na tela e avisar, do que perder dado em silêncio.
+      dbg && dbg('sbPull: fp_v6 continua pendente, pulando substituição dos alunos');
+    } else {
+      // IMPORTANTE: substitui SEMPRE, mesmo se vier vazio. Uma lista vazia
+      // também é um resultado válido (conta nova, ou nenhum aluno ainda) —
+      // é isso que garante que uma conta nunca fique "com sobra" de outra
+      // conta testada antes no mesmo aparelho/navegador.
+      students = (data || []).map(r => r.data);
+      setLocalNoSync('fp_v6', JSON.stringify(students));
+      // Marca todo mundo como "já sincronizado" nesse ponto — evita reenviar
+      // tudo de novo por engano logo depois de um pull.
+      _lastSyncedSnapshot = {};
+      students.forEach(s => { _lastSyncedSnapshot[s.id] = JSON.stringify(s); });
+    }
 
     const { data: extras, error: e2 } = await sb.from('app_data').select('key,value').eq('user_id', currentUser.id);
     if (e2) throw new Error(e2.message);
@@ -5978,7 +5995,10 @@ async function sbPull() {
     // Cada chave sincronizável é resolvida a partir da nuvem — se essa
     // conta não tem nada salvo pra ela, volta pro valor padrão em vez de
     // manter o que sobrou na memória/localStorage de uma sessão anterior.
+    // Exceção: chaves que ainda estão "pendentes" (não confirmadas na
+    // nuvem) não são tocadas, pra não apagar uma alteração recente.
     SYNC_KEYS.forEach(key => {
+      if (_dirtyKeys.has(key)) { dbg && dbg('sbPull: ' + key + ' continua pendente, pulando substituição'); return; }
       const hasCloudValue = Object.prototype.hasOwnProperty.call(cloudMap, key);
       const value = hasCloudValue ? cloudMap[key] : SYNC_DEFAULTS[key];
       if (value === null || value === undefined) {
@@ -5991,7 +6011,11 @@ async function sbPull() {
     });
 
     renderHome();
-    toast('✅ ' + students.length + ' aluno(s) e dados carregados!');
+    if (erroEnvioPendente) {
+      toast('⚠️ Uma alteração recente não foi confirmada na nuvem (mantida só neste aparelho): ' + erroEnvioPendente);
+    } else {
+      toast('✅ ' + students.length + ' aluno(s) e dados carregados!');
+    }
   } catch(e) { toast('❌ ' + e.message); }
 }
 

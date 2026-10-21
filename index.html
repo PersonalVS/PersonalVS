@@ -23,7 +23,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Praxis"/>
 
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ══════════════════════════════════════════════════════════════
@@ -1188,20 +1187,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
    mesmo se o navegador não reportar certo a área da barra de status. */
 html.pwa-standalone #topbar{padding-top:50px !important;min-height:92px !important}
 html.pwa-standalone #pin-lock{padding-top:62px !important}
-html.pwa-standalone #auth-screen{padding-top:58px !important}
 
-/* AUTH SCREEN */
-#auth-screen{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;flex-direction:column;justify-content:center;padding:calc(var(--safe-top)+28px) 22px calc(var(--safe-bottom)+28px);overflow-y:auto}
-#auth-screen.hidden{display:none !important;pointer-events:none !important;visibility:hidden !important}
-.auth-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;margin-bottom:4px;text-align:center}
-.auth-logo span{color:var(--accent)}
-.auth-sub{font-size:13px;color:var(--text2);margin-bottom:26px;text-align:center}
-.auth-panel{display:none;flex-direction:column;gap:12px;width:100%;max-width:380px;margin:0 auto}
-.auth-panel.active{display:flex}
-.auth-switch{text-align:center;font-size:13px;color:var(--text2);margin-top:14px}
-.auth-switch a{color:var(--accent);font-weight:700;cursor:pointer;text-decoration:none}
-.auth-error{background:rgba(255,70,70,.08);border:1px solid rgba(255,70,70,.3);color:#ff6b6b;border-radius:10px;padding:10px 12px;font-size:12px;display:none}
-.auth-ok{background:var(--accent-dim);border:1px solid var(--accent-mid);color:var(--accent);border-radius:10px;padding:10px 12px;font-size:12px;display:none}
 .pin-setup-msg{font-size:12px;color:var(--text3);text-align:center;margin-top:16px;line-height:1.6}
 .pin-action-row{display:flex;gap:12px;margin-top:18px;width:100%;max-width:280px}
 
@@ -1254,84 +1240,6 @@ html.pwa-standalone #auth-screen{padding-top:58px !important}
   </div>
 </div>
 
-<!-- AUTH SCREEN (login / cadastro / recuperação) -->
-<div id="auth-screen">
-  <div class="auth-logo"><span>Praxis</span></div>
-  <div class="auth-sub">Sua gestão de alunos, na nuvem, só sua</div>
-
-  <!-- LOGIN -->
-  <div class="auth-panel active" id="auth-panel-login">
-    <div class="auth-error" id="auth-login-error"></div>
-    <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" id="auth-login-email" type="email" placeholder="voce@email.com" autocomplete="email"/></div>
-    <div class="form-group">
-      <label class="form-label">Senha</label>
-      <div class="pw-wrap">
-        <input class="form-input" id="auth-login-senha" type="password" placeholder="••••••••" autocomplete="current-password" onkeyup="checkCapsLock(event,'auth-login-caps')" onkeydown="checkCapsLock(event,'auth-login-caps')"/>
-        <button type="button" class="pw-eye" onclick="togglePwVisibility('auth-login-senha', this)" title="Mostrar/ocultar senha">👁️</button>
-      </div>
-      <div class="caps-warning" id="auth-login-caps">⇪ Caps Lock está ativado</div>
-    </div>
-    <div class="cf-turnstile" id="turnstile-login" data-sitekey="0x4AAAAAAD8SIAksGLICkVgG" data-callback="turnstileLoginOk" data-expired-callback="turnstileLoginReset" data-theme="dark" style="margin:2px 0"></div>
-    <button class="btn btn-primary btn-full" style="padding:15px" onclick="doSignIn()"><span id="auth-login-txt">Entrar</span></button>
-    <div style="text-align:right"><a style="font-size:12px;color:var(--accent);cursor:pointer" onclick="authShow('forgot')">Esqueci minha senha</a></div>
-    <div class="auth-switch">Não tem conta? <a onclick="authShow('signup')">Criar conta grátis</a></div>
-    <div style="text-align:center;margin-top:14px"><a style="font-size:13px;color:var(--text2);cursor:pointer;text-decoration:underline" onclick="enterGuestDemo()">👀 Ver demonstração sem cadastro</a></div>
-  </div>
-
-  <!-- CADASTRO -->
-  <div class="auth-panel" id="auth-panel-signup">
-    <div class="auth-error" id="auth-signup-error"></div>
-    <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="auth-signup-nome" placeholder="Seu nome"/></div>
-    <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" id="auth-signup-email" type="email" placeholder="voce@email.com" autocomplete="email"/></div>
-    <div class="form-group">
-      <label class="form-label">Senha</label>
-      <div class="pw-wrap">
-        <input class="form-input" id="auth-signup-senha" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" onkeyup="checkCapsLock(event,'auth-signup-caps')" onkeydown="checkCapsLock(event,'auth-signup-caps')"/>
-        <button type="button" class="pw-eye" onclick="togglePwVisibility('auth-signup-senha', this)" title="Mostrar/ocultar senha">👁️</button>
-      </div>
-      <div class="caps-warning" id="auth-signup-caps">⇪ Caps Lock está ativado</div>
-    </div>
-    <div class="form-group" style="display:flex;align-items:flex-start;gap:9px;margin-top:2px">
-      <input type="checkbox" id="auth-signup-termos" style="margin-top:3px;flex-shrink:0;width:17px;height:17px;accent-color:var(--accent)"/>
-      <label for="auth-signup-termos" style="font-size:12px;color:var(--text2);line-height:1.55">Li e concordo com os <a href="termos.html" target="_blank" style="color:var(--accent);font-weight:600">Termos de Uso</a> e a <a href="privacidade.html" target="_blank" style="color:var(--accent);font-weight:600">Política de Privacidade</a>.</label>
-    </div>
-    <div class="cf-turnstile" id="turnstile-signup" data-sitekey="0x4AAAAAAD8SIAksGLICkVgG" data-callback="turnstileSignupOk" data-expired-callback="turnstileSignupReset" data-theme="dark" style="margin:2px 0"></div>
-    <button class="btn btn-primary btn-full" style="padding:15px" onclick="doSignUp()"><span id="auth-signup-txt">Criar minha conta</span></button>
-    <div style="font-size:11px;color:var(--text3);text-align:center;line-height:1.6">Ao criar sua conta, seu espaço de dados é criado automaticamente — nada pra configurar.</div>
-    <div class="auth-switch">Já tem conta? <a onclick="authShow('login')">Entrar</a></div>
-  </div>
-
-  <!-- ESQUECI A SENHA -->
-  <div class="auth-panel" id="auth-panel-forgot">
-    <div class="auth-error" id="auth-forgot-error"></div>
-    <div class="auth-ok" id="auth-forgot-ok"></div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:4px">Digite seu e-mail e enviaremos um link para redefinir sua senha.</div>
-    <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" id="auth-forgot-email" type="email" placeholder="voce@email.com"/></div>
-    <div class="cf-turnstile" id="turnstile-forgot" data-sitekey="0x4AAAAAAD8SIAksGLICkVgG" data-callback="turnstileForgotOk" data-expired-callback="turnstileForgotReset" data-theme="dark" style="margin:2px 0"></div>
-    <button class="btn btn-primary btn-full" style="padding:15px" onclick="doForgotPassword()"><span id="auth-forgot-txt">Enviar link de recuperação</span></button>
-    <div class="auth-switch"><a onclick="authShow('login')">‹ Voltar para o login</a></div>
-  </div>
-
-  <!-- REDEFINIR SENHA (chega aqui pelo link do e-mail) -->
-  <div class="auth-panel" id="auth-panel-reset">
-    <div class="auth-error" id="auth-reset-error"></div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:4px">Escolha sua nova senha.</div>
-    <div class="form-group">
-      <label class="form-label">Nova senha</label>
-      <div class="pw-wrap">
-        <input class="form-input" id="auth-reset-senha" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" onkeyup="checkCapsLock(event,'auth-reset-caps')" onkeydown="checkCapsLock(event,'auth-reset-caps')"/>
-        <button type="button" class="pw-eye" onclick="togglePwVisibility('auth-reset-senha', this)" title="Mostrar/ocultar senha">👁️</button>
-      </div>
-      <div class="caps-warning" id="auth-reset-caps">⇪ Caps Lock está ativado</div>
-    </div>
-    <button class="btn btn-primary btn-full" style="padding:15px" onclick="doUpdatePassword()"><span id="auth-reset-txt">Salvar nova senha</span></button>
-  </div>
-
-  <div style="text-align:center;margin-top:26px;font-size:11px;color:var(--text3)">
-    <a href="termos.html" target="_blank" style="color:var(--text3)">Termos de Uso</a> · <a href="privacidade.html" target="_blank" style="color:var(--text3)">Política de Privacidade</a>
-  </div>
-</div>
-
 <!-- ONBOARDING GUIADO (só na primeira vez, sem alunos ainda) -->
 <div id="onboarding-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:10500;flex-direction:column;justify-content:center;padding:calc(var(--safe-top)+28px) 26px calc(var(--safe-bottom)+28px)">
   <div style="text-align:right"><a onclick="pularOnboarding()" style="font-size:13px;color:var(--text3);cursor:pointer">Pular ›</a></div>
@@ -1346,7 +1254,7 @@ html.pwa-standalone #auth-screen{padding-top:58px !important}
     <div class="logo" style="display:flex;align-items:center;gap:6px"><img src="" id="topbar-logo-img" style="width:22px;height:22px;object-fit:contain"/><span>Praxis</span></div>
     <div id="top-title"></div>
     <div class="spacer"></div>
-    <div id="sync-indicator" onclick="showNav('supabase')" title="Tudo sincronizado" style="font-size:15px;cursor:pointer;margin-right:8px;opacity:.85">✅</div>
+    <div id="sync-indicator" onclick="showNav('supabase')" title="Dados salvos neste aparelho" style="display:none;font-size:15px;cursor:pointer;margin-right:8px;opacity:.85">✅</div>
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
   </div>
 
@@ -1689,8 +1597,8 @@ html.pwa-standalone #auth-screen{padding-top:58px !important}
     <!-- BIBLIOTECA -->
     <!-- NUVEM / SUPABASE -->
     <div class="screen" id="screen-supabase">
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px">☁️ Conta e Nuvem</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Seus dados ficam isolados na nuvem, só você tem acesso</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px">⚙️ Segurança e Ajuda</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Seus dados ficam guardados neste aparelho</div>
 
       <div id="sb-status-card" class="card" style="margin-bottom:13px"></div>
 
@@ -1718,30 +1626,6 @@ html.pwa-standalone #auth-screen{padding-top:58px !important}
           <button class="btn btn-ghost btn-sm" style="flex:1" onclick="removePIN()">🔓 Remover PIN</button>
         </div>
         <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6">O PIN de 4 dígitos protege os dados dos seus alunos ao abrir o app neste aparelho.</div>
-      </div>
-
-      <div class="card" style="margin-bottom:13px">
-        <div class="card-title">📦 Sincronização</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Suas alterações são enviadas pra nuvem sozinhas, poucos segundos depois de cada mudança. Os botões abaixo são só um reforço manual, se quiser forçar agora.</div>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <button class="btn btn-primary btn-full" style="padding:16px;font-size:15px;font-weight:700;min-height:56px" onclick="sbPush()">☁️ ⬆️ SALVAR NA NUVEM</button>
-          <button class="btn btn-outline btn-full" style="padding:16px;font-size:15px;min-height:56px" onclick="sbPull()">☁️ ⬇️ CARREGAR DA NUVEM</button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:13px">
-        <div class="card-title">👤 Minha conta</div>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
-          <button class="btn btn-outline btn-full" onclick="doChangeEmail()">✉️ Trocar e-mail</button>
-          <button class="btn btn-outline btn-full" onclick="doChangePasswordLogged()">🔑 Trocar senha</button>
-          <button class="btn btn-ghost btn-full" onclick="doSignOut()">🚪 Sair da conta</button>
-        </div>
-      </div>
-
-      <div class="card" style="background:rgba(255,70,70,.06);border-color:rgba(255,70,70,.25)">
-        <div class="card-title" style="color:#ff6b6b">⚠️ Excluir conta</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:10px">Apaga permanentemente sua conta (login), todos os seus alunos e dados da nuvem. Não pode ser desfeito.</div>
-        <button class="btn btn-full" style="background:rgba(255,70,70,.12);border:1px solid rgba(255,70,70,.4);color:#ff6b6b" onclick="doDeleteAccountData()">🗑️ Excluir minha conta</button>
       </div>
 
       <div class="card" style="margin-top:13px">
@@ -5585,258 +5469,14 @@ function dbg(msg) {
   el.style.display = 'block';
 }
 
-// ══════════════════════════════════════════
-// AUTENTICAÇÃO — Supabase Auth (multiusuário)
-// ══════════════════════════════════════════
-
-function togglePwVisibility(inputId, btnEl) {
-  const input = document.getElementById(inputId);
-  if (!input) return;
-  const showing = input.type === 'text';
-  input.type = showing ? 'password' : 'text';
-  btnEl.textContent = showing ? '👁️' : '🙈';
-  btnEl.title = showing ? 'Mostrar senha' : 'Ocultar senha';
-}
-
-function checkCapsLock(event, warningId) {
-  const el = document.getElementById(warningId);
-  if (!el) return;
-  // getModifierState nem sempre existe (ex: alguns navegadores antigos/mobile) — some silenciosamente nesse caso
-  if (typeof event.getModifierState !== 'function') return;
-  const isOn = event.getModifierState('CapsLock');
-  el.classList.toggle('show', isOn);
-}
-
-function authShow(view) {
-  ['login','signup','forgot','reset'].forEach(v => {
-    document.getElementById('auth-panel-' + v).classList.toggle('active', v === view);
-  });
-  ['login','signup','forgot'].forEach(v => {
-    const el = document.getElementById('auth-' + v + '-error');
-    if (el) el.style.display = 'none';
-  });
-}
-
-function authErr(panel, msg) {
-  const el = document.getElementById('auth-' + panel + '-error');
-  if (!el) return;
-  el.textContent = traduzErroAuth(msg);
-  el.style.display = 'block';
-}
-
-function traduzErroAuth(msg) {
-  const m = (msg || '').toLowerCase();
-  if (m.includes('invalid login credentials')) return 'E-mail ou senha incorretos.';
-  if (m.includes('user already registered') || m.includes('already registered')) return 'Já existe uma conta com esse e-mail. Tente entrar.';
-  if (m.includes('password should be at least')) return 'A senha precisa ter pelo menos 6 caracteres.';
-  if (m.includes('email not confirmed')) return 'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).';
-  if (m.includes('unable to validate email') || m.includes('invalid email')) return 'E-mail inválido.';
-  return msg || 'Algo deu errado. Tente novamente.';
-}
-
-// ══════════════════════════════════════════
-// TURNSTILE (Cloudflare) — proteção contra bots no cadastro e na
-// recuperação de senha. O token só é válido uma vez, por isso
-// resetamos o widget depois de cada tentativa (deu certo ou não).
-// ══════════════════════════════════════════
-let _captchaTokenSignup = null;
-let _captchaTokenForgot = null;
-let _captchaTokenLogin = null;
-function turnstileSignupOk(token) { _captchaTokenSignup = token; }
-function turnstileSignupReset()   { _captchaTokenSignup = null; }
-function turnstileForgotOk(token) { _captchaTokenForgot = token; }
-function turnstileForgotReset()   { _captchaTokenForgot = null; }
-function turnstileLoginOk(token)  { _captchaTokenLogin = token; }
-function turnstileLoginReset()    { _captchaTokenLogin = null; }
-function resetTurnstile(widgetId) {
-  try { if (window.turnstile) turnstile.reset('#' + widgetId); } catch(e) {}
-}
-
-async function doSignUp() {
-  const nome = document.getElementById('auth-signup-nome').value.trim();
-  const email = document.getElementById('auth-signup-email').value.trim();
-  const senha = document.getElementById('auth-signup-senha').value;
-  const aceitouTermos = document.getElementById('auth-signup-termos').checked;
-  if (!nome || !email || !senha) { authErr('signup', 'Preencha nome, e-mail e senha.'); return; }
-  if (senha.length < 6) { authErr('signup', 'A senha precisa ter pelo menos 6 caracteres.'); return; }
-  if (!aceitouTermos) { authErr('signup', 'Você precisa aceitar os Termos de Uso e a Política de Privacidade para criar sua conta.'); return; }
-  if (!_captchaTokenSignup) { authErr('signup', 'Confirme a verificação de segurança acima antes de continuar.'); return; }
-  const btn = document.getElementById('auth-signup-txt');
-  btn.textContent = 'Criando conta...';
-  try {
-    const { data, error } = await sb.auth.signUp({
-      email, password: senha,
-      // Registra nome e o momento exato do aceite dos termos — evidência
-      // de consentimento, útil caso precise comprovar isso no futuro.
-      options: { data: { nome, termos_aceitos_em: new Date().toISOString() }, captchaToken: _captchaTokenSignup }
-    });
-    if (error) throw error;
-    if (data.session) {
-      // Confirmação de e-mail desativada no projeto: já entra direto.
-      toast('✅ Conta criada! Bem-vindo(a).');
-    } else {
-      toast('✅ Conta criada! Confira seu e-mail para confirmar o acesso.');
-      authShow('login');
-    }
-  } catch(e) {
-    authErr('signup', e.message);
-  } finally {
-    btn.textContent = 'Criar minha conta';
-    resetTurnstile('turnstile-signup');
-    _captchaTokenSignup = null;
-  }
-}
-
-async function doSignIn() {
-  const email = document.getElementById('auth-login-email').value.trim();
-  const senha = document.getElementById('auth-login-senha').value;
-  if (!email || !senha) { authErr('login', 'Preencha e-mail e senha.'); return; }
-  if (!_captchaTokenLogin) { authErr('login', 'Confirme a verificação de segurança acima antes de continuar.'); return; }
-  const btn = document.getElementById('auth-login-txt');
-  btn.textContent = 'Entrando...';
-  try {
-    const { error } = await sb.auth.signInWithPassword({ email, password: senha, options: { captchaToken: _captchaTokenLogin } });
-    if (error) throw error;
-  } catch(e) {
-    authErr('login', e.message);
-  } finally {
-    btn.textContent = 'Entrar';
-    resetTurnstile('turnstile-login');
-    _captchaTokenLogin = null;
-  }
-}
-
-async function doForgotPassword() {
-  const email = document.getElementById('auth-forgot-email').value.trim();
-  if (!email) { authErr('forgot', 'Digite seu e-mail.'); return; }
-  if (!_captchaTokenForgot) { authErr('forgot', 'Confirme a verificação de segurança acima antes de continuar.'); return; }
-  const btn = document.getElementById('auth-forgot-txt');
-  btn.textContent = 'Enviando...';
-  try {
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname,
-      captchaToken: _captchaTokenForgot
-    });
-    if (error) throw error;
-    const ok = document.getElementById('auth-forgot-ok');
-    ok.textContent = '✅ Enviamos um link de recuperação para ' + email + '.';
-    ok.style.display = 'block';
-  } catch(e) {
-    authErr('forgot', e.message);
-  } finally {
-    btn.textContent = 'Enviar link de recuperação';
-    resetTurnstile('turnstile-forgot');
-    _captchaTokenForgot = null;
-  }
-}
-
-async function doUpdatePassword() {
-  const senha = document.getElementById('auth-reset-senha').value;
-  if (!senha || senha.length < 6) { authErr('reset', 'A senha precisa ter pelo menos 6 caracteres.'); return; }
-  const btn = document.getElementById('auth-reset-txt');
-  btn.textContent = 'Salvando...';
-  try {
-    const { error } = await sb.auth.updateUser({ password: senha });
-    if (error) throw error;
-    toast('✅ Senha atualizada! Você já está logado(a).');
-  } catch(e) {
-    authErr('reset', e.message);
-  } finally {
-    btn.textContent = 'Salvar nova senha';
-  }
-}
-
-// Envia AGORA (sem esperar o debounce) tudo que ainda não foi pra nuvem.
-// Usado antes de sair da conta, pra garantir que a última alteração
-// (ex.: aluno que acabou de ser cadastrado) não fique pra trás.
-async function flushAllPendingSyncNow() {
-  Object.values(_syncTimers).forEach(t => clearTimeout(t));
-  const tasks = [flushStudentsSync()];
-  SYNC_KEYS.forEach(key => tasks.push(flushSyncKey(key)));
-  await Promise.all(tasks);
-}
-
 // Abre o WhatsApp com uma mensagem pré-montada, já identificando quem
 // está mandando (e-mail da conta) — facilita muito dar suporte real.
 function enviarFeedback() {
   trackEvent('feedback_enviado');
   const numeroSuporte = '5585996038644'; // troque pelo seu número, com código do país, sem +, espaço ou traço
-  const emailConta = currentUser?.email || '(não logado)';
-  const msg = `Oi! Estou usando o Praxis (conta: ${emailConta}) e queria comentar:\n\n`;
+  const msg = `Oi! Estou usando o Praxis e queria comentar:\n\n`;
   const url = `https://wa.me/${numeroSuporte}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
-}
-
-async function doSignOut() {
-  if (!confirm('Sair da sua conta neste dispositivo?')) return;
-  toast('☁️ Salvando alterações antes de sair...');
-  await flushAllPendingSyncNow();
-  await sb.auth.signOut();
-}
-
-// Troca de e-mail: Supabase envia confirmação para o e-mail NOVO (e opcionalmente
-// para o antigo, se "Secure email change" estiver ativo no projeto).
-async function doChangeEmail() {
-  const novoEmail = prompt('Novo e-mail:');
-  if (!novoEmail) return;
-  try {
-    const { error } = await sb.auth.updateUser({ email: novoEmail });
-    if (error) throw error;
-    toast('✅ Enviamos um link de confirmação para ' + novoEmail + '.');
-  } catch(e) {
-    toast('❌ ' + e.message);
-  }
-}
-
-async function doChangePasswordLogged() {
-  const novaSenha = prompt('Nova senha (mínimo 6 caracteres):');
-  if (!novaSenha) return;
-  if (novaSenha.length < 6) { toast('⚠️ Mínimo 6 caracteres'); return; }
-  try {
-    const { error } = await sb.auth.updateUser({ password: novaSenha });
-    if (error) throw error;
-    toast('✅ Senha alterada!');
-  } catch(e) {
-    toast('❌ ' + e.message);
-  }
-}
-
-// Cancelar conta: apagar o USUÁRIO (auth.users) exige privilégio de administrador
-// (service role), que nunca deve ficar exposto no app do navegador. Por isso,
-// aqui apagamos todos os DADOS do usuário (o que já cumpre "excluir minha conta"
-// na prática) e avisamos sobre o passo restante — ver nota na Etapa 4 do plano.
-async function doDeleteAccountData() {
-  if (!currentUser) return;
-  const conf = prompt('Isso vai apagar sua conta e TODOS os seus alunos e dados, permanentemente. Digite EXCLUIR para confirmar:');
-  if (conf !== 'EXCLUIR') return;
-  toast('🗑️ Excluindo sua conta...');
-  try {
-    // Edge Function apaga o login de verdade (auth.users) além dos dados —
-    // é a única forma segura de fazer isso (exige privilégio de admin,
-    // que nunca pode ficar no navegador).
-    const { data, error } = await sb.functions.invoke('delete-account', { method: 'POST' });
-    if (error) throw error;
-    if (data?.error) throw new Error(data.error);
-  } catch(e) {
-    // Se a Edge Function ainda não foi publicada (ou falhar por qualquer
-    // motivo), pelo menos os DADOS são apagados — a pessoa não fica
-    // "presa" com uma conta que não consegue excluir.
-    dbg('delete-account edge function falhou, apagando só os dados: ' + e.message);
-    try {
-      await sb.from('students').delete().eq('user_id', currentUser.id);
-      await sb.from('app_data').delete().eq('user_id', currentUser.id);
-    } catch(e2) { toast('❌ ' + e2.message); return; }
-  }
-  students = [];
-  attendanceData = {};
-  scheduleData = {};
-  faltaMotivos = {};
-  aulasARepor = [];
-  listaEspera = [];
-  notasRapidas = [];
-  localStorage.clear();
-  toast('✅ Sua conta e seus dados foram apagados.');
-  await sb.auth.signOut();
 }
 
 // ══════════════════════════════════════════
@@ -5853,7 +5493,7 @@ function sbStatusCard() {
       <div style="font-size:11px;color:var(--text3);margin-top:2px">${currentUser.email}</div></div>
     </div>`;
   } else {
-    el.innerHTML = `<div style="font-size:13px;color:var(--text3)">Não conectado</div>`;
+    el.innerHTML = `<div style="font-size:13px;color:var(--text2)">📱 Dados salvos só neste aparelho</div>`;
   }
 
   const pinCard = document.getElementById('pin-status-card');
@@ -7205,9 +6845,11 @@ async function bootApp() {
   dbg && dbg('Versão do app: ' + APP_VERSION);
   if (!_appBooted) {
     _appBooted = true;
-    await sbPull();          // traz os dados do usuário logado da nuvem
-    trackEvent('sessao_iniciada');
-    checkAdminAccess();      // verifica silenciosamente se este usuário é admin
+    if (currentUser) {       // sem login, não há nuvem: dados ficam só neste aparelho
+      await sbPull();
+      trackEvent('sessao_iniciada');
+      checkAdminAccess();
+    }
   }
   updateSyncIndicator('ok');
   renderHome();
@@ -7223,118 +6865,17 @@ async function bootApp() {
 }
 
 // ══════════════════════════════════════════
-// MODO DEMONSTRAÇÃO (visitante, sem cadastro)
-// ══════════════════════════════════════════
-function enterGuestDemo() {
-  GUEST_MODE = true;
-  currentUser = null;
-
-  const hoje = new Date();
-  const diaSemanaHoje = hoje.getDay();
-  const dataISO = (offsetDias) => {
-    const d = new Date(hoje); d.setDate(d.getDate() + offsetDias);
-    return d.toISOString().slice(0, 10);
-  };
-
-  students = [
-    {
-      id: uid(), name: 'Ana Beatriz Souza', weight: '64', height: '166', age: '29', sex: 'F',
-      goal: 'Emagrecimento e condicionamento', daysPerWeek: '3', cycle: '3',
-      payDay: hoje.getDate(), valor: '250', payStatus: 'ok',
-      paidUntil: dataISO(18), photo: null, progressHistory: [], objetivosAnamnese: ['Emagrecimento'], tags: [],
-    },
-    {
-      id: uid(), name: 'Carlos Eduardo Lima', weight: '82', height: '178', age: '41', sex: 'M',
-      goal: 'Hipertrofia', daysPerWeek: '4', cycle: '4',
-      payDay: hoje.getDate(), valor: '300', payStatus: 'ok',
-      paidUntil: dataISO(-3), photo: null, progressHistory: [], objetivosAnamnese: ['Hipertrofia'], tags: [],
-    },
-    {
-      id: uid(), name: 'Fernanda Torres', weight: '58', height: '160', age: '34', sex: 'F',
-      goal: 'Condicionamento geral', daysPerWeek: '2', cycle: '2',
-      payDay: hoje.getDate(), valor: '200', payStatus: 'ok',
-      paidUntil: dataISO(2), photo: null, progressHistory: [], objetivosAnamnese: [], tags: [],
-    },
-    {
-      id: uid(), name: 'Roberto Nascimento', weight: '90', height: '175', age: '58', sex: 'M',
-      goal: 'Longevidade e mobilidade', daysPerWeek: '3', cycle: '3',
-      payDay: hoje.getDate(), valor: '280', payStatus: 'ok',
-      paidUntil: dataISO(25), photo: null, progressHistory: [], objetivosAnamnese: [], tags: [],
-    },
-    {
-      id: uid(), name: 'Juliana Prado', weight: '70', height: '168', age: '26', sex: 'F',
-      goal: 'Definição muscular', daysPerWeek: '5', cycle: '4',
-      payDay: hoje.getDate(), valor: '320', payStatus: 'ok',
-      paidUntil: dataISO(-1), photo: null, progressHistory: [], objetivosAnamnese: [], tags: [],
-    },
-  ];
-
-  // Agenda: garante que pelo menos 2 alunos aparecem "com treino hoje"
-  scheduleData = {};
-  scheduleData[students[0].id] = { scheduledDays: [diaSemanaHoje, (diaSemanaHoje + 2) % 7, (diaSemanaHoje + 4) % 7], time: '07:00', objetivo: 'Treino de pernas' };
-  scheduleData[students[1].id] = { scheduledDays: [(diaSemanaHoje + 1) % 7, (diaSemanaHoje + 3) % 7, (diaSemanaHoje + 5) % 7, (diaSemanaHoje + 6) % 7], time: '18:00', objetivo: 'Treino de costas' };
-  scheduleData[students[2].id] = { scheduledDays: [diaSemanaHoje, (diaSemanaHoje + 3) % 7], time: '09:00', objetivo: 'Circuito metabólico' };
-  scheduleData[students[3].id] = { scheduledDays: [(diaSemanaHoje + 1) % 7, (diaSemanaHoje + 4) % 7, (diaSemanaHoje + 6) % 7], time: '06:30', objetivo: 'Mobilidade e força funcional' };
-  scheduleData[students[4].id] = { scheduledDays: [diaSemanaHoje, (diaSemanaHoje + 1) % 7, (diaSemanaHoje + 2) % 7, (diaSemanaHoje + 4) % 7, (diaSemanaHoje + 5) % 7], time: '19:00', objetivo: 'Treino superior' };
-
-  attendanceData = {};
-  notasRapidas = [];
-  aulasARepor = [];
-
-  document.getElementById('auth-screen').classList.add('hidden');
-  document.getElementById('app').style.display = '';
-  showGuestBanner();
-  showScreen('home');
-  renderHome();
-  toast('👀 Modo demonstração — dados fictícios, nada é salvo');
-}
-
-function exitGuestDemo() {
-  // Recarrega a página do zero: garante que nada do modo demonstração
-  // fique pendurado em variáveis de memória.
-  location.reload();
-}
-
-function showGuestBanner() {
-  if (document.getElementById('guest-banner')) return;
-  const bar = document.createElement('div');
-  bar.id = 'guest-banner';
-  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9500;background:linear-gradient(90deg,#7a5c00,#a67c00);color:#fff;font-size:12.5px;font-weight:600;padding:calc(var(--safe-top) + 8px) 14px 8px;display:flex;align-items:center;justify-content:center;gap:10px;text-align:center';
-  bar.innerHTML = `👀 Modo demonstração — dados fictícios, nada é salvo
-    <a style="text-decoration:underline;cursor:pointer;font-weight:700" onclick="exitGuestDemo()">Criar minha conta</a>`;
-  document.body.prepend(bar);
-}
-
-// ══════════════════════════════════════════
-// GATE DE AUTENTICAÇÃO — decide auth-screen vs app
+// INICIALIZAÇÃO — sem tela de login: o app abre direto, usando os
+// dados guardados neste aparelho (localStorage).
 // ══════════════════════════════════════════
 function authBoot() {
-
-
-  sb.auth.onAuthStateChange((event, session) => {
-    if (event === 'PASSWORD_RECOVERY') {
-      // Usuário clicou no link de "esqueci a senha" — mostra tela de redefinição
-      document.getElementById('auth-screen').classList.remove('hidden');
-      document.getElementById('app').style.display = 'none';
-      authShow('reset');
-      return;
-    }
-    if (session?.user) {
-      currentUser = session.user;
-      document.getElementById('auth-screen').classList.add('hidden');
-      document.getElementById('app').style.display = '';
-      sbStatusCard();
-      bootApp();
-    } else {
-      currentUser = null;
-      _appBooted = false;
-      document.getElementById('auth-screen').classList.remove('hidden');
-      document.getElementById('app').style.display = 'none';
-      authShow('login');
-    }
-  });
+  document.getElementById('app').style.display = '';
+  bootApp();
 }
-authBoot();
+// Espera o script inteiro terminar de carregar (evita usar variáveis
+// declaradas mais abaixo antes da hora).
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', authBoot);
+else authBoot();
 
 // Registra o Service Worker (habilita "Adicionar à tela inicial").
 // Se falhar por qualquer motivo, o app continua funcionando normal

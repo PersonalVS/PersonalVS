@@ -1168,28 +1168,11 @@ html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-s
 .attend-bar-wrap{flex:1;height:6px;background:var(--card2);border-radius:4px;overflow:hidden}
 .attend-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .4s ease}
 
-/* PIN LOCK */
-#pin-lock{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--safe-top)+32px) 24px calc(var(--safe-bottom)+32px)}
-#pin-lock.hidden{display:none !important;pointer-events:none !important;visibility:hidden !important}
-.pin-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;margin-bottom:6px}.pin-logo span{color:var(--accent)}
-.pin-sub{font-size:14px;color:var(--text2);margin-bottom:40px}
-.pin-dots{display:flex;gap:14px;margin-bottom:40px}
-.pin-dot{width:16px;height:16px;border-radius:50%;background:var(--card2);border:2px solid var(--border);transition:all .2s}
-.pin-dot.filled{background:var(--accent);border-color:var(--accent)}
-.pin-dot.error{background:var(--red);border-color:var(--red)}
-.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px}
-.pin-key{padding:18px;border-radius:16px;font-size:22px;font-weight:700;font-family:'Syne',sans-serif;background:var(--card);border:1px solid var(--border);color:var(--text);cursor:pointer;text-align:center;transition:all .12s;user-select:none}
-.pin-key:active{transform:scale(.91);background:var(--accent-dim);border-color:var(--accent)}
-.pin-key.del{font-size:18px;color:var(--text2)}
-.pin-key.empty{background:transparent;border-color:transparent;cursor:default}
 
 /* Reforço pro modo instalado (PWA): garante um espaço mínimo no topo
    mesmo se o navegador não reportar certo a área da barra de status. */
 html.pwa-standalone #topbar{padding-top:50px !important;min-height:92px !important}
-html.pwa-standalone #pin-lock{padding-top:62px !important}
 
-.pin-setup-msg{font-size:12px;color:var(--text3);text-align:center;margin-top:16px;line-height:1.6}
-.pin-action-row{display:flex;gap:12px;margin-top:18px;width:100%;max-width:280px}
 
 /* ANAMNESE */
 .anamnese-chip{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);transition:all .15s;user-select:none}
@@ -1212,34 +1195,6 @@ html.pwa-standalone #pin-lock{padding-top:62px !important}
 </style>
 </head>
 <body>
-<!-- PIN LOCK SCREEN -->
-<div id="pin-lock">
-  <div class="pin-logo"><span>Praxis</span></div>
-  <div class="pin-sub" id="pin-sub-msg">Digite seu PIN para entrar</div>
-  <div class="pin-dots" id="pin-dots">
-    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
-    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
-  </div>
-  <div class="pin-keypad">
-    <button class="pin-key" onclick="pinKey(1)">1</button>
-    <button class="pin-key" onclick="pinKey(2)">2</button>
-    <button class="pin-key" onclick="pinKey(3)">3</button>
-    <button class="pin-key" onclick="pinKey(4)">4</button>
-    <button class="pin-key" onclick="pinKey(5)">5</button>
-    <button class="pin-key" onclick="pinKey(6)">6</button>
-    <button class="pin-key" onclick="pinKey(7)">7</button>
-    <button class="pin-key" onclick="pinKey(8)">8</button>
-    <button class="pin-key" onclick="pinKey(9)">9</button>
-    <button class="pin-key empty"></button>
-    <button class="pin-key" onclick="pinKey(0)">0</button>
-    <button class="pin-key del" onclick="pinDel()">⌫</button>
-  </div>
-  <div class="pin-setup-msg" id="pin-setup-msg"></div>
-  <div class="pin-action-row" id="pin-action-row" style="display:none">
-    <button class="btn btn-ghost btn-full btn-sm" onclick="pinSkip()">Pular (sem PIN)</button>
-  </div>
-</div>
-
 <!-- ONBOARDING GUIADO (só na primeira vez, sem alunos ainda) -->
 <div id="onboarding-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:10500;flex-direction:column;justify-content:center;padding:calc(var(--safe-top)+28px) 26px calc(var(--safe-bottom)+28px)">
   <div style="text-align:right"><a onclick="pularOnboarding()" style="font-size:13px;color:var(--text3);cursor:pointer">Pular ›</a></div>
@@ -1616,17 +1571,6 @@ html.pwa-standalone #pin-lock{padding-top:62px !important}
         <div class="card-title">💬 Ajude a melhorar o app</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">Achou um bug, travou em algum lugar, ou tem uma ideia? Me conta direto — é assim que o app melhora.</div>
         <button class="btn btn-primary btn-full" onclick="enviarFeedback()">📩 Enviar sugestão / reportar problema</button>
-      </div>
-
-      <!-- PIN Security -->
-      <div class="card" style="margin-bottom:13px">
-        <div class="card-title">🔐 Segurança — PIN (neste aparelho)</div>
-        <div id="pin-status-card" style="font-size:13px;color:var(--text2);margin-bottom:12px"></div>
-        <div style="display:flex;gap:9px">
-          <button class="btn btn-outline btn-sm" style="flex:1" onclick="setupNewPin()">🔑 Alterar PIN</button>
-          <button class="btn btn-ghost btn-sm" style="flex:1" onclick="removePIN()">🔓 Remover PIN</button>
-        </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6">O PIN de 4 dígitos protege os dados dos seus alunos ao abrir o app neste aparelho.</div>
       </div>
 
       <div class="card" style="margin-top:13px">
@@ -5472,14 +5416,6 @@ function sbStatusCard() {
   } else {
     el.innerHTML = `<div style="font-size:13px;color:var(--text2)">📱 Dados salvos só neste aparelho</div>`;
   }
-
-  const pinCard = document.getElementById('pin-status-card');
-  if (pinCard) {
-    const hasPin = !!localStorage.getItem('fp_pin');
-    pinCard.innerHTML = hasPin
-      ? `<span style="color:var(--accent);font-weight:700">🔒 PIN ativado</span> — seu app está protegido`
-      : `<span style="color:var(--orange);font-weight:700">🔓 Sem PIN</span> — seu app não está protegido`;
-  }
 }
 
 // ══════════════════════════════════════════
@@ -5684,131 +5620,6 @@ async function sbPull() {
 // sbMigrate foi removida: ficou obsoleta (usava nomes antigos de chave,
 // sem o prefixo fp_) e não era mais chamada por nenhum botão da interface
 // — sbPush() e a sincronização automática já cobrem esse caso.
-
-// ══════════════════════════════════════════
-// PIN LOCK
-// ══════════════════════════════════════════
-let pinBuffer = '';
-let pinMode = 'check'; // 'check' | 'setup' | 'confirm'
-let pinFirst = '';
-
-function pinInit() {
-  const stored = localStorage.getItem('fp_pin');
-  const skipped = localStorage.getItem('fp_pin_skip');
-  if (!stored && !skipped) {
-    // First run — offer setup
-    pinMode = 'setup';
-    document.getElementById('pin-sub-msg').textContent = 'Crie seu PIN de 4 dígitos';
-    document.getElementById('pin-setup-msg').textContent = 'O PIN protege os dados dos seus alunos. Você pode pular e configurar depois nas configurações.';
-    document.getElementById('pin-action-row').style.display = 'flex';
-  } else if (!stored && skipped) {
-    // Skipped — unlock directly
-    document.getElementById('pin-lock').classList.add('hidden');
-  } else {
-    // Has PIN — check mode
-    pinMode = 'check';
-    document.getElementById('pin-sub-msg').textContent = 'Digite seu PIN para entrar';
-    document.getElementById('pin-action-row').style.display = 'none';
-    document.getElementById('pin-setup-msg').textContent = '';
-  }
-}
-
-function pinKey(n) {
-  if (pinBuffer.length >= 4) return;
-  pinBuffer += n;
-  updatePinDots();
-  if (pinBuffer.length === 4) {
-    setTimeout(() => handlePinComplete(), 150);
-  }
-}
-
-function pinDel() {
-  pinBuffer = pinBuffer.slice(0,-1);
-  updatePinDots();
-}
-
-function updatePinDots(error = false) {
-  for (let i=0;i<4;i++) {
-    const d = document.getElementById('pd'+i);
-    d.classList.remove('filled','error');
-    if (error) d.classList.add('error');
-    else if (i < pinBuffer.length) d.classList.add('filled');
-  }
-}
-
-function handlePinComplete() {
-  const stored = localStorage.getItem('fp_pin');
-  if (pinMode === 'check') {
-    if (pinBuffer === stored) {
-      document.getElementById('pin-lock').classList.add('hidden');
-      toast('🔓 Bem-vindo!');
-    } else {
-      updatePinDots(true);
-      navigator.vibrate && navigator.vibrate([50,50,50]);
-      toast('❌ PIN incorreto');
-      setTimeout(() => { pinBuffer = ''; updatePinDots(); }, 800);
-    }
-  } else if (pinMode === 'setup') {
-    pinFirst = pinBuffer;
-    pinBuffer = '';
-    pinMode = 'confirm';
-    document.getElementById('pin-sub-msg').textContent = 'Confirme o PIN';
-    updatePinDots();
-  } else if (pinMode === 'confirm') {
-    if (pinBuffer === pinFirst) {
-      localStorage.setItem('fp_pin', pinBuffer);
-      document.getElementById('pin-lock').classList.add('hidden');
-      toast('✅ PIN criado com sucesso!');
-    } else {
-      updatePinDots(true);
-      toast('❌ PINs diferentes, tente novamente');
-      setTimeout(() => {
-        pinBuffer = ''; pinFirst = ''; pinMode = 'setup';
-        document.getElementById('pin-sub-msg').textContent = 'Crie seu PIN de 4 dígitos';
-        updatePinDots();
-      }, 800);
-    }
-  }
-}
-
-function pinSkip() {
-  localStorage.setItem('fp_pin_skip', '1');
-  document.getElementById('pin-lock').classList.add('hidden');
-}
-
-// PIN settings functions (called from settings area)
-function changePIN() {
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
-  overlay.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:24px;width:100%;max-width:300px;text-align:center">
-    <div style="font-family:Syne,sans-serif;font-weight:800;font-size:18px;margin-bottom:20px">🔐 Alterar PIN</div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Vá em Configurações > Segurança para alterar o PIN.</div>
-    <button onclick="this.closest('div[style]').remove()" class="btn btn-primary btn-full">OK</button>
-  </div>`;
-  document.body.appendChild(overlay);
-}
-
-async function removePIN() {
-  const ok = await showConfirm('🔓', 'Remover o PIN?', 'Seu app ficará sem proteção de acesso neste aparelho.', 'Remover PIN');
-  if (!ok) return;
-  localStorage.removeItem('fp_pin');
-  localStorage.setItem('fp_pin_skip','1');
-  toast('🔓 PIN removido. App ficará desbloqueado.');
-  sbStatusCard();
-}
-
-function setupNewPin() {
-  // Show PIN lock overlay in setup mode
-  const lockEl = document.getElementById('pin-lock');
-  pinBuffer = ''; pinFirst = ''; pinMode = 'setup';
-  document.getElementById('pin-sub-msg').textContent = 'Crie um novo PIN de 4 dígitos';
-  document.getElementById('pin-setup-msg').textContent = '';
-  document.getElementById('pin-action-row').style.display = 'flex';
-  updatePinDots();
-  lockEl.classList.remove('hidden');
-  // Override complete handler to go back to settings after
-  const origHandleComplete = handlePinComplete;
-}
 
 // ══════════════════════════════════════════
 // PUSH NOTIFICATIONS
@@ -6831,7 +6642,7 @@ async function bootApp() {
   updateSyncIndicator('ok');
   renderHome();
   checkPaymentAlerts();
-  pinInit();
+  localStorage.removeItem('fp_pin'); localStorage.removeItem('fp_pin_skip'); // PIN removido do app
   startAutoSync();
   if ('Notification' in window && Notification.permission === 'granted') {
     schedulePaymentNotifications();

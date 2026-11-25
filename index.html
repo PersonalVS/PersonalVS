@@ -1286,6 +1286,7 @@ html.pwa-standalone #pin-lock{padding-top:62px !important}
         <button class="filter-chip"        id="fchip-pending"  onclick="setFilter('pending')">⏳ Sem treino</button>
         <button class="sort-btn"           id="sort-btn"       onclick="cycleSort()"><span id="sort-icon">↕</span><span id="sort-label">Ordem</span></button>
       </div>
+      <button class="btn btn-primary btn-full" style="margin-bottom:12px" onclick="showNav('add')">➕ Novo aluno</button>
       <div id="student-list"></div>
     </div>
 
@@ -1639,6 +1640,13 @@ html.pwa-standalone #pin-lock{padding-top:62px !important}
       <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px">🎯 Fases do Negócio</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Metodologia MVP — evolua o app em 3 etapas, na sua velocidade</div>
 
+      <!-- Controle de pacotes de sessões -->
+      <div class="card">
+        <div class="card-title">📦 Controle de Pacotes de Sessões</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Acompanha automaticamente pelas presenças marcadas na Agenda desde o início do pacote.</div>
+        <div id="pacotes-list"></div>
+      </div>
+
       <!-- ══ FASE 1 ══ -->
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -1661,16 +1669,6 @@ html.pwa-standalone #pin-lock{padding-top:62px !important}
           <div style="font-weight:700;font-size:13px;margin-bottom:4px">🎯 Hoje: aluno + objetivo</div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Configure o objetivo do dia no ⚙️ Config de cada aluno, na Agenda.</div>
           <div id="hoje-objetivos-list"></div>
-        </div>
-
-        <!-- Captura rápida de treino -->
-        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
-          <div style="font-weight:700;font-size:13px;margin-bottom:4px">✏️ Captura Rápida de Treino</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Registre um ajuste feito no treino, na hora, antes de esquecer.</div>
-          <select class="form-select" id="nota-rapida-aluno" style="margin-bottom:8px;font-size:13px"></select>
-          <textarea class="form-textarea" id="nota-rapida-texto" rows="2" placeholder="Ex: Reduzir carga do agachamento, relatou desconforto no joelho" style="margin-bottom:8px"></textarea>
-          <button class="btn btn-primary btn-full" style="font-size:12px" onclick="addNotaRapida()">Salvar anotação</button>
-          <div id="notas-rapidas-list" style="margin-top:12px"></div>
         </div>
 
         <!-- Radar de frequência -->
@@ -1705,19 +1703,6 @@ html.pwa-standalone #pin-lock{padding-top:62px !important}
           <button class="bib-tab"        id="wppfil-semana"   onclick="setWppFiltro('semana')"   style="font-size:10px">🟡 Esta Semana</button>
         </div>
         <div id="wpp-list"></div>
-      </div>
-
-      <!-- Lista de espera -->
-      <div class="card">
-        <div class="card-title">📝 Lista de Espera</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Guarde quem demonstrou interesse pra chamar assim que abrir uma vaga.</div>
-        <div id="lista-espera-list" style="margin-bottom:12px"></div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="espera-nome" placeholder="Nome do interessado"/></div>
-          <div class="form-group"><label class="form-label">Contato</label><input class="form-input" id="espera-contato" placeholder="WhatsApp"/></div>
-        </div>
-        <div class="form-group"><label class="form-label">Observação (opcional)</label><input class="form-input" id="espera-obs" placeholder="Ex: prefere manhã, indicação da Dona Maria..."/></div>
-        <button class="btn btn-primary btn-full" style="font-size:12px" onclick="addListaEspera()">Adicionar à lista</button>
       </div>
 
       <!-- Vagas livres na semana -->
@@ -1778,14 +1763,7 @@ html.pwa-standalone #pin-lock{padding-top:62px !important}
             <input type="checkbox" id="fase-check-3" onchange="toggleFaseConcluida(3)" style="width:16px;height:16px;accent-color:var(--accent)"/> concluída
           </label>
         </div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.5">Pacotes de sessões, apresentações pra leads e backup do seu negócio — tudo organizado logo abaixo.</div>
-      </div>
-
-      <!-- Controle de pacotes de sessões -->
-      <div class="card">
-        <div class="card-title">📦 Controle de Pacotes de Sessões</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Acompanha automaticamente pelas presenças marcadas na Agenda desde o início do pacote.</div>
-        <div id="pacotes-list"></div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.5">O controle de pacotes de sessões fica no topo desta tela, e o backup do seu negócio logo abaixo.</div>
       </div>
 
       <!-- Backup de dados -->
@@ -2046,7 +2024,6 @@ html.pwa-standalone #pin-lock{padding-top:62px !important}
 
   <nav id="bottomnav">
     <div class="nav-item active" id="nav-home"        onclick="showNav('home')">       <div class="nav-icon">🏠</div><div>Início</div>     <div class="nav-dot"></div></div>
-    <div class="nav-item"        id="nav-add"          onclick="showNav('add')">        <div class="nav-icon">➕</div><div>Novo</div>       <div class="nav-dot"></div></div>
     <div class="nav-item"        id="nav-agenda"       onclick="showNav('agenda')">     <div class="nav-icon">📅</div><div>Agenda</div>     <div class="nav-dot"></div></div>
     <div class="nav-item"        id="nav-dashboard"    onclick="showNav('dashboard')">  <div class="nav-icon">📊</div><div>Finanças</div>   <div class="nav-dot"></div></div>
     <div class="nav-item"        id="nav-fases"        onclick="showNav('fases')">      <div class="nav-icon">🎯</div><div>Fases</div>       <div class="nav-dot"></div></div>
@@ -2488,7 +2465,7 @@ function showNav(tab) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   trackEvent('tela_' + tab);
   if (tab === 'home') { document.getElementById('nav-home').classList.add('active'); showScreen('home'); renderHome(); }
-  else if (tab === 'add') { document.getElementById('nav-add').classList.add('active'); openStudentForm(null); }
+  else if (tab === 'add') { document.getElementById('nav-home').classList.add('active'); openStudentForm(null); }
   else if (tab === 'agenda') { document.getElementById('nav-agenda').classList.add('active'); showScreen('agenda'); renderAgenda(); }
   else if (tab === 'mensalidade') { document.getElementById('nav-mensalidade') && document.getElementById('nav-mensalidade').classList.add('active'); showScreen('mensalidade'); renderMensalidade(); }
   else if (tab === 'dashboard') { document.getElementById('nav-dashboard').classList.add('active'); showScreen('dashboard'); }
